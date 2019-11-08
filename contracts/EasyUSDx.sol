@@ -2,13 +2,13 @@ pragma solidity ^0.5.4;
 
 import './DSAuth.sol';
 
-library IERC20Token {
-    function balanceOf(address _owner) public view returns (uint);
-    function allowance(address _owner, address _spender) public view returns (uint);
-    function transfer(address _to, uint _value) public returns (bool success);
-    function transferFrom(address _from, address _to, uint _value) public returns (bool success);
-    function approve(address _spender, uint _value) public returns (bool success);
-    function totalSupply() public view returns (uint);
+interface IERC20Token {
+    function balanceOf(address _owner) external view returns (uint);
+    function allowance(address _owner, address _spender) external view returns (uint);
+    function transfer(address _to, uint _value) external returns (bool success);
+    function transferFrom(address _from, address _to, uint _value) external returns (bool success);
+    function approve(address _spender, uint _value) external returns (bool success);
+    function totalSupply() external view returns (uint);
 }
 
 library DSMath {
@@ -36,7 +36,7 @@ contract EasyUSDx is DSAuth {
 	mapping(address => uint256) public buyRate;  // offset 10^6
 
 	constructor(address _usdx) public {
-		usdx = _udsx;
+		usdx = _usdx;
 		owner = msg.sender;
 		isOpen = true;
 	}
@@ -62,7 +62,8 @@ contract EasyUSDx is DSAuth {
 	// use usdx to buy token
 	function buyToken(uint256 _usdxAmount, address _tokenAddr, address _receiver) public {
 		require(isOpen, "not open");
-		require(price[_tokenAddr]!= 0 && buyToken[_tokenAddr] != 0, "invalid token address");
+		require(price[_tokenAddr]!= 0, "invalid token address");
+		require(buyRate[_tokenAddr] != 0, "invalid token address");
 		require(IERC20Token(usdx).transferFrom(msg.sender, address(this), _usdxAmount), "approve or balance not enough");
 		uint256 _tokenAmount = _usdxAmount / price[_tokenAddr];
 		uint256 _fee = _tokenAmount.mul(buyRate[_tokenAddr]) / OFFSET;
@@ -87,8 +88,8 @@ contract EasyUSDx is DSAuth {
 		buyRate[_tokenAddr] = _buyRate;
 	}
 
-	function emergencyStop() external onlyOwner {
-		isOpen = -isOpen;
+	function emergencyStop(bool _open) external onlyOwner {
+		isOpen = _open;
 	}
 
 	function transferOut(address _tokenAddr, address _receiver, uint256 _amount) auth external returns (bool) {
