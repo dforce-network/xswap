@@ -1,4 +1,4 @@
-# EasyUSDx
+# Xswap
 
 ### Rinkby
 
