@@ -23,17 +23,17 @@ library DSMath {
     }
 }
 
-contract EasyUSDx is DSAuth {
+contract XSwap is DSAuth {
 	using DSMath for uint256;
 
-	uint256 constant internal OFFSET = 10 ^ 4; 
+	uint256 constant internal OFFSET = 10000; 
 
 	address public usdx;
 	address public owner;
 	bool public isOpen;
 	mapping(address => uint256) public price; // 1 token = ? usdx
-	mapping(address => uint256) public sellRate; // offset 10^6
-	mapping(address => uint256) public buyRate;  // offset 10^6
+	mapping(address => uint256) public sellRate; // offset 10^4
+	mapping(address => uint256) public buyRate;  // offset 10^4
 
 	constructor(address _usdx) public {
 		usdx = _usdx;
@@ -70,25 +70,25 @@ contract EasyUSDx is DSAuth {
 		require(IERC20Token(_tokenAddr).transfer(_receiver, _tokenAmount.sub(_fee)));
 	}
 
-	function updatePair(address _tokenAddr, uint256 _price, uint256 _sellRate, uint256 _buyRate) external onlyOwner {
+	function updatePair(address _tokenAddr, uint256 _price, uint256 _sellRate, uint256 _buyRate) external auth {
 		price[_tokenAddr] = _price;
 		sellRate[_tokenAddr] = _sellRate;
 		buyRate[_tokenAddr] = _buyRate;
 	}
 
-	function updatePrice(address _tokenAddr, uint256 _price) external onlyOwner {
+	function updatePrice(address _tokenAddr, uint256 _price) external auth {
 		price[_tokenAddr] = _price;
 	}
 
-	function updateSellRate(address _tokenAddr, uint256 _sellRate) external onlyOwner {
+	function updateSellRate(address _tokenAddr, uint256 _sellRate) external auth {
 		sellRate[_tokenAddr] = _sellRate;
 	}
 
-	function updateBuyRate(address _tokenAddr, uint256 _buyRate) external onlyOwner {
+	function updateBuyRate(address _tokenAddr, uint256 _buyRate) external auth {
 		buyRate[_tokenAddr] = _buyRate;
 	}
 
-	function emergencyStop(bool _open) external onlyOwner {
+	function emergencyStop(bool _open) external auth {
 		isOpen = _open;
 	}
 

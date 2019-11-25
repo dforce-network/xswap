@@ -1,9 +1,10 @@
 {
   "name": "easyUSDx",
   "version": "1.0.0",
-  "description": "",
+  "description": "### Rinkby",
   "main": "truffle-config.js",
   "directories": {
+    "doc": "doc",
     "test": "test"
   },
   "scripts": {
@@ -11,5 +12,17 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dforce-network/easyusdx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dforce-network/easyusdx/issues"
+  },
+  "homepage": "https://github.com/dforce-network/easyusdx#readme",
+  "dependencies": {
+    "bignumber": "^1.1.0",
+    "bn.js": "^5.0.0"
+  }
 }
