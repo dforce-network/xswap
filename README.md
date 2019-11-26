@@ -1,10 +1,12 @@
 
 # XSwap
-35fa72124a34e1bc84bf2e98b21a025420835078
 
 ### Rinkby
 
 ```
+usdx token
+0xaf21bb8ae7b7a5eec37964e478583cd486fd12e2
+
 DSGuard
 0x93b0a865146eaddd2f0eee66b6392a5104c0fdf1
 
@@ -24,4 +26,29 @@ XSwap
 npm install
 truffle test
 ```
-35fa72124a34e1bc84bf2e98b21a025420835078
+
+### DSGuard set admin
+
+#### permit in DSGuard.sol
+```
+function permit(address src, address dst, bytes32 sig)
+```
+
+#### function signature
+```
+"e538984f": "updateBuyRate(address,uint256)",
+"9544ec58": "updatePair(address,uint256,uint256,uint256)",
+"457972de": "updatePrice(address,uint256)",
+"f3ceea99": "updateSellRate(address,uint256)"
+```
+
+#### functions
+````
+permit(${admin.address}, xswap.address, 0xe538984f)
+permit(${admin.address}, xswap.address, 0x9544ec58)
+permit(${admin.address}, xswap.address, 0x457972de)
+permit(${admin.address}, xswap.address, 0xf3ceea99)
+````
+````
+
+
