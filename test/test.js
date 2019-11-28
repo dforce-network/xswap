@@ -268,7 +268,7 @@ contract('test', function(accounts) {
 
         await updateToken(usdx.address)
         await updateToken(usdt.address)
-        tx = await xSwap.buyToken(d6(1000000), usdt.address, user1, {from: user1})
+        tx = await xSwap.buyToken(d18(1000000), usdt.address, user1, {from: user1})
         await updateAndCheckUserBalance(d6(999000), usdt.address)
         await updateAndCheckUserBalance(d18(1000000), usdx.address)
         await updateAndCheckLiquility(d6(999000), usdt.address)
@@ -339,35 +339,67 @@ contract('test', function(accounts) {
         await updateAndCheckLiquility(d6(1000000), usdc.address)
     })
 
-    it("case24", async function () {
+    it("case24, pax", async function () {
         await renewContract()
         tx = await xSwap.updatePair(pax.address, new BN(1), new BN(10), new BN(10))
         tx = await pax.mint(xSwap.address, d18(2))
-        tx = await usdx.mint(user1, d18(1.000001))
-        tx = await pax.approvex(xSwap.address, {from: user1})
+        tx = await usdx.mint(user1, "1000001000000000000")
+        tx = await usdx.approvex(xSwap.address, {from: user1})
 
         await updateToken(usdx.address)
         await updateToken(pax.address)
-        tx = await xSwap.sellToken(d18(1.000001), pax.address, user1, {from: user1})
-        await updateAndCheckUserBalance(d18(1.000001 * 99.9 / 100), usdx.address)
-        await updateAndCheckUserBalance(d18(1.000001), pax.address)
-        await updateAndCheckLiquility(d18(1.000001 * 99.9 / 100), usdx.address)
-        await updateAndCheckLiquility(d18(1.000001), pax.address)
+        tx = await xSwap.buyToken("1000001000000000000", pax.address, user1, {from: user1})
+        await updateAndCheckUserBalance("999000999000000000", pax.address)
+        await updateAndCheckUserBalance("1000001000000000000", usdx.address)
+        await updateAndCheckLiquility("999000999000000000", pax.address)
+        await updateAndCheckLiquility("1000001000000000000", usdx.address)
     })
 
-    it("case28", async function () {
+    it("case24, usdt", async function () {
+        await renewContract()
+        tx = await xSwap.updatePair(usdt.address, new BN(10 ** 12), new BN(10), new BN(10))
+        tx = await usdt.mint(xSwap.address, d6(2))
+        tx = await usdx.mint(user1, "1000001000000000000")
+        tx = await usdx.approvex(xSwap.address, {from: user1})
+
+        await updateToken(usdx.address)
+        await updateToken(usdt.address)
+        tx = await xSwap.buyToken("1000001000000000000", usdt.address, user1, {from: user1})
+        await updateAndCheckUserBalance("999001", usdt.address)
+        await updateAndCheckUserBalance("1000001000000000000", usdx.address)
+        await updateAndCheckLiquility("999001", usdt.address)
+        await updateAndCheckLiquility("1000001000000000000", usdx.address)
+    })
+
+    it("case26, pax", async function () {
         await renewContract()
         tx = await xSwap.updatePair(pax.address, new BN(1), new BN(10), new BN(10))
-        tx = await pax.mint(xSwap.address, d18(2))
-        tx = await usdx.mint(user1, d18(1.000001))
+        tx = await usdx.mint(xSwap.address, d18(2))
+        tx = await pax.mint(user1, "1000001000000000000")
         tx = await pax.approvex(xSwap.address, {from: user1})
 
         await updateToken(usdx.address)
         await updateToken(pax.address)
-        tx = await xSwap.sellToken(d18(1.000001), pax.address, user1, {from: user1})
-        await updateAndCheckUserBalance(d18(1.000001 * 99.9 / 100), usdx.address)
-        await updateAndCheckUserBalance(d18(1.000001), pax.address)
-        await updateAndCheckLiquility(d18(1.000001 * 99.9 / 100), usdx.address)
-        await updateAndCheckLiquility(d18(1.000001), pax.address)
+        tx = await xSwap.sellToken("1000001000000000000", pax.address, user1, {from: user1})
+        await updateAndCheckUserBalance("999000999000000000", usdx.address)
+        await updateAndCheckUserBalance("1000001000000000000", pax.address)
+        await updateAndCheckLiquility("999000999000000000", usdx.address)
+        await updateAndCheckLiquility("1000001000000000000", pax.address)
+    })
+
+    it("case26, usdt", async function () {
+        await renewContract()
+        tx = await xSwap.updatePair(usdt.address, new BN(10 ** 12), new BN(10), new BN(10))
+        tx = await usdt.mint(user1, "1000001")
+        tx = await usdx.mint(xSwap.address, d18(2))
+        tx = await usdt.approvex(xSwap.address, {from: user1})
+
+        await updateToken(usdx.address)
+        await updateToken(usdt.address)
+        tx = await xSwap.sellToken("1000001", usdt.address, user1, {from: user1})
+        await updateAndCheckUserBalance("999000999000000000", usdx.address)
+        await updateAndCheckUserBalance("1000001", usdt.address)
+        await updateAndCheckLiquility("1000001", usdt.address)
+        await updateAndCheckLiquility("999000999000000000", usdx.address)
     })
 });
