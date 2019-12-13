@@ -52,7 +52,7 @@ contract XSwap is DSAuth {
 	// sell token to get usdx
 	function sellToken(uint256 _tokenAmount, address _tokenAddr, address _receiver) public {
 		require(isOpen, "not open");
-		require(price[_tokenAddr]!= 0 && sellRate[_tokenAddr] != 0, "invalid token address");
+		require(price[_tokenAddr]!= 0, "invalid token address");
 		require(IERC20Token(_tokenAddr).transferFrom(msg.sender, address(this), _tokenAmount), "approve or balance not enough");
 		uint256 _usdxAmount = _tokenAmount.mul(price[_tokenAddr]);
 		uint256 _fee = _usdxAmount.mul(sellRate[_tokenAddr]) / OFFSET;
@@ -63,7 +63,6 @@ contract XSwap is DSAuth {
 	function buyToken(uint256 _usdxAmount, address _tokenAddr, address _receiver) public {
 		require(isOpen, "not open");
 		require(price[_tokenAddr]!= 0, "invalid token address");
-		require(buyRate[_tokenAddr] != 0, "invalid token address");
 		require(IERC20Token(usdx).transferFrom(msg.sender, address(this), _usdxAmount), "approve or balance not enough");
 		uint256 _tokenAmount = _usdxAmount / price[_tokenAddr];
 		uint256 _fee = _tokenAmount.mul(buyRate[_tokenAddr]) / OFFSET;
