@@ -53,20 +53,20 @@ contract XSwap is DSAuth {
 	function sellToken(uint256 _tokenAmount, address _tokenAddr, address _receiver) public {
 		require(isOpen, "not open");
 		require(price[_tokenAddr]!= 0, "invalid token address");
-		require(IERC20Token(_tokenAddr).transferFrom(msg.sender, address(this), _tokenAmount), "approve or balance not enough");
+		IERC20Token(_tokenAddr).transferFrom(msg.sender, address(this), _tokenAmount);
 		uint256 _usdxAmount = _tokenAmount.mul(price[_tokenAddr]);
 		uint256 _fee = _usdxAmount.mul(sellRate[_tokenAddr]) / OFFSET;
-		require(IERC20Token(usdx).transfer(_receiver, _usdxAmount.sub(_fee)));
+		IERC20Token(usdx).transfer(_receiver, _usdxAmount.sub(_fee));
 	}
 
 	// use usdx to buy token
 	function buyToken(uint256 _usdxAmount, address _tokenAddr, address _receiver) public {
 		require(isOpen, "not open");
 		require(price[_tokenAddr]!= 0, "invalid token address");
-		require(IERC20Token(usdx).transferFrom(msg.sender, address(this), _usdxAmount), "approve or balance not enough");
+		IERC20Token(usdx).transferFrom(msg.sender, address(this), _usdxAmount);
 		uint256 _tokenAmount = _usdxAmount / price[_tokenAddr];
 		uint256 _fee = _tokenAmount.mul(buyRate[_tokenAddr]) / OFFSET;
-		require(IERC20Token(_tokenAddr).transfer(_receiver, _tokenAmount.sub(_fee)));
+		IERC20Token(_tokenAddr).transfer(_receiver, _tokenAmount.sub(_fee));
 	}
 
 	function updatePair(address _tokenAddr, uint256 _price, uint256 _sellRate, uint256 _buyRate) external auth {
