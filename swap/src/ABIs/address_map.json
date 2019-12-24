@@ -1,0 +1,10 @@
+
+{
+    "rinkeby":{
+        "address_USDT":"0xA1e525F7d24D7cCB78A070BBd12C0BF21Fb4a848",
+        "address_XSWAP":"0x5fc6345c302d0127a777eaf924f63c028b087f56",
+        "address_TUSD":"0xfeb2112e370091f25a2f96fb600484700a0ed603",
+        "address_USDx":"0xaf21bb8ae7b7a5eec37964e478583cd486fd12e2",
+        "address_PAX":"0xd414e78d5db39e90c704070943e067ffc0eb3d86"
+    }
+}

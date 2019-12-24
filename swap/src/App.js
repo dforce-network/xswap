@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import './App.scss';
+import RouterView from './router/RouterView'
+import routes from './router/index'
+import { HashRouter } from 'react-router-dom'
+import MediaQuery from 'react-responsive';
+class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+    }
+  }
+  
+  render() {
+    return (
+    <MediaQuery query='(min-device-width: 736px)'>
+       {(match)=>(
+          <div className="App">
+          <HashRouter>
+            <RouterView routes={routes} />
+          </HashRouter>
+        </div>
+       )}
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      </MediaQuery >
+    );
+  }
+
 }
 
 export default App;

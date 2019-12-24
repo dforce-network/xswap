@@ -1,0 +1,23 @@
+{
+    "Kovan": {
+        "MoneyMarket": "0x0961a04d184b13cf5ba463b76ffc90a49fe7a1f9",
+        "WETH": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+        "DF": "0xcE6FB79C099f3B2F361E94B2D5645820790832f3",
+        "USDx": "0x54b909745294bf82d36845EE69c1daAdDbE14978"
+    },
+    "Main": {
+        "MoneyMarket": "0x0eEe3E3828A45f7601D5F54bF49bB01d1A9dF5ea",
+        "WETH": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "USDx": "0xeb269732ab75a6fd61ea60b06fe994cd32a83549"
+    },
+    "Rinkeby": {
+        "MoneyMarket": "0x5759F246E6b66B654c61Fec7427dc69E693E98fA",
+        "WETH": "0xC8b1a5ef2e19937dd6c0f804DF2e3efE9F093B1e",
+        "USDx": "0xaf21bb8ae7b7a5eec37964e478583cd486fd12e2"
+    },
+    "Asset": {
+        "USDx": "USDx",
+        "DF": "DF",
+        "WETH": "WETH"
+    }
+}

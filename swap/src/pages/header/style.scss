@@ -1,0 +1,48 @@
+header{
+    height: 88px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .navLeftlogo {
+        display: flex;
+        width:170px;
+        height:28px;
+        margin-left: 455px;
+        margin-top: 50px;
+        img {
+            width: 127px;
+            height: 28px;
+        }
+    }
+    .navRightTitle {
+            margin-right: 455px;
+            margin-top: 50px;
+            display: flex;
+            span {
+                display: block;
+                width:80px;
+                height:36px;
+                font-size:20px;
+                font-family:Roboto;
+                font-weight:500;
+                color:rgba(18,197,147,1);
+            }
+            .wrongNetwork {
+                display: flex;
+                display: none;
+                img {
+                    width: 14px;
+                    height: 25px;
+                }
+                P{
+                    font-size:20px;
+                    font-family:Roboto;
+                    font-weight:500;
+                    color:rgba(246,151,38,1);
+                    margin-left: 8px;
+                    line-height: 25px;
+                }
+            }
+            
+        }
+}
