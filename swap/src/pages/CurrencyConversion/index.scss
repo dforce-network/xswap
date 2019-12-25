@@ -65,13 +65,12 @@
             transform: translateX(0);
             transition: transform 0.5s;
         }
-        .SelectionBoxUsdt,.SelectionBoxUstx,.SelectionBoxUsdtLeft,.SelectionBoxUsdtRight,.SelectioBoxUstxRed{
+        .SelectionBoxUsdt,.SelectionBoxUstx,.SelectionBoxUsdtLeft,.SelectionBoxUsdtRight,.SelectioBoxUstxRed,.SelectionBoxUsdtRed{
             width:450px;
             height:84px;
             background:rgba(255,255,255,1);
             border-radius:6px;
             display: flex;
-            justify-content: space-between;
             .SelectionBoxUsdtMoeny {
                 margin-left: 20px;
                 line-height: 84px;
@@ -112,7 +111,7 @@
            input {
                border: none;
                outline: none;
-               min-width: 50px;
+                flex: 1;
                margin-right: 20px;
            }
         }

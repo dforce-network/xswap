@@ -13,7 +13,7 @@ class App extends Component {
   
   render() {
     return (
-    <MediaQuery query='(min-device-width: 736px)'>
+    <MediaQuery maxWidth={736}>
        {(match)=>(
           <div className="App">
           <HashRouter>
