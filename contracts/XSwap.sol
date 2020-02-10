@@ -108,8 +108,8 @@ contract XSwap is DSAuth {
 	}
 
 	function setFee(address _input, address _output, uint256 _fee) public auth {
-		prices[_input][_output] = _fee;
-		prices[_output][_input] = _fee;
+		fee[_input][_output] = _fee;
+		fee[_output][_input] = _fee;
 	}
 
 	function emergencyStop(bool _open) external auth {
