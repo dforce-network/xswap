@@ -1,6 +1,7 @@
 pragma solidity ^0.5.4;
 
 import './DSAuth.sol';
+import './IDispatcher.sol';
 
 interface IERC20Token {
     function balanceOf(address _owner) external view returns (uint);
@@ -9,6 +10,12 @@ interface IERC20Token {
     function transferFrom(address _from, address _to, uint _value) external returns (bool success);
     function approve(address _spender, uint _value) external returns (bool success);
     function totalSupply() external view returns (uint);
+}
+
+interface ILendFMe {
+	function supply(address _token, uint _amounts) external returns (uint);
+	function withdraw(address _token, uint _amounts) external returns (uint);
+	function getSupplyBalance(address _user, address _token) external view returns (uint256);
 }
 
 library DSMath {
@@ -26,72 +33,101 @@ library DSMath {
 contract XSwap is DSAuth {
 	using DSMath for uint256;
 
-	uint256 constant internal OFFSET = 10000; 
+	uint256 constant internal OFFSET = 10 ** 18;
 
-	address public usdx;
 	address public owner;
+	address public lendFMe;
 	bool public isOpen;
-	mapping(address => uint256) public price; // 1 token = ? usdx
-	mapping(address => uint256) public sellRate; // offset 10^4
-	mapping(address => uint256) public buyRate;  // offset 10^4
+	mapping(address => mapping(address => uint256)) public prices; // 1 tokenA = ? tokenB
+	mapping(address => mapping(address => uint256)) public fee;   // fee from tokenA to tokenB
+	mapping(address => bool) public supportLending;
 
-	constructor(address _usdx) public {
-		usdx = _usdx;
+	constructor() public {
 		owner = msg.sender;
 		isOpen = true;
 	}
 
-	function sellToken(uint256 _tokenAmount, address _tokenAddr) external {
-		sellToken(_tokenAmount, _tokenAddr, msg.sender);
+	function trade(address _input, address _output, uint256 _inputAmount) public {
+		trade(_input, _output, _inputAmount, msg.sender);
 	}
 
-	function buyToken(uint256 _tokenAmount, address _tokenAddr) external {
-		buyToken(_tokenAmount, _tokenAddr, msg.sender);
-	}
-
-	// sell token to get usdx
-	function sellToken(uint256 _tokenAmount, address _tokenAddr, address _receiver) public {
+	function trade(address _input, address _output, uint256 _inputAmount, address _receiver) public {
 		require(isOpen, "not open");
-		require(price[_tokenAddr]!= 0, "invalid token address");
-		IERC20Token(_tokenAddr).transferFrom(msg.sender, address(this), _tokenAmount);
-		uint256 _usdxAmount = _tokenAmount.mul(price[_tokenAddr]);
-		uint256 _fee = _usdxAmount.mul(sellRate[_tokenAddr]) / OFFSET;
-		IERC20Token(usdx).transfer(_receiver, _usdxAmount.sub(_fee));
+		require(prices[_input][_output] != 0, "invalid token address");
+		IERC20Token(_input).transferFrom(msg.sender, address(this), _inputAmount);
+		if(supportLending[_input]) {
+			ILendFMe(lendFMe).supply(_input, _inputAmount);
+		}
+		
+		uint256 _tokenAmount = _inputAmount * OFFSET / prices[_input][_output];
+		uint256 _fee = _tokenAmount * fee[_input][_output] / OFFSET;
+		uint256 _amountToUser = _tokenAmount - _fee;
+		if(supportLending[_output]) {
+			ILendFMe(lendFMe).withdraw(_output, _amountToUser);
+		}
+		IERC20Token(_output).transfer(_receiver, _amountToUser);
 	}
 
-	// use usdx to buy token
-	function buyToken(uint256 _usdxAmount, address _tokenAddr, address _receiver) public {
-		require(isOpen, "not open");
-		require(price[_tokenAddr]!= 0, "invalid token address");
-		IERC20Token(usdx).transferFrom(msg.sender, address(this), _usdxAmount);
-		uint256 _tokenAmount = _usdxAmount / price[_tokenAddr];
-		uint256 _fee = _tokenAmount.mul(buyRate[_tokenAddr]) / OFFSET;
-		IERC20Token(_tokenAddr).transfer(_receiver, _tokenAmount.sub(_fee));
+	function getTokenBalance(address _token) public returns (uint256) {
+		uint256 balanceInDefi = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
+		return balanceInDefi + IERC20Token(_token).balanceOf(address(this));
 	}
 
-	function updatePair(address _tokenAddr, uint256 _price, uint256 _sellRate, uint256 _buyRate) external auth {
-		price[_tokenAddr] = _price;
-		sellRate[_tokenAddr] = _sellRate;
-		buyRate[_tokenAddr] = _buyRate;
+	function setLendFMe(address _lendFMe) public auth {
+		lendFMe = _lendFMe;
 	}
 
-	function updatePrice(address _tokenAddr, uint256 _price) external auth {
-		price[_tokenAddr] = _price;
+	function enableLending(address _token) public auth {
+		require(!supportLending[_token], "the token is already supported lending");
+		supportLending[_token] = true;
+		uint256 _balance = IERC20Token(_token).balanceOf(address(this));
+		if(_balance > 0) {
+			ILendFMe(lendFMe).supply(_token, _balance);
+		}
 	}
 
-	function updateSellRate(address _tokenAddr, uint256 _sellRate) external auth {
-		sellRate[_tokenAddr] = _sellRate;
+	function disableLending(address _token) public auth {
+		require(supportLending[_token], "the token doesnt support lending");
+		supportLending[_token] = false;
+		uint256 _balance = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
+		if(_balance > 0) {
+			ILendFMe(lendFMe).withdraw(_token, _balance);
+		}
 	}
 
-	function updateBuyRate(address _tokenAddr, uint256 _buyRate) external auth {
-		buyRate[_tokenAddr] = _buyRate;
+	function setPrices(address _input, address _output, uint256 _price) external auth {
+		prices[_input][_output] = _price;
+	}
+
+	function setFee(address _input, address _output, uint256 _fee) external auth {
+		prices[_input][_output] = _fee;
+		prices[_output][_input] = _fee;
 	}
 
 	function emergencyStop(bool _open) external auth {
 		isOpen = _open;
 	}
 
-	function transferOut(address _tokenAddr, address _receiver, uint256 _amount) auth external returns (bool) {
-		return IERC20Token(_tokenAddr).transfer(_receiver, _amount);
+	function transferOut(address _token, address _receiver) auth external returns (bool) {
+		uint256 _balance = IERC20Token(_token).balanceOf(address(this));
+		if(supportLending[_token]) {
+			_balance = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
+			if(_balance > 0) {
+				ILendFMe(lendFMe).withdraw(_token, _balance);
+			}
+		}
+		if(_balance > 0) {
+			IERC20Token(_token).transfer(_receiver, _balance);
+		}
+
+		return true;
+	}
+	
+	function transferIn(address _token, uint256 _amount) auth external returns (bool) {
+		IERC20Token(_token).transferFrom(msg.sender, address(this), _amount);
+		if(supportLending[_token]) {
+			ILendFMe(lendFMe).supply(_token, IERC20Token(_token).balanceOf(address(this)));
+		}
+	    return true;
 	}
 }
