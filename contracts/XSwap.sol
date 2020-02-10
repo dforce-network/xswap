@@ -42,9 +42,10 @@ contract XSwap is DSAuth {
 	mapping(address => mapping(address => uint256)) public fee;   // fee from tokenA to tokenB
 	mapping(address => bool) public supportLending;
 
-	constructor() public {
+	constructor(address _lendFMe) public {
 		owner = msg.sender;
 		isOpen = true;
+		lendFMe = _lendFMe;
 	}
 
 	function trade(address _input, address _output, uint256 _inputAmount) public {
@@ -73,10 +74,6 @@ contract XSwap is DSAuth {
 		return balanceInDefi + IERC20Token(_token).balanceOf(address(this));
 	}
 
-	function setLendFMe(address _lendFMe) public auth {
-		lendFMe = _lendFMe;
-	}
-
 	function enableLending(address _token) public auth {
 		require(!supportLending[_token], "the token is already supported lending");
 		supportLending[_token] = true;
@@ -96,11 +93,21 @@ contract XSwap is DSAuth {
 		}
 	}
 
-	function setPrices(address _input, address _output, uint256 _price) external auth {
+	function createPair(address _input, address _output, uint256 _priceInOut, uint256 _priceOutIn, uint256 _fee) external auth {
+		setPrices(_input, _output, _priceInOut, _priceOutIn);
+		setFee(_input, _output, _fee);
+	}
+
+	function setPrices(address _input, address _output, uint256 _priceInOut, uint256 _priceOutIn) public auth {
+		setPrices(_input, _output, _priceInOut);
+		setPrices(_output, _input, _priceOutIn);		
+	}
+
+	function setPrices(address _input, address _output, uint256 _price) public auth {
 		prices[_input][_output] = _price;
 	}
 
-	function setFee(address _input, address _output, uint256 _fee) external auth {
+	function setFee(address _input, address _output, uint256 _fee) public auth {
 		prices[_input][_output] = _fee;
 		prices[_output][_input] = _fee;
 	}
@@ -110,13 +117,10 @@ contract XSwap is DSAuth {
 	}
 
 	function transferOut(address _token, address _receiver) auth external returns (bool) {
-		uint256 _balance = IERC20Token(_token).balanceOf(address(this));
 		if(supportLending[_token]) {
-			_balance = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
-			if(_balance > 0) {
-				ILendFMe(lendFMe).withdraw(_token, _balance);
-			}
+			ILendFMe(lendFMe).withdraw(_token, uint256(-1));		
 		}
+		uint256 _balance = IERC20Token(_token).balanceOf(address(this));
 		if(_balance > 0) {
 			IERC20Token(_token).transfer(_receiver, _balance);
 		}
