@@ -87,10 +87,7 @@ contract XSwap is DSAuth {
 	function disableLending(address _token) public auth {
 		require(supportLending[_token], "the token doesnt support lending");
 		supportLending[_token] = false;
-		uint256 _balance = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
-		if(_balance > 0) {
-			ILendFMe(lendFMe).withdraw(_token, _balance);
-		}
+		ILendFMe(lendFMe).withdraw(_token, uint256(-1));
 	}
 
 	function createPair(address _input, address _output, uint256 _priceInOut, uint256 _priceOutIn, uint256 _fee) external auth {
