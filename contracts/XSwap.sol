@@ -41,6 +41,7 @@ contract XSwap is DSAuth {
 	mapping(address => mapping(address => uint256)) public prices; // 1 tokenA = ? tokenB
 	mapping(address => mapping(address => uint256)) public fee;   // fee from tokenA to tokenB
 	mapping(address => bool) public supportLending;
+	mapping(address => uint256) public decimals;
 
 	constructor(address _lendFMe) public {
 		owner = msg.sender;
@@ -55,23 +56,29 @@ contract XSwap is DSAuth {
 	function trade(address _input, address _output, uint256 _inputAmount, address _receiver) public {
 		require(isOpen, "not open");
 		require(prices[_input][_output] != 0, "invalid token address");
+		require(decimals[_input] != 0, "input decimal not setted");
+		require(decimals[_output] != 0, "_output decimal not setted");
 		IERC20Token(_input).transferFrom(msg.sender, address(this), _inputAmount);
 		if(supportLending[_input]) {
 			ILendFMe(lendFMe).supply(_input, _inputAmount);
 		}
-		
-		uint256 _tokenAmount = _inputAmount * OFFSET / prices[_input][_output];
+		uint256 _tokenAmount = normalizeToken(_input, _inputAmount) * prices[_input][_output] / OFFSET;
 		uint256 _fee = _tokenAmount * fee[_input][_output] / OFFSET;
 		uint256 _amountToUser = _tokenAmount - _fee;
+
 		if(supportLending[_output]) {
-			ILendFMe(lendFMe).withdraw(_output, _amountToUser);
+			ILendFMe(lendFMe).withdraw(_output, denormalizedToken(_output, _amountToUser));
 		}
-		IERC20Token(_output).transfer(_receiver, _amountToUser);
+		IERC20Token(_output).transfer(_receiver, denormalizedToken(_output, _amountToUser));
 	}
 
 	function getTokenBalance(address _token) public returns (uint256) {
 		uint256 balanceInDefi = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
 		return balanceInDefi + IERC20Token(_token).balanceOf(address(this));
+	}
+
+	function setLendFMe(address _lendFMe) public auth {
+		lendFMe = _lendFMe;
 	}
 
 	function enableLending(address _token) public auth {
@@ -109,11 +116,28 @@ contract XSwap is DSAuth {
 		fee[_output][_input] = _fee;
 	}
 
+	function setTokenDecimals(address _token, uint256 _decimals) public auth {
+		require(_decimals <= 18);
+		decimals[_token] = _decimals;
+	}
+
 	function emergencyStop(bool _open) external auth {
 		isOpen = _open;
 	}
 
-	function transferOut(address _token, address _receiver) auth external returns (bool) {
+	function transferOut(address _token, address _receiver, uint256 _amount) auth external returns (bool) {
+		if(supportLending[_token]) {
+			ILendFMe(lendFMe).withdraw(_token, _amount);		
+		}
+		uint256 _balance = IERC20Token(_token).balanceOf(address(this));
+		if(_balance >= _amount) {
+			IERC20Token(_token).transfer(_receiver, _amount);
+			return true;
+		}
+		return false;
+	}
+
+	function transferOutALL(address _token, address _receiver) auth external returns (bool) {
 		if(supportLending[_token]) {
 			ILendFMe(lendFMe).withdraw(_token, uint256(-1));		
 		}
@@ -131,5 +155,14 @@ contract XSwap is DSAuth {
 			ILendFMe(lendFMe).supply(_token, IERC20Token(_token).balanceOf(address(this)));
 		}
 	    return true;
+	}
+
+	function normalizeToken(address _token, uint256 _amount) internal returns (uint256) {
+		return _amount * (10 ** (18 - decimals[_token]));
+	}
+
+	function denormalizedToken(address _token, uint256 _amount) internal returns (uint256) {
+		return _amount / (10 ** (18 - decimals[_token]))
+		;
 	}
 }
