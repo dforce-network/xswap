@@ -35,7 +35,6 @@ contract XSwap is DSAuth {
 
 	uint256 constant internal OFFSET = 10 ** 18;
 
-	address public owner;
 	address public lendFMe;
 	bool public isOpen;
 	mapping(address => mapping(address => uint256)) public prices; // 1 tokenA = ? tokenB
@@ -44,7 +43,6 @@ contract XSwap is DSAuth {
 	mapping(address => uint256) public decimals;
 
 	constructor(address _lendFMe) public {
-		owner = msg.sender;
 		isOpen = true;
 		lendFMe = _lendFMe;
 	}
@@ -56,8 +54,8 @@ contract XSwap is DSAuth {
 	function trade(address _input, address _output, uint256 _inputAmount, address _receiver) public {
 		require(isOpen, "not open");
 		require(prices[_input][_output] != 0, "invalid token address");
-		require(decimals[_input] != 0, "input decimal not setted");
-		require(decimals[_output] != 0, "_output decimal not setted");
+		require(decimals[_input] != 0, "input decimal not setteled");
+		require(decimals[_output] != 0, "output decimal not setteled");
 		IERC20Token(_input).transferFrom(msg.sender, address(this), _inputAmount);
 		if(supportLending[_input]) {
 			ILendFMe(lendFMe).supply(_input, _inputAmount);
@@ -72,7 +70,7 @@ contract XSwap is DSAuth {
 		IERC20Token(_output).transfer(_receiver, denormalizedToken(_output, _amountToUser));
 	}
 
-	function getTokenBalance(address _token) public returns (uint256) {
+	function getTokenLiquidation(address _token) public view returns (uint256) {
 		uint256 balanceInDefi = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
 		return balanceInDefi + IERC20Token(_token).balanceOf(address(this));
 	}
@@ -94,6 +92,7 @@ contract XSwap is DSAuth {
 	function disableLending(address _token) public auth {
 		require(supportLending[_token], "the token doesnt support lending");
 		supportLending[_token] = false;
+		IERC20Token(_token).approve(lendFMe, 0);
 		ILendFMe(lendFMe).withdraw(_token, uint256(-1));
 	}
 

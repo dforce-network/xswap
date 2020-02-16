@@ -25,6 +25,12 @@ contract FakeLendFMe {
 	}
 
 	function withdraw(address _token, uint _amounts) external returns (uint) {
+		if (_amounts == uint(-1)) {
+			uint256 toUser = balances[_token][msg.sender];
+			balances[_token][msg.sender] = 0;
+			IERC20(_token).transfer(msg.sender, toUser);
+			return 0;
+		}
 		require(balances[_token][msg.sender] >= _amounts, "user have no enough token");
 		balances[_token][msg.sender] -= _amounts;
 		require(IERC20(_token).transfer(msg.sender, _amounts), "contrract balance not enough");
