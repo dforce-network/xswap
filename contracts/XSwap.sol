@@ -1,37 +1,13 @@
 pragma solidity ^0.5.4;
 
-import './DSAuth.sol';
-import './IDispatcher.sol';
+import './DSLibrary/DSAuth.sol';
+import './DSLibrary/DSMath.sol';
+import './interface/IDispatcher.sol';
+import './interface/IXSwap.sol';
+import './interface/IERC20Token.sol';
+import './interface/ILendFMe.sol';
 
-interface IERC20Token {
-    function balanceOf(address _owner) external view returns (uint);
-    function allowance(address _owner, address _spender) external view returns (uint);
-    function transfer(address _to, uint _value) external returns (bool success);
-    function transferFrom(address _from, address _to, uint _value) external returns (bool success);
-    function approve(address _spender, uint _value) external returns (bool success);
-    function totalSupply() external view returns (uint);
-}
-
-interface ILendFMe {
-	function supply(address _token, uint _amounts) external returns (uint);
-	function withdraw(address _token, uint _amounts) external returns (uint);
-	function getSupplyBalance(address _user, address _token) external view returns (uint256);
-}
-
-library DSMath {
-    function add(uint x, uint y) internal pure returns (uint z) {
-        require((z = x + y) >= x, "ds-math-add-overflow");
-    }
-    function sub(uint x, uint y) internal pure returns (uint z) {
-        require((z = x - y) <= x, "ds-math-sub-underflow");
-    }
-    function mul(uint x, uint y) internal pure returns (uint z) {
-        require(y == 0 || (z = x * y) / y == x, "ds-math-mul-overflow");
-    }
-}
-
-contract XSwap is DSAuth {
-	using DSMath for uint256;
+contract XSwap is DSAuth, DSMath {
 
 	uint256 constant internal OFFSET = 10 ** 18;
 
@@ -60,9 +36,9 @@ contract XSwap is DSAuth {
 		if(supportLending[_input]) {
 			ILendFMe(lendFMe).supply(_input, _inputAmount);
 		}
-		uint256 _tokenAmount = normalizeToken(_input, _inputAmount) * prices[_input][_output] / OFFSET;
-		uint256 _fee = _tokenAmount * fee[_input][_output] / OFFSET;
-		uint256 _amountToUser = _tokenAmount - _fee;
+		uint256 _tokenAmount = mul(normalizeToken(_input, _inputAmount), prices[_input][_output]) / OFFSET;
+		uint256 _fee = mul(_tokenAmount, fee[_input][_output]) / OFFSET;
+		uint256 _amountToUser = sub(_tokenAmount, _fee);
 
 		if(supportLending[_output]) {
 			ILendFMe(lendFMe).withdraw(_output, denormalizedToken(_output, _amountToUser));
