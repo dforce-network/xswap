@@ -1,13 +1,28 @@
-pragma solidity ^0.5.4;
+pragma solidity 0.5.4;
 
 import './DSLibrary/DSAuth.sol';
-import './DSLibrary/DSMath.sol';
-import './interface/IDispatcher.sol';
 import './interface/IXSwap.sol';
 import './interface/IERC20Token.sol';
 import './interface/ILendFMe.sol';
 
-contract XSwap is DSAuth, DSMath {
+library DSMath {
+    function add(uint x, uint y) internal pure returns (uint z) {
+        require((z = x + y) >= x, "ds-math-add-overflow");
+    }
+    function sub(uint x, uint y) internal pure returns (uint z) {
+        require((z = x - y) <= x, "ds-math-sub-underflow");
+    }
+    function mul(uint x, uint y) internal pure returns (uint z) {
+        require(y == 0 || (z = x * y) / y == x, "ds-math-mul-overflow");
+    }
+    function div(uint x, uint y) internal pure returns (uint z) {
+        require(y > 0, "ds-math-div-overflow");
+        z = x / y;
+    }
+}
+
+contract XSwap is DSAuth {
+	using DSMath for uint256;
 
 	uint256 constant internal OFFSET = 10 ** 18;
 
@@ -23,11 +38,11 @@ contract XSwap is DSAuth, DSMath {
 		lendFMe = _lendFMe;
 	}
 
-	function trade(address _input, address _output, uint256 _inputAmount) public {
-		trade(_input, _output, _inputAmount, msg.sender);
+	function trade(address _input, address _output, uint256 _inputAmount) public returns (bool) {
+		return trade(_input, _output, _inputAmount, msg.sender);
 	}
 
-	function trade(address _input, address _output, uint256 _inputAmount, address _receiver) public {
+	function trade(address _input, address _output, uint256 _inputAmount, address _receiver) public returns (bool) {
 		require(isOpen, "not open");
 		require(prices[_input][_output] != 0, "invalid token address");
 		require(decimals[_input] != 0, "input decimal not setteled");
@@ -36,14 +51,15 @@ contract XSwap is DSAuth, DSMath {
 		if(supportLending[_input]) {
 			ILendFMe(lendFMe).supply(_input, _inputAmount);
 		}
-		uint256 _tokenAmount = mul(normalizeToken(_input, _inputAmount), prices[_input][_output]) / OFFSET;
-		uint256 _fee = mul(_tokenAmount, fee[_input][_output]) / OFFSET;
-		uint256 _amountToUser = sub(_tokenAmount, _fee);
+		uint256 _tokenAmount = normalizeToken(_input, _inputAmount).mul(prices[_input][_output]).div(OFFSET);
+		uint256 _fee = _tokenAmount.mul(fee[_input][_output]).div(OFFSET);
+		uint256 _amountToUser = _tokenAmount.sub(_fee);
 
 		if(supportLending[_output]) {
 			ILendFMe(lendFMe).withdraw(_output, denormalizedToken(_output, _amountToUser));
 		}
 		IERC20Token(_output).transfer(_receiver, denormalizedToken(_output, _amountToUser));
+		return true;
 	}
 
 	function getTokenLiquidation(address _token) public view returns (uint256) {
@@ -51,11 +67,12 @@ contract XSwap is DSAuth, DSMath {
 		return balanceInDefi + IERC20Token(_token).balanceOf(address(this));
 	}
 
-	function setLendFMe(address _lendFMe) public auth {
+	function setLendFMe(address _lendFMe) public auth returns (bool) {
 		lendFMe = _lendFMe;
+		return true;
 	}
 
-	function enableLending(address _token) public auth {
+	function enableLending(address _token) public auth returns (bool) {
 		require(!supportLending[_token], "the token is already supported lending");
 		supportLending[_token] = true;
 		IERC20Token(_token).approve(lendFMe, uint256(-1));
@@ -63,41 +80,49 @@ contract XSwap is DSAuth, DSMath {
 		if(_balance > 0) {
 			ILendFMe(lendFMe).supply(_token, _balance);
 		}
+		return true;
 	}
 
-	function disableLending(address _token) public auth {
+	function disableLending(address _token) public auth returns (bool) {
 		require(supportLending[_token], "the token doesnt support lending");
 		supportLending[_token] = false;
 		IERC20Token(_token).approve(lendFMe, 0);
 		ILendFMe(lendFMe).withdraw(_token, uint256(-1));
+		return true;
 	}
 
-	function createPair(address _input, address _output, uint256 _priceInOut, uint256 _priceOutIn, uint256 _fee) external auth {
+	function createPair(address _input, address _output, uint256 _priceInOut, uint256 _priceOutIn, uint256 _fee) external auth returns (bool) {
 		setPrices(_input, _output, _priceInOut, _priceOutIn);
 		setFee(_input, _output, _fee);
+		return true;
 	}
 
-	function setPrices(address _input, address _output, uint256 _priceInOut, uint256 _priceOutIn) public auth {
+	function setPrices(address _input, address _output, uint256 _priceInOut, uint256 _priceOutIn) public auth returns (bool) {
 		setPrices(_input, _output, _priceInOut);
-		setPrices(_output, _input, _priceOutIn);		
+		setPrices(_output, _input, _priceOutIn);
+		return true;		
 	}
 
-	function setPrices(address _input, address _output, uint256 _price) public auth {
+	function setPrices(address _input, address _output, uint256 _price) public auth returns (bool) {
 		prices[_input][_output] = _price;
+		return true;
 	}
 
-	function setFee(address _input, address _output, uint256 _fee) public auth {
+	function setFee(address _input, address _output, uint256 _fee) public auth returns (bool) {
 		fee[_input][_output] = _fee;
 		fee[_output][_input] = _fee;
+		return true;
 	}
 
-	function setTokenDecimals(address _token, uint256 _decimals) public auth {
+	function setTokenDecimals(address _token, uint256 _decimals) public auth returns (bool){
 		require(_decimals <= 18);
 		decimals[_token] = _decimals;
+		return true;		
 	}
 
-	function emergencyStop(bool _open) external auth {
+	function emergencyStop(bool _open) external auth returns (bool) {
 		isOpen = _open;
+		return true;
 	}
 
 	function transferOut(address _token, address _receiver, uint256 _amount) auth external returns (bool) {
@@ -137,7 +162,6 @@ contract XSwap is DSAuth, DSMath {
 	}
 
 	function denormalizedToken(address _token, uint256 _amount) internal returns (uint256) {
-		return _amount / (10 ** (18 - decimals[_token]))
-		;
+		return _amount / (10 ** (18 - decimals[_token]));
 	}
 }
