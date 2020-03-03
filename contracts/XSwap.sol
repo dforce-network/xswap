@@ -38,6 +38,7 @@ contract XSwap is DSAuth {
 		lendFMe = _lendFMe;
 	}
 
+	// trade _inputAmount of _input token to get _output token
 	function trade(address _input, address _output, uint256 _inputAmount) public returns (bool) {
 		return trade(_input, _output, _inputAmount, msg.sender);
 	}
@@ -91,6 +92,7 @@ contract XSwap is DSAuth {
 		return true;
 	}
 
+	// create new pairs
 	function createPair(address _input, address _output, uint256 _priceInOut, uint256 _priceOutIn, uint256 _fee) external auth returns (bool) {
 		setPrices(_input, _output, _priceInOut, _priceOutIn);
 		setFee(_input, _output, _fee);
