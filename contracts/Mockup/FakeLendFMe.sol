@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.4;
 
 interface IERC20 {
     function balanceOf(address _owner) external view returns (uint);

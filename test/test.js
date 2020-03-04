@@ -1,7 +1,7 @@
 'use strict'
 const BN = require('bn.js');
-const XSwap = artifacts.require('./XSwap.sol')
-const DSAuth = artifacts.require('./DSAuth.sol')
+const XSwap = artifacts.require('XSwap')
+const DSAuth = artifacts.require('DSAuth')
 const DSToken = artifacts.require("DSToken")
 var DSGuard = artifacts.require("DSGuard")
 const FakeLendFMe = artifacts.require("FakeLendFMe")
