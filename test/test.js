@@ -404,7 +404,7 @@ contract('test', function(accounts) {
 
         // set AB ratio
         tx = await xSwap.setPrices(usdx.address, usdc.address, "999900000000000000")
-        tx = await xSwap.setPrices(usdc.address, usdx.address, "1001000000000000000")
+        tx = await xSwap.setPrices(usdc.address, usdx.address, "1000100000000000000")
 
         // 30. swap A to B 1000,  usdx to usdc
         userBalance = await usdc.balanceOf(user1)
@@ -453,7 +453,7 @@ contract('test', function(accounts) {
 
         // 34.5 enable usdx lending 
         tx = await xSwap.enableLending(usdx.address)
-        await showABLiquidation("34.5 disable usdx")
+        await showABLiquidation("34.5 enable usdx")
         await showABContractBalance()
 
         // 35. swap A to B 1000,  usdx to usdc
@@ -517,6 +517,7 @@ contract('test', function(accounts) {
         await userDiff(usdx, userBalance)
 
         // 39. set A no lending, B lending
+        tx = await xSwap.disableLending(usdx.address)
         tx = await xSwap.enableLending(usdc.address)
         await showABLiquidation("39. disable A Lending, set B Lending")
         await showABContractBalance() 
@@ -630,7 +631,7 @@ contract('test', function(accounts) {
         await userDiff(usdx, userBalance)
 
         // set A/B fee to 0
-        tx = await xSwap.setFee(usdc.address, usdx.address, "999000000000000000")
+        tx = await xSwap.setFee(usdc.address, usdx.address, "0")
 
         // 52. swap A to B 1000,  usdx to usdc
         userBalance = await usdc.balanceOf(user1)
