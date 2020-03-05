@@ -404,7 +404,7 @@ contract('test', function(accounts) {
 
         // set AB ratio
         tx = await xSwap.setPrices(usdx.address, usdc.address, "999900000000000000")
-        tx = await xSwap.setPrices(usdc.address, usdx.address, "1000100000000000000")
+        tx = await xSwap.setPrices(usdc.address, usdx.address, "10001000000000000000")
 
         // 30. swap A to B 1000,  usdx to usdc
         userBalance = await usdc.balanceOf(user1)
