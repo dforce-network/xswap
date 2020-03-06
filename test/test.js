@@ -482,7 +482,7 @@ contract('test', function(accounts) {
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
         tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
-        await showABLiquidation("37. after reset A/B fee to 99.9%, 1000 usdx to usdc")
+        await showABLiquidation("37. after reset A/B fee to 0%, 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
 
@@ -491,7 +491,7 @@ contract('test', function(accounts) {
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
         tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
-        await showABLiquidation("38. after reset A/B fee to 99.9%, 1000 usdc to usdx")
+        await showABLiquidation("38. after reset A/B fee to 0%, 1000 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
 
