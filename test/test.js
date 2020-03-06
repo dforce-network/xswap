@@ -477,33 +477,12 @@ contract('test', function(accounts) {
         // set AB fee to 0
         tx = await xSwap.setFee(usdc.address, usdx.address,"0")
 
-        // should fail if swap between A and B
-        tx = await usdx.mint(user1, d18(100))
-        try {
-            await xSwap.trade(usdx.address, usdc.address, d18(100), {from: user1})
-            assert.fail('Expected revert not received');
-        } catch (error) {
-            const revertFound = error.message.search('revert') >= 0;
-            assert(revertFound, `Expected "revert", got ${error} instead`)
-        }
-        tx = await usdc.mint(user1, d6(100))
-        try {
-            await xSwap.trade(usdc.address, usdx.address, d6(100), {from: user1})
-            assert.fail('Expected revert not received');
-        } catch (error) {
-            const revertFound = error.message.search('revert') >= 0;
-            assert(revertFound, `Expected "revert", got ${error} instead`)
-        }
-
-        // set AB fee to 999,000,000,000,000,000
-        tx = await xSwap.setFee(usdc.address, usdx.address, "999000000000000000")
-
         // 37. swap A to B 1000,  usdx to usdc
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
         tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
-        await showABLiquidation("37.after reset A/B fee, 1000 usdx to usdc")
+        await showABLiquidation("37. after reset A/B fee to 99.9%, 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
 
@@ -512,9 +491,12 @@ contract('test', function(accounts) {
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
         tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
-        await showABLiquidation("38.after reset A/B fee, 1000 usdc to usdx")
+        await showABLiquidation("38. after reset A/B fee to 99.9%, 1000 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
+
+        // set AB fee to 999,000,000,000,000,000
+        tx = await xSwap.setFee(usdc.address, usdx.address, "999000000000000000")
 
         // 39. set A no lending, B lending
         tx = await xSwap.disableLending(usdx.address)
