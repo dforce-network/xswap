@@ -14,5 +14,5 @@ interface NonStandardIERC20Token {
     function allowance(address _owner, address _spender) external view returns (uint);
     function transfer(address _to, uint _value) external;
     function transferFrom(address _from, address _to, uint _value) external;
-    function approve(address _spender, uint _value) external returns (bool success);
+    function approve(address _spender, uint _value) external;
 }
