@@ -47,7 +47,7 @@ contract XSwap is DSAuth {
 		require(prices[_input][_output] != 0, "invalid token address");
 		require(decimals[_input] != 0, "input decimal not setteled");
 		require(decimals[_output] != 0, "output decimal not setteled");
-		IERC20Token(_input).transferFrom(msg.sender, address(this), _inputAmount);
+		NonStandardIERC20Token(_input).transferFrom(msg.sender, address(this), _inputAmount);
 		if(supportLending[_input]) {
 			ILendFMe(lendFMe).supply(_input, _inputAmount);
 		}
@@ -58,13 +58,13 @@ contract XSwap is DSAuth {
 		if(supportLending[_output]) {
 			ILendFMe(lendFMe).withdraw(_output, denormalizedToken(_output, _amountToUser));
 		}
-		IERC20Token(_output).transfer(_receiver, denormalizedToken(_output, _amountToUser));
+		NonStandardIERC20Token(_output).transfer(_receiver, denormalizedToken(_output, _amountToUser));
 		return true;
 	}
 
 	function getTokenLiquidation(address _token) public view returns (uint256) {
 		uint256 balanceInDefi = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
-		return balanceInDefi + IERC20Token(_token).balanceOf(address(this));
+		return balanceInDefi.add(NonStandardIERC20Token(_token).balanceOf(address(this)));
 	}
 
 	function setLendFMe(address _lendFMe) public auth returns (bool) {
@@ -75,8 +75,8 @@ contract XSwap is DSAuth {
 	function enableLending(address _token) public auth returns (bool) {
 		require(!supportLending[_token], "the token is already supported lending");
 		supportLending[_token] = true;
-		IERC20Token(_token).approve(lendFMe, uint256(-1));
-		uint256 _balance = IERC20Token(_token).balanceOf(address(this));
+		NonStandardIERC20Token(_token).approve(lendFMe, uint256(-1));
+		uint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));
 		if(_balance > 0) {
 			ILendFMe(lendFMe).supply(_token, _balance);
 		}
@@ -86,7 +86,7 @@ contract XSwap is DSAuth {
 	function disableLending(address _token) public auth returns (bool) {
 		require(supportLending[_token], "the token doesnt support lending");
 		supportLending[_token] = false;
-		IERC20Token(_token).approve(lendFMe, 0);
+		NonStandardIERC20Token(_token).approve(lendFMe, 0);
 		ILendFMe(lendFMe).withdraw(_token, uint256(-1));
 		return true;
 	}
@@ -130,9 +130,9 @@ contract XSwap is DSAuth {
 		if(supportLending[_token]) {
 			ILendFMe(lendFMe).withdraw(_token, _amount);
 		}
-		uint256 _balance = IERC20Token(_token).balanceOf(address(this));
+		uint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));
 		if(_balance >= _amount) {
-			IERC20Token(_token).transfer(_receiver, _amount);
+			NonStandardIERC20Token(_token).transfer(_receiver, _amount);
 			return true;
 		}
 		return false;
@@ -142,27 +142,29 @@ contract XSwap is DSAuth {
 		if(supportLending[_token]) {
 			ILendFMe(lendFMe).withdraw(_token, uint256(-1));
 		}
-		uint256 _balance = IERC20Token(_token).balanceOf(address(this));
+		uint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));
 		if(_balance > 0) {
-			IERC20Token(_token).transfer(_receiver, _balance);
+			NonStandardIERC20Token(_token).transfer(_receiver, _balance);
 		}
 
 		return true;
 	}
 
 	function transferIn(address _token, uint256 _amount) external auth returns (bool) {
-		IERC20Token(_token).transferFrom(msg.sender, address(this), _amount);
+		NonStandardIERC20Token(_token).transferFrom(msg.sender, address(this), _amount);
 		if(supportLending[_token]) {
-			ILendFMe(lendFMe).supply(_token, IERC20Token(_token).balanceOf(address(this)));
+			ILendFMe(lendFMe).supply(_token, NonStandardIERC20Token(_token).balanceOf(address(this)));
 		}
 	    return true;
 	}
 
 	function normalizeToken(address _token, uint256 _amount) internal view returns (uint256) {
-		return _amount * (10 ** (18 - decimals[_token]));
+		uint256 n = 18;
+		return _amount.mul((10 ** (n.sub(decimals[_token]))));
 	}
 
 	function denormalizedToken(address _token, uint256 _amount) internal view returns (uint256) {
-		return _amount / (10 ** (18 - decimals[_token]));
+		uint256 n = 18;
+		return _amount.div((10 ** (n.sub(decimals[_token]))));
 	}
 }
