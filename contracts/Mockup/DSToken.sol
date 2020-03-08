@@ -186,7 +186,6 @@ contract DSToken is DSTokenBase(0) {
     }
 
     function approve(address guy, uint wad) public returns (bool) {
-        require(_approvals[msg.sender][guy] == 0 || wad == 0); //take care of re-approve.
         return super.approve(guy, wad);
     }
 
