@@ -25,6 +25,7 @@ contract XSwap is DSAuth {
 
 	uint256 constant internal OFFSET = 10 ** 18;
 
+	bool private actived;
 	address public lendFMe;
 	bool public isOpen;
 	mapping(address => mapping(address => uint256)) public prices; // 1 tokenA = ? tokenB
@@ -32,9 +33,15 @@ contract XSwap is DSAuth {
 	mapping(address => bool) public supportLending;
 	mapping(address => uint256) public decimals;
 
-	constructor(address _lendFMe) public {
+	constructor() public {
+	}
+
+	function active(address _lendFMe) public {
+		require(actived == false, "already actived.");
+		owner = msg.sender;
 		isOpen = true;
 		lendFMe = _lendFMe;
+		actived = true;
 	}
 
 	// trade _inputAmount of _input token to get _output token
