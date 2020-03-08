@@ -43,7 +43,8 @@ contract('test', function(accounts) {
         dai = await DSToken.new("0x444600000000000000000000000000", 18)
         tusd = await DSToken.new("0x444600000000000000000000000000", 18)
         lendFMe = await FakeLendFMe.new()
-        xSwap = await XSwap.new(lendFMe.address)
+        xSwap = await XSwap.new()
+        tx = await xSwap.active(lendFMe.address);
         tx = await xSwap.setTokenDecimals(usdx.address, 18);
         tx = await xSwap.setTokenDecimals(usdt.address, 6);
         tx = await xSwap.setTokenDecimals(pax.address, 18);
