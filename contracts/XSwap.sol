@@ -86,7 +86,7 @@ contract XSwap is DSAuth {
 	function disableLending(address _token) public auth returns (bool) {
 		require(supportLending[_token], "the token doesnt support lending");
 		supportLending[_token] = false;
-		NonStandardIERC20Token(_token).approve(lendFMe, 0);
+		// NonStandardIERC20Token(_token).approve(lendFMe, 0);
 		ILendFMe(lendFMe).withdraw(_token, uint256(-1));
 		return true;
 	}
