@@ -82,7 +82,8 @@ contract XSwap is DSAuth {
 	function enableLending(address _token) public auth returns (bool) {
 		require(!supportLending[_token], "the token is already supported lending");
 		supportLending[_token] = true;
-		NonStandardIERC20Token(_token).approve(lendFMe, uint256(-1));
+		if (NonStandardIERC20Token(_token).allowance(address(this), lendFMe) == 0)
+			NonStandardIERC20Token(_token).approve(lendFMe, uint256(-1));
 		uint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));
 		if(_balance > 0) {
 			ILendFMe(lendFMe).supply(_token, _balance);
