@@ -1,19 +1,5 @@
-This file descibes the contracts needed to be audited.
+This file descibes the contracts should be audited.
 
-**DSLibrary**
-
-    DSAuth.sol
-
-    DSGurad.sol
-
-**interface**
-
-    IERC20Token.sol
-
-    ILendFMe.sol
-
-    IXSwap.sol
 
 *XSwap.sol*
-
-*XSwapEntrance.sol*
+*XSwapProxy.sol*
