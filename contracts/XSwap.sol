@@ -3,6 +3,7 @@ pragma solidity ^0.5.4;
 import './DSLibrary/DSAuth.sol';
 import './interface/IERC20Token.sol';
 import './interface/ILendFMe.sol';
+import './interface/IChai.sol';
 
 library DSMath {
     function add(uint x, uint y) internal pure returns (uint z) {
@@ -24,6 +25,13 @@ contract XSwap is DSAuth {
 	using DSMath for uint256;
 
 	uint256 constant internal OFFSET = 10 ** 18;
+	//Mainnet
+	// address private chai = 0x06AF07097C9Eeb7fD685c692751D5C66dB49c215;
+	// address private dai  = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+
+	//Rinkeby
+	address private chai = 0x8a5C1BD4D75e168a4f65eB902c289400B90FD980;
+	address private dai  = 0xA3A59273494BB5B8F0a8FAcf21B3f666A47d6140;
 
 	bool private actived;
 	address public lendFMe;
@@ -54,16 +62,27 @@ contract XSwap is DSAuth {
 		require(prices[_input][_output] != 0, "invalid token address");
 		require(decimals[_input] != 0, "input decimal not setteled");
 		require(decimals[_output] != 0, "output decimal not setteled");
+
 		NonStandardIERC20Token(_input).transferFrom(msg.sender, address(this), _inputAmount);
 		if(supportLending[_input]) {
-			ILendFMe(lendFMe).supply(_input, _inputAmount);
+			if (_input == dai) {
+				IChai(chai).join(address(this), _inputAmount);
+				ILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));
+			}
+			else
+				ILendFMe(lendFMe).supply(_input, _inputAmount);
 		}
 		uint256 _tokenAmount = normalizeToken(_input, _inputAmount).mul(prices[_input][_output]).div(OFFSET);
 		uint256 _fee = _tokenAmount.mul(fee[_input][_output]).div(OFFSET);
 		uint256 _amountToUser = _tokenAmount.sub(_fee);
 
 		if(supportLending[_output]) {
-			ILendFMe(lendFMe).withdraw(_output, denormalizedToken(_output, _amountToUser));
+			if (_output == dai) {
+				ILendFMe(lendFMe).withdraw(chai, _amountToUser); //assume chai / dai >= 1;
+				IChai(chai).draw(address(this), _amountToUser);
+			}
+			else
+				ILendFMe(lendFMe).withdraw(_output, denormalizedToken(_output, _amountToUser));
 		}
 		NonStandardIERC20Token(_output).transfer(_receiver, denormalizedToken(_output, _amountToUser));
 		return true;
@@ -82,11 +101,24 @@ contract XSwap is DSAuth {
 	function enableLending(address _token) public auth returns (bool) {
 		require(!supportLending[_token], "the token is already supported lending");
 		supportLending[_token] = true;
-		if (NonStandardIERC20Token(_token).allowance(address(this), lendFMe) == 0)
-			NonStandardIERC20Token(_token).approve(lendFMe, uint256(-1));
+
+		if (_token == dai) {
+			IERC20Token(_token).approve(chai, uint256(-1));
+			IERC20Token(chai).approve(lendFMe, uint256(-1));
+		}
+		else {
+			if (NonStandardIERC20Token(_token).allowance(address(this), lendFMe) == 0)
+				NonStandardIERC20Token(_token).approve(lendFMe, uint256(-1));
+		}
+
 		uint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));
 		if(_balance > 0) {
-			ILendFMe(lendFMe).supply(_token, _balance);
+			if (_token == dai) {
+				IChai(chai).join(address(this), _balance);
+				ILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));
+			}
+			else
+				ILendFMe(lendFMe).supply(_token, _balance);
 		}
 		return true;
 	}
@@ -94,8 +126,14 @@ contract XSwap is DSAuth {
 	function disableLending(address _token) public auth returns (bool) {
 		require(supportLending[_token], "the token doesnt support lending");
 		supportLending[_token] = false;
-		// NonStandardIERC20Token(_token).approve(lendFMe, 0);
-		ILendFMe(lendFMe).withdraw(_token, uint256(-1));
+
+		if (_token == dai) {
+			ILendFMe(lendFMe).withdraw(chai, uint256(-1));
+			IChai(chai).exit(address(this), IERC20Token(chai).balanceOf(address(this)));
+		}
+		else
+			ILendFMe(lendFMe).withdraw(_token, uint256(-1));
+
 		return true;
 	}
 
@@ -136,7 +174,13 @@ contract XSwap is DSAuth {
 
 	function transferOut(address _token, address _receiver, uint256 _amount) external auth returns (bool) {
 		if(supportLending[_token]) {
-			ILendFMe(lendFMe).withdraw(_token, _amount);
+			if (_token == dai) {
+				ILendFMe(lendFMe).withdraw(chai, uint256(-1));
+				IChai(chai).draw(address(this), _amount);
+				ILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));
+			}
+			else
+				ILendFMe(lendFMe).withdraw(_token, _amount);
 		}
 		uint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));
 		if(_balance >= _amount) {
@@ -148,7 +192,12 @@ contract XSwap is DSAuth {
 
 	function transferOutALL(address _token, address _receiver) external auth returns (bool) {
 		if(supportLending[_token]) {
-			ILendFMe(lendFMe).withdraw(_token, uint256(-1));
+			if (_token == dai) {
+				ILendFMe(lendFMe).withdraw(chai, uint256(-1));
+				IChai(chai).exit(address(this), IERC20Token(chai).balanceOf(address(this)));
+			}
+			else
+				ILendFMe(lendFMe).withdraw(_token, uint256(-1));
 		}
 		uint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));
 		if(_balance > 0) {
@@ -161,7 +210,12 @@ contract XSwap is DSAuth {
 	function transferIn(address _token, uint256 _amount) external auth returns (bool) {
 		NonStandardIERC20Token(_token).transferFrom(msg.sender, address(this), _amount);
 		if(supportLending[_token]) {
-			ILendFMe(lendFMe).supply(_token, NonStandardIERC20Token(_token).balanceOf(address(this)));
+			if (_token == dai) {
+				IChai(chai).join(address(this), NonStandardIERC20Token(dai).balanceOf(address(this)));
+				ILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));
+			}
+			else
+				ILendFMe(lendFMe).supply(_token, NonStandardIERC20Token(_token).balanceOf(address(this)));
 		}
 	    return true;
 	}
