@@ -175,9 +175,8 @@ contract XSwap is DSAuth {
 	function transferOut(address _token, address _receiver, uint256 _amount) external auth returns (bool) {
 		if(supportLending[_token]) {
 			if (_token == dai) {
-				ILendFMe(lendFMe).withdraw(chai, uint256(-1));
+				ILendFMe(lendFMe).withdraw(chai, _amount);
 				IChai(chai).draw(address(this), _amount);
-				ILendFMe(lendFMe).supply(chai, IERC20Token(chai).balanceOf(address(this)));
 			}
 			else
 				ILendFMe(lendFMe).withdraw(_token, _amount);
