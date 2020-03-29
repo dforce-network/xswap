@@ -107,8 +107,7 @@ contract XSwap is DSAuth {
 			IERC20Token(chai).approve(lendFMe, uint256(-1));
 		}
 		else {
-			if (NonStandardIERC20Token(_token).allowance(address(this), lendFMe) == 0)
-				NonStandardIERC20Token(_token).approve(lendFMe, uint256(-1));
+			NonStandardIERC20Token(_token).approve(lendFMe, uint256(-1));
 		}
 
 		uint256 _balance = NonStandardIERC20Token(_token).balanceOf(address(this));
