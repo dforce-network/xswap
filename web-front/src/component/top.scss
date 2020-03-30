@@ -1,0 +1,44 @@
+// >768
+@media screen and (min-width: 768px) {
+    .top {
+        // background-color: red;
+        height: 70px;
+
+        .top-left {
+            float: left;
+            padding-top: 30px;
+
+            img {
+                width: 170px;
+            }
+        }
+
+        .top-right {
+            float: right;
+            padding-top: 32px;
+            font-size: 20px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+            cursor: pointer;
+        }
+
+        .top-right-connect {
+            float: right;
+            padding-top: 32px;
+            font-size: 20px;
+            font-weight: normal;
+            color: rgba(18, 197, 147, 1);
+            cursor: pointer;
+        }
+    }
+
+    .slogon {
+        // background-color: red;
+        font-size: 56px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        text-align: center;
+        margin-top: 70px;
+        margin-bottom: 70px;
+    }
+}

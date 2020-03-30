@@ -1,0 +1,106 @@
+// >768
+@media screen and (min-width: 768px) {
+    .history-title {
+        font-size: 20px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        margin-bottom: 15px;
+    }
+
+    .history {
+        max-height: 800px;
+        width: 1000px;
+        margin: 0 auto;
+        background-color: #2D3154;
+        overflow: auto;
+        margin-bottom: 100px;
+
+        .history-item {
+            height: 80px;
+            // background-color: red;
+
+            .history-item-left {
+                float: left;
+                padding-left: 15px;
+                padding-top: 26px;
+                position: relative;
+
+                img {
+                    width: 34px;
+                }
+
+                img.rotate {
+                    animation: icon-loading 0.8s linear infinite;
+                }
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    left: 32px;
+                    bottom: -44px;
+                    display: block;
+                    width: 0px;
+                    height: 45px;
+                    border-left: 1px dashed #6A6F94;
+                }
+            }
+
+            .history-item-right {
+                float: left;
+                padding-left: 16px;
+                padding-top: 20px;
+                font-weight: 500;
+
+                .history-item-right-top {
+                    font-size: 16px;
+                    color: rgba(116, 121, 168, 1);
+
+                    .tx_date {
+                        position: relative;
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            right: -15px;
+                            bottom: 2px;
+                            display: block;
+                            width: 2px;
+                            height: 14px;
+                            background-color: #7479A8;
+                        }
+                    }
+
+                    .tx_hash {
+                        margin-left: 30px;
+                        color: #5F85FF;
+                        cursor: pointer;
+                    }
+                }
+
+                .history-item-right-bottom {
+                    padding-top: 10px;
+                    font-size: 18px;
+                    color: rgba(222, 224, 247, 1);
+                }
+            }
+        }
+
+        .history-item:last-child {
+            .history-item-left {
+                &::after {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+@keyframes icon-loading {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
