@@ -26,7 +26,7 @@ body {
 
 body {
   line-height: 1;
-  background: #222649 !important;
+  background: #F8F9FF !important;
 }
 
 ol,
@@ -37,4 +37,11 @@ ul {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+input,
+button,
+a {
+  outline: 0 none !important;
+  /* blr: expression(this.onFocus=this.blur()); */
 }

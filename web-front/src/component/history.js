@@ -7,6 +7,7 @@ import en_US from '../language/en_US.js';
 import zh_CN from '../language/zh_CN';
 import logo_exchange from '../images/logo_exchange.svg';
 import logo_exchange_pendding from '../images/logo_exchange_pendding.svg';
+import no_history from '../images/no-history.svg';
 
 
 export default class RecordBoard extends Component {
@@ -118,7 +119,7 @@ export default class RecordBoard extends Component {
         }
 
         return (
-            <IntlProvider locale={'en'} messages={navigator.language === 'zh-CN' ? zh_CN : en_US} >
+            <IntlProvider locale={'en'} messages={this.props.cur_language === '中文' ? zh_CN : en_US} >
                 {
                     this.state.RecentTransactions &&
                     <div className="history-title">
@@ -127,6 +128,16 @@ export default class RecordBoard extends Component {
                 }
 
                 <div className="history">
+                    {
+                        (this.state.RecentTransactions).length === 0 &&
+                        <div className="no-history">
+                            <img src={no_history} />
+                            <span className="no-history-span">
+                                <FormattedMessage id='no_history' />
+                            </span>
+                        </div>
+                    }
+
                     {
                         this.state.RecentTransactions && this.state.RecentTransactions.map((item, i) => {
                             var img_src = logo_exchange;
