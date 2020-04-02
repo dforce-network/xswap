@@ -321,13 +321,12 @@ export default class App extends React.Component {
   render() {
     return (
       <IntlProvider locale={'en'} messages={this.state.cur_language === '中文' ? zh_CN : en_US} >
+        <Top
+          account={this.state.my_account}
+          net_type={this.state.net_type}
+        />
+
         <div className="App">
-          <Top
-            account={this.state.my_account}
-            net_type={this.state.net_type}
-          />
-
-
           <div className="token-balance">
             <div className="token-balance-left">
               <FormattedMessage id='send' />

@@ -5,6 +5,8 @@ const en_US = {
     swap: 'SWAP',
     connect: 'Connect',
     slogon: 'The Best Way to Swap Stable Assets.',
-    no_history: 'No History'
+    no_history: 'No History',
+    Contract_US: 'Contact',
+    Community: 'Community'
 }
 export default en_US;

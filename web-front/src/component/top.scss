@@ -1,34 +1,128 @@
 // >768
 @media screen and (min-width: 768px) {
     .top {
+        width: 1120px;
         // background-color: red;
         height: 70px;
+        margin: 0 auto;
 
         .top-left {
             float: left;
-            padding-top: 30px;
+            padding-top: 25px;
 
             img {
-                width: 170px;
+                width: 124px;
             }
-        }
-
-        .top-right {
-            float: right;
-            padding-top: 32px;
-            font-size: 20px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 1);
-            cursor: pointer;
         }
 
         .top-right-connect {
             float: right;
-            padding-top: 32px;
-            font-size: 20px;
-            font-weight: normal;
-            color: rgba(18, 197, 147, 1);
             cursor: pointer;
+            width: 98px;
+            text-align: center;
+            height: 26px;
+            line-height: 26px;
+            background: rgba(41, 187, 146, 1);
+            border-radius: 3px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+            margin-top: 24px;
+        }
+
+        .top-meun {
+            float: right;
+
+            .top-meun-item {
+                // background-color: green;
+                float: right;
+                position: relative;
+                margin-top: 28px;
+                padding-bottom: 20px;
+                width: 150px;
+                margin-right: 20px;
+                cursor: pointer;
+
+                .item-fixed {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: rgba(37, 33, 82, 1);
+                    position: relative;
+
+                    .arrow-down {
+                        transition: 0.3s;
+                        position: absolute;
+                        right: 5px;
+                        width: 8px;
+                        top: 5px;
+                    }
+
+                    .img-right45 {
+                        right: 45px;
+                    }
+                }
+
+                .item-more {
+                    transition: 0.3s;
+                    display: none;
+                    position: absolute;
+                    // background-color: red;
+                    top: 30px;
+                    width: 150px;
+                    background: rgba(255, 255, 255, 1);
+                    border: 1px solid rgba(229, 230, 242, 1);
+                    box-shadow: 0px 6px 19px 0px rgba(7, 2, 55, 0.1);
+                    border-radius: 4px;
+                    padding-left: 10px;
+                    padding-bottom: 10px;
+                    padding-top: 10px;
+
+                    ul {
+                        li {
+                            // height: 50px;
+                            margin-bottom: 10px;
+
+                            a {
+                                text-decoration: none;
+                                font-size: 14px;
+                                font-weight: 500;
+                                color: rgba(37, 33, 82, 1);
+                                transition: 0.3s;
+                            }
+
+                            a:hover {
+                                color: #29BB92;
+                            }
+
+                            .title {
+                                display: block;
+                                padding-top: 10px;
+                                padding-bottom: 5px;
+                            }
+
+                            .details {
+                                display: block;
+                                font-size: 12px;
+                                font-weight: 400;
+                                color: rgba(139, 142, 165, 1);
+                                line-height: 16px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .top-meun-item:hover {
+                .item-more {
+                    display: block;
+                }
+
+                .item-fixed {
+                    .arrow-down {
+                        transform: rotate(180deg);
+                    }
+                }
+            }
         }
     }
 
