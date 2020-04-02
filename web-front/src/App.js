@@ -641,6 +641,7 @@ export default class App extends React.Component {
             </div>
           </div>
 
+          <div className='clear'></div>
 
           <div
             onClick={() => {
@@ -735,7 +736,7 @@ export default class App extends React.Component {
               </div>
             </div>
 
-            <div className="foot-item">
+            <div className="foot-item padding-left20">
               <div className="foot-item-title">
                 <FormattedMessage id='Contract_US' />
               </div>
