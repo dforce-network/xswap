@@ -19,6 +19,11 @@ export const handle_approve_click = (that, XSwap_addr) => {
 
 
 export const swap_click = (that, input_addr, output_addr) => {
+  if (!that.state.is_wap_enable) {
+    console.log('i return u');
+    return false;
+  }
+
   that.state.cur_send_contract.methods.allowance(that.state.my_account, address_map[that.state.net_type]['XSwap']).call((err, res_allowance) => {
     if (that.bn(res_allowance).gt(that.bn('0'))) {
       that.state.XSwap.methods.trade(input_addr, output_addr, that.state.side_A_amount_real.toString())
@@ -280,6 +285,42 @@ export const get_my_balance = (that) => {
 }
 
 
+export const handle_A_max = (that) => {
+  var t_balance;
+  if (that.state.cur_send_addr === 'USDT') {
+    t_balance = that.state.my_balance_USDT;
+  } else if (that.state.cur_send_addr === 'USDx') {
+    t_balance = that.state.my_balance_USDx;
+  } else if (that.state.cur_send_addr === 'USDC') {
+    t_balance = that.state.my_balance_USDC;
+  } else if (that.state.cur_send_addr === 'TUSD') {
+    t_balance = that.state.my_balance_TUSD;
+  } else if (that.state.cur_send_addr === 'PAX') {
+    t_balance = that.state.my_balance_PAX;
+  } else if (that.state.cur_send_addr === 'DAI') {
+    t_balance = that.state.my_balance_DAI;
+  } else if (that.state.cur_send_addr === 'HBTC') {
+    t_balance = that.state.my_balance_HBTC;
+  } else if (that.state.cur_send_addr === 'imBTC') {
+    t_balance = that.state.my_balance_imBTC;
+  }
+
+  console.log(t_balance);
+
+  var to_show_recive = that.bn(t_balance).sub(that.bn(t_balance).mul(that.bn(that.state.cur_fee)).div(that.bn(10 ** 18)))
+    .mul(that.bn(that.state.cur_exchange)).div(that.bn(10 ** 18));
+  to_show_recive = format_bn(to_show_recive, that.state.cur_send_decimals, 4);
+
+  that.setState({
+    is_wap_enable: true,
+    side_A_amount: format_bn(t_balance, that.state.cur_send_decimals, that.state.cur_send_decimals),
+    side_A_amount_real: that.bn(t_balance),
+    side_B_amount: to_show_recive,
+    is_Insufficient_Balance: false
+  });
+}
+
+
 export const handle_A_change = (value, that) => {
   if (value.length > 18) {
     return;
@@ -315,6 +356,52 @@ export const handle_A_change = (value, that) => {
     side_A_amount_real: amount_bn,
     side_B_amount: to_show_recive
   });
+
+  if (amount_bn.toString() === '0') {
+    that.setState({
+      is_wap_enable: false
+    });
+    return false;
+  }
+
+  console.log(that.state.cur_send_addr);
+  var t_balance;
+  if (that.state.cur_send_addr === 'USDT') {
+    t_balance = that.state.my_balance_USDT;
+  } else if (that.state.cur_send_addr === 'USDx') {
+    t_balance = that.state.my_balance_USDx;
+  } else if (that.state.cur_send_addr === 'USDC') {
+    t_balance = that.state.my_balance_USDC;
+  } else if (that.state.cur_send_addr === 'TUSD') {
+    t_balance = that.state.my_balance_TUSD;
+  } else if (that.state.cur_send_addr === 'PAX') {
+    t_balance = that.state.my_balance_PAX;
+  } else if (that.state.cur_send_addr === 'DAI') {
+    t_balance = that.state.my_balance_DAI;
+  } else if (that.state.cur_send_addr === 'HBTC') {
+    t_balance = that.state.my_balance_HBTC;
+  } else if (that.state.cur_send_addr === 'imBTC') {
+    t_balance = that.state.my_balance_imBTC;
+  }
+
+  // console.log(t_balance);
+  compare(that, t_balance, amount_bn.toString());
+}
+
+const compare = (that, my_balance, input_balance) => {
+  if (that.bn(input_balance).gt(that.bn(my_balance))) {
+    console.log('no such balance');
+    that.setState({
+      is_wap_enable: false,
+      is_Insufficient_Balance: true
+    });
+  } else {
+    console.log('u can swap');
+    that.setState({
+      is_wap_enable: true,
+      is_Insufficient_Balance: false
+    });
+  }
 }
 
 

@@ -7,6 +7,7 @@ const zh_CN = {
     slogon: 'The Best Way to Swap Stable Assets.',
     no_history: '没有历史记录',
     Contract_US: '联系我们',
-    Community: '社区'
+    Community: '社区',
+    Resource: 'Resource'
 }
 export default zh_CN;

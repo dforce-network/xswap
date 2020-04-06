@@ -7,6 +7,7 @@ const en_US = {
     slogon: 'The Best Way to Swap Stable Assets.',
     no_history: 'No History',
     Contract_US: 'Contact',
-    Community: 'Community'
+    Community: 'Community',
+    Resource: 'Resource'
 }
 export default en_US;
