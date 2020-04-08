@@ -1,10 +1,10 @@
 pragma solidity ^0.5.4;
-contract ErrorReporter {
 
+contract ErrorReporter {
     /**
-      * @dev `error` corresponds to enum Error; `info` corresponds to enum FailureInfo, and `detail` is an arbitrary
-      * contract-specific code that enables us to report opaque error codes from upgradeable contracts.
-      **/
+     * @dev `error` corresponds to enum Error; `info` corresponds to enum FailureInfo, and `detail` is an arbitrary
+     * contract-specific code that enables us to report opaque error codes from upgradeable contracts.
+     */
     event Failure(uint error, uint info, uint detail);
 
     enum Error {
@@ -34,7 +34,7 @@ contract ErrorReporter {
         INVALID_COMBINED_RISK_PARAMETERS
     }
 
-    /*
+    /**
      * Note: FailureInfo (but not Error) is kept in alphabetical order
      *       This is because FailureInfo grows significantly faster, and
      *       the order of Error has some meaning, while the order of FailureInfo
@@ -128,8 +128,8 @@ contract ErrorReporter {
 
 
     /**
-      * @dev use this when reporting a known error from the money market or a non-upgradeable collaborator
-      */
+     * @dev use this when reporting a known error from the money market or a non-upgradeable collaborator
+     */
     function fail(Error err, FailureInfo info) internal returns (uint) {
         emit Failure(uint(err), uint(info), 0);
 
@@ -138,8 +138,8 @@ contract ErrorReporter {
 
 
     /**
-      * @dev use this when reporting an opaque error from an upgradeable collaborator contract
-      */
+     * @dev use this when reporting an opaque error from an upgradeable collaborator contract
+     */
     function failOpaque(FailureInfo info, uint opaqueError) internal returns (uint) {
         emit Failure(uint(Error.OPAQUE_ERROR), uint(info), opaqueError);
 
@@ -147,11 +147,11 @@ contract ErrorReporter {
     }
 
 }
-contract CarefulMath is ErrorReporter {
 
+contract CarefulMath is ErrorReporter {
     /**
-    * @dev Multiplies two numbers, returns an error on overflow.
-    */
+     * @dev Multiplies two numbers, returns an error on overflow.
+     */
     function mul(uint a, uint b) internal pure returns (Error, uint) {
         if (a == 0) {
             return (Error.NO_ERROR, 0);
@@ -167,8 +167,8 @@ contract CarefulMath is ErrorReporter {
     }
 
     /**
-    * @dev Integer division of two numbers, truncating the quotient.
-    */
+     * @dev Integer division of two numbers, truncating the quotient.
+     */
     function div(uint a, uint b) internal pure returns (Error, uint) {
         if (b == 0) {
             return (Error.DIVISION_BY_ZERO, 0);
@@ -178,8 +178,8 @@ contract CarefulMath is ErrorReporter {
     }
 
     /**
-    * @dev Subtracts two numbers, returns an error on overflow (i.e. if subtrahend is greater than minuend).
-    */
+     * @dev Subtracts two numbers, returns an error on overflow (i.e. if subtrahend is greater than minuend).
+     */
     function sub(uint a, uint b) internal pure returns (Error, uint) {
         if (b <= a) {
             return (Error.NO_ERROR, a - b);
@@ -189,8 +189,8 @@ contract CarefulMath is ErrorReporter {
     }
 
     /**
-    * @dev Adds two numbers, returns an error on overflow.
-    */
+     * @dev Adds two numbers, returns an error on overflow.
+     */
     function add(uint a, uint b) internal pure returns (Error, uint) {
         uint c = a + b;
 
@@ -202,8 +202,8 @@ contract CarefulMath is ErrorReporter {
     }
 
     /**
-    * @dev add a and b and then subtract c
-    */
+     * @dev add a and b and then subtract c
+     */
     function addThenSub(uint a, uint b, uint c) internal pure returns (Error, uint) {
         (Error err0, uint sum) = add(a, b);
 
@@ -214,10 +214,16 @@ contract CarefulMath is ErrorReporter {
         return sub(sum, c);
     }
 
+    /**
+     * @dev Multiplies two numbers, overflow will lead to revert.
+     */
     function srcMul(uint x, uint y) internal pure returns (uint z) {
         require(y == 0 || (z = x * y) / y == x, "ds-math-mul-overflow");
     }
 
+    /**
+     * @dev Integer division of two numbers, truncating the quotient.
+     */
     function srcDiv(uint x, uint y) internal pure returns (uint z) {
         require(y > 0, "ds-math-div-overflow");
         z = x / y;
@@ -244,8 +250,8 @@ contract CarefulMath is ErrorReporter {
         }
     }
 }
-contract Exponential is CarefulMath {
 
+contract Exponential is CarefulMath {
     // TODO: We may wish to put the result of 10**18 here instead of the expression.
     // Per https://solidity.readthedocs.io/en/latest/contracts.html#constant-state-variables
     // the optimizer MAY replace the expression 10**18 with its calculated value.
@@ -262,10 +268,10 @@ contract Exponential is CarefulMath {
     uint constant mantissaOneTenth = 10**17;
 
     /**
-    * @dev Creates an exponential from numerator and denominator values.
-    *      Note: Returns an error if (`num` * 10e18) > MAX_INT,
-    *            or if `denom` is zero.
-    */
+     * @dev Creates an exponential from numerator and denominator values.
+     *      Note: Returns an error if (`num` * 10e18) > MAX_INT,
+     *            or if `denom` is zero.
+     */
     function getExp(uint num, uint denom) pure internal returns (Error, Exp memory) {
         (Error err0, uint scaledNumerator) = mul(num, expScale);
         if (err0 != Error.NO_ERROR) {
@@ -281,8 +287,8 @@ contract Exponential is CarefulMath {
     }
 
     /**
-    * @dev Adds two exponentials, returning a new exponential.
-    */
+     * @dev Adds two exponentials, returning a new exponential.
+     */
     function addExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {
         (Error error, uint result) = add(a.mantissa, b.mantissa);
 
@@ -290,8 +296,8 @@ contract Exponential is CarefulMath {
     }
 
     /**
-    * @dev Subtracts two exponentials, returning a new exponential.
-    */
+     * @dev Subtracts two exponentials, returning a new exponential.
+     */
     function subExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {
         (Error error, uint result) = sub(a.mantissa, b.mantissa);
 
@@ -299,8 +305,8 @@ contract Exponential is CarefulMath {
     }
 
     /**
-    * @dev Multiply an Exp by a scalar, returning a new Exp.
-    */
+     * @dev Multiply an Exp by a scalar, returning a new Exp.
+     */
     function mulScalar(Exp memory a, uint scalar) pure internal returns (Error, Exp memory) {
         (Error err0, uint scaledMantissa) = mul(a.mantissa, scalar);
         if (err0 != Error.NO_ERROR) {
@@ -311,8 +317,8 @@ contract Exponential is CarefulMath {
     }
 
     /**
-    * @dev Divide an Exp by a scalar, returning a new Exp.
-    */
+     * @dev Divide an Exp by a scalar, returning a new Exp.
+     */
     function divScalar(Exp memory a, uint scalar) pure internal returns (Error, Exp memory) {
         (Error err0, uint descaledMantissa) = div(a.mantissa, scalar);
         if (err0 != Error.NO_ERROR) {
@@ -323,8 +329,8 @@ contract Exponential is CarefulMath {
     }
 
     /**
-    * @dev Divide a scalar by an Exp, returning a new Exp.
-    */
+     * @dev Divide a scalar by an Exp, returning a new Exp.
+     */
     function divScalarByExp(uint scalar, Exp memory divisor) pure internal returns (Error, Exp memory) {
         /*
             We are doing this as:
@@ -343,8 +349,8 @@ contract Exponential is CarefulMath {
     }
 
     /**
-    * @dev Multiplies two exponentials, returning a new exponential.
-    */
+     * @dev Multiplies two exponentials, returning a new exponential.
+     */
     function mulExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {
 
         (Error err0, uint doubleScaledProduct) = mul(a.mantissa, b.mantissa);
@@ -368,47 +374,47 @@ contract Exponential is CarefulMath {
     }
 
     /**
-      * @dev Divides two exponentials, returning a new exponential.
-      *     (a/scale) / (b/scale) = (a/scale) * (scale/b) = a/b,
-      *  which we can scale as an Exp by calling getExp(a.mantissa, b.mantissa)
-      */
+     * @dev Divides two exponentials, returning a new exponential.
+     *     (a/scale) / (b/scale) = (a/scale) * (scale/b) = a/b,
+     *  which we can scale as an Exp by calling getExp(a.mantissa, b.mantissa)
+     */
     function divExp(Exp memory a, Exp memory b) pure internal returns (Error, Exp memory) {
         return getExp(a.mantissa, b.mantissa);
     }
 
     /**
-      * @dev Truncates the given exp to a whole number value.
-      *      For example, truncate(Exp{mantissa: 15 * (10**18)}) = 15
-      */
+     * @dev Truncates the given exp to a whole number value.
+     *      For example, truncate(Exp{mantissa: 15 * (10**18)}) = 15
+     */
     function truncate(Exp memory exp) pure internal returns (uint) {
         // Note: We are not using careful math here as we're performing a division that cannot fail
         return exp.mantissa / 10**18;
     }
 
     /**
-      * @dev Checks if first Exp is less than second Exp.
-      */
+     * @dev Checks if first Exp is less than second Exp.
+     */
     function lessThanExp(Exp memory left, Exp memory right) pure internal returns (bool) {
-        return left.mantissa < right.mantissa; //TODO: Add some simple tests and this in another PR yo.
+        return left.mantissa < right.mantissa;
     }
 
     /**
-      * @dev Checks if left Exp <= right Exp.
-      */
+     * @dev Checks if left Exp <= right Exp.
+     */
     function lessThanOrEqualExp(Exp memory left, Exp memory right) pure internal returns (bool) {
         return left.mantissa <= right.mantissa;
     }
 
     /**
-      * @dev Checks if first Exp is greater than second Exp.
-      */
+     * @dev Checks if first Exp is greater than second Exp.
+     */
     function greaterThanExp(Exp memory left, Exp memory right) pure internal returns (bool) {
         return left.mantissa > right.mantissa;
     }
 
     /**
-      * @dev returns true if Exp is exactly zero
-      */
+     * @dev returns true if Exp is exactly zero
+     */
     function isZeroExp(Exp memory value) pure internal returns (bool) {
         return value.mantissa == 0;
     }
@@ -428,22 +434,42 @@ interface IERC20 {
 }
 
 contract PriceOracle is Exponential {
-
-    /**
-      * @dev flag for whether or not contract is paused
-      *
-      */
+    // Flag for whether or not contract is paused.
     bool public paused;
 
-    uint public constant numBlocksPerPeriod = 240; // approximately 1 hour: 60 seconds/minute * 60 minutes/hour * 1 block/15 seconds
+    // Approximately 1 hour: 60 seconds/minute * 60 minutes/hour * 1 block/15 seconds.
+    uint public constant numBlocksPerPeriod = 240;
 
     uint public constant maxSwingMantissa = (10 ** 17); // 0.1
 
     /**
-      * @dev Mapping of asset addresses to exchange rate information. Dynamic changes in asset prices based on exchange rates.
-      *
-      * map: assetAddress -> ExchangeRateInfo
-      */
+     * @dev An administrator who can set the pending anchor value for assets.
+     *      Set in the constructor.
+     */
+    address public anchorAdmin;
+
+    /**
+     * @dev Pending anchor administrator for this contract.
+     */
+    address public pendingAnchorAdmin;
+
+    /**
+     * @dev Address of the price poster.
+     *      Set in the constructor.
+     */
+    address public poster;
+
+    /**
+     * @dev The maximum allowed percentage difference between a new price and the anchor's price
+     *      Set only in the constructor
+     */
+    Exp public maxSwing;
+
+    /**
+     * @dev Mapping of asset addresses to exchange rate information.
+     *      Dynamic changes in asset prices based on exchange rates.
+     * map: assetAddress -> ExchangeRateInfo
+     */
     struct ExchangeRateInfo {
         address exchangeRateModel;
         uint exchangeRate;
@@ -453,22 +479,22 @@ contract PriceOracle is Exponential {
     mapping(address => ExchangeRateInfo) public exchangeRates;
 
     /**
-      * @dev Mapping of asset addresses to asset addresses. Stable coin can share a price.
-      *
-      * map: assetAddress -> Reader
-      */
+     * @dev Mapping of asset addresses to asset addresses. Stable coin can share a price.
+     *
+     * map: assetAddress -> Reader
+     */
     struct Reader {
-        address asset;
-        int decimalsDifference;
+        address asset;          // Asset to read price
+        int decimalsDifference; // Standard decimal is 18, so this is equal to the decimal of `asset` - 18.
     }
     mapping(address => Reader) public readers;
 
     /**
-      * @dev Mapping of asset addresses and their corresponding price in terms of Eth-Wei
-      *      which is simply equal to AssetWeiPrice * 10e18. For instance, if OMG token was
-      *      worth 5x Eth then the price for OMG would be 5*10e18 or Exp({mantissa: 5000000000000000000}).
-      * map: assetAddress -> Exp
-      */
+     * @dev Mapping of asset addresses and their corresponding price in terms of Eth-Wei
+     *      which is simply equal to AssetWeiPrice * 10e18. For instance, if OMG token was
+     *      worth 5x Eth then the price for OMG would be 5*10e18 or Exp({mantissa: 5000000000000000000}).
+     * map: assetAddress -> Exp
+     */
     mapping(address => Exp) public _assetPrices;
 
     constructor(address _poster) public {
@@ -478,8 +504,8 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice Do not pay into PriceOracle
-      */
+     * @notice Do not pay into PriceOracle.
+     */
     function() payable external {
         revert();
     }
@@ -506,15 +532,17 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @dev `msgSender` is msg.sender; `error` corresponds to enum OracleError; `info` corresponds to enum OracleFailureInfo, and `detail` is an arbitrary
-      * contract-specific code that enables us to report opaque error codes from upgradeable contracts.
-      **/
+     * @dev `msgSender` is msg.sender; `error` corresponds to enum OracleError;
+     *      `info` corresponds to enum OracleFailureInfo, and `detail` is an arbitrary
+     *      contract-specific code that enables us to report opaque error codes from upgradeable contracts.
+     */
     event OracleFailure(address msgSender, address asset, uint error, uint info, uint detail);
 
     /**
-      * @dev use this when reporting a known error from the price oracle or a non-upgradeable collaborator
-      *      Using Oracle in name because we already inherit a `fail` function from ErrorReporter.sol via Exponential.sol
-      */
+     * @dev Use this when reporting a known error from the price oracle or a non-upgradeable collaborator
+     *      Using Oracle in name because we already inherit a `fail` function from ErrorReporter.sol
+     *      via Exponential.sol
+     */
     function failOracle(address asset, OracleError err, OracleFailureInfo info) internal returns (uint) {
         emit OracleFailure(msg.sender, asset, uint(err), uint(info), 0);
 
@@ -522,39 +550,22 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @dev Use this when reporting an error from the money market. Give the money market result as `details`
-      */
-    function failOracleWithDetails(address asset, OracleError err, OracleFailureInfo info, uint details) internal returns (uint) {
+     * @dev Use this to report an error when set asset price.
+     *      Give the `error` corresponds to enum Error as `details`.
+     */
+    function failOracleWithDetails(
+        address asset,
+        OracleError err,
+        OracleFailureInfo info,
+        uint details
+    ) internal returns (uint) {
         emit OracleFailure(msg.sender, asset, uint(err), uint(info), details);
 
         return uint(err);
     }
 
-    /**
-      * @dev An administrator who can set the pending anchor value for assets.
-      *      Set in the constructor.
-      */
-    address public anchorAdmin;
-
-    /**
-      * @dev pending anchor administrator for this contract.
-      */
-    address public pendingAnchorAdmin;
-
-    /**
-      * @dev Address of the price poster.
-      *      Set in the constructor.
-      */
-    address public poster;
-
-    /**
-      * @dev maxSwing the maximum allowed percentage difference between a new price and the anchor's price
-      *      Set only in the constructor
-      */
-    Exp public maxSwing;
-
     struct Anchor {
-        // floor(block.number / numBlocksPerPeriod) + 1
+        // Floor(block.number / numBlocksPerPeriod) + 1
         uint period;
 
         // Price in ETH, scaled by 10**18
@@ -562,32 +573,33 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @dev anchors by asset
-      */
+     * @dev Anchors by asset.
+     */
     mapping(address => Anchor) public anchors;
 
     /**
-      * @dev pending anchor prices by asset
-      */
+     * @dev Pending anchor prices by asset.
+     */
     mapping(address => uint) public pendingAnchors;
 
     /**
-      * @dev emitted when a pending anchor is set
-      * @param asset Asset for which to set a pending anchor
-      * @param oldScaledPrice if an unused pending anchor was present, its value; otherwise 0.
-      * @param newScaledPrice the new scaled pending anchor price
-      */
+     * @dev Emitted when a pending anchor is set.
+     * @param asset Asset for which to set a pending anchor.
+     * @param oldScaledPrice If an unused pending anchor was present, its value; otherwise 0.
+     * @param newScaledPrice The new scaled pending anchor price.
+     */
     event NewPendingAnchor(address anchorAdmin, address asset, uint oldScaledPrice, uint newScaledPrice);
 
     /**
-      * @notice provides ability to override the anchor price for an asset
-      * @dev Admin function to set the anchor price for an asset
-      * @param asset Asset for which to override the anchor price
-      * @param newScaledPrice New anchor price
-      * @return uint 0=success, otherwise a failure (see enum OracleError for details)
-      */
+     * @notice Provides ability to override the anchor price for an asset.
+     * @dev Admin function to set the anchor price for an asset.
+     * @param asset Asset for which to override the anchor price.
+     * @param newScaledPrice New anchor price.
+     * @return uint 0=success, otherwise a failure (see enum OracleError for details).
+     */
     function _setPendingAnchor(address asset, uint newScaledPrice) public returns (uint) {
-        // Check caller = anchorAdmin. Note: Deliberately not allowing admin. They can just change anchorAdmin if desired.
+        // Check caller = anchorAdmin.
+        // Note: Deliberately not allowing admin. They can just change anchorAdmin if desired.
         if (msg.sender != anchorAdmin) {
             return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_PERMISSION_CHECK);
         }
@@ -601,52 +613,52 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @dev emitted for all exchangeRates changes
-      */
+     * @dev Emitted for all exchangeRates changes.
+     */
     event SetExchangeRate(address asset, address exchangeRateModel, uint exchangeRate, uint maxSwingRate, uint maxSwingDuration);
     event SetMaxSwingRate(address asset, uint oldMaxSwingRate, uint newMaxSwingRate, uint maxSwingDuration);
 
     /**
-      * @dev emitted for all readers changes
-      */
+     * @dev Emitted for all readers changes.
+     */
     event ReaderPosted(address asset, address oldReader, address newReader, int decimalsDifference);
 
     /**
-      * @dev emitted for all price changes
-      */
+     * @dev Emitted for all price changes.
+     */
     event PricePosted(address asset, uint previousPriceMantissa, uint requestedPriceMantissa, uint newPriceMantissa);
 
     /**
-      * @dev emitted if this contract successfully posts a capped-to-max price to the money market
-      */
+     * @dev Emitted if this contract successfully posts a capped-to-max price.
+     */
     event CappedPricePosted(address asset, uint requestedPriceMantissa, uint anchorPriceMantissa, uint cappedPriceMantissa);
 
     /**
-      * @dev emitted when admin either pauses or resumes the contract; newState is the resulting state
-      */
+     * @dev Emitted when admin either pauses or resumes the contract; `newState` is the resulting state.
+     */
     event SetPaused(bool newState);
 
     /**
-      * @dev emitted when pendingAnchorAdmin is changed
-      */
+     * @dev Emitted when `pendingAnchorAdmin` is changed.
+     */
     event NewPendingAnchorAdmin(address oldPendingAnchorAdmin, address newPendingAnchorAdmin);
 
     /**
-      * @dev emitted when pendingAnchorAdmin is accepted, which means anchor admin is updated
-      */
+     * @dev Emitted when `pendingAnchorAdmin` is accepted, which means anchor admin is updated.
+     */
     event NewAnchorAdmin(address oldAnchorAdmin, address newAnchorAdmin);
 
     /**
-      * @dev emitted when poster is changed
-      */
+     * @dev Emitted when `poster` is changed.
+     */
     event NewPoster(address oldPoster, address newPoster);
 
     /**
-      * @notice set `paused` to the specified state
-      * @dev Admin function to pause or resume the market
-      * @param requestedState value to assign to `paused`
-      * @return uint 0=success, otherwise a failure
-      */
+     * @notice Set `paused` to the specified state.
+     * @dev Admin function to pause or resume the contract.
+     * @param requestedState Value to assign to `paused`.
+     * @return uint 0=success, otherwise a failure.
+     */
     function _setPaused(bool requestedState) public returns (uint) {
         // Check caller = anchorAdmin
         if (msg.sender != anchorAdmin) {
@@ -660,22 +672,22 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice Begins transfer of anchor admin rights. The newPendingAnchorAdmin must call `_acceptAnchorAdmin` to finalize the transfer.
-      * @dev Admin function to begin change of anchor admin. The newPendingAnchorAdmin must call `_acceptAnchorAdmin` to finalize the transfer.
-      * @param newPendingAnchorAdmin New pending anchor admin.
-      * @return uint 0=success, otherwise a failure
-      *
-      * TODO: Should we add a second arg to verify, like a checksum of `newAnchorAdmin` address?
-      */
+     * @notice Begins to transfer the right of anchor admin.
+     *         The `newPendingAnchorAdmin` must call `_acceptAnchorAdmin` to finalize the transfer.
+     * @dev Admin function to change the anchor admin.
+     *      The `newPendingAnchorAdmin` must call `_acceptAnchorAdmin` to finalize the transfer.
+     * @param newPendingAnchorAdmin New pending anchor admin.
+     * @return uint 0=success, otherwise a failure.
+     */
     function _setPendingAnchorAdmin(address newPendingAnchorAdmin) public returns (uint) {
-        // Check caller = anchorAdmin
+        // Check caller = anchorAdmin.
         if (msg.sender != anchorAdmin) {
             return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);
         }
 
-        // save current value, if any, for inclusion in log
+        // Save current value, if any, for inclusion in log.
         address oldPendingAnchorAdmin = pendingAnchorAdmin;
-        // Store pendingAdmin = newPendingAdmin
+        // Store pendingAdmin = newPendingAdmin.
         pendingAnchorAdmin = newPendingAnchorAdmin;
 
         emit NewPendingAnchorAdmin(oldPendingAnchorAdmin, newPendingAnchorAdmin);
@@ -684,22 +696,22 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice Accepts transfer of anchor admin rights. msg.sender must be pendingAnchorAdmin
-      * @dev Admin function for pending anchor admin to accept role and update anchor admin
-      * @return uint 0=success, otherwise a failure
-      */
+     * @notice Accepts transfer of anchor admin rights. `msg.sender` must be `pendingAnchorAdmin`.
+     * @dev Admin function for pending anchor admin to accept role and update anchor admin`
+     * @return uint 0=success, otherwise a failure`
+     */
     function _acceptAnchorAdmin() public returns (uint) {
-        // Check caller = pendingAnchorAdmin
-        // msg.sender can't be zero
+        // Check caller = pendingAnchorAdmin.
+        // `msg.sender` can't be zero.
         if (msg.sender != pendingAnchorAdmin) {
             return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.ACCEPT_ANCHOR_ADMIN_PENDING_ANCHOR_ADMIN_CHECK);
         }
 
-        // Save current value for inclusion in log
+        // Save current value for inclusion in log.
         address oldAnchorAdmin = anchorAdmin;
-        // Store admin = pendingAnchorAdmin
+        // Store admin = pendingAnchorAdmin.
         anchorAdmin = pendingAnchorAdmin;
-        // Clear the pending value
+        // Clear the pending value.
         pendingAnchorAdmin = address(0);
 
         emit NewAnchorAdmin(oldAnchorAdmin, msg.sender);
@@ -708,23 +720,23 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice Set new poster.
-      * @dev Admin function to change of poster.
-      * @param newPoster New poster.
-      * @return uint 0=success, otherwise a failure
-      *
-      * TODO: Should we add a second arg to verify, like a checksum of `newAnchorAdmin` address?
-      */
+     * @notice Set new poster.
+     * @dev Admin function to change of poster.
+     * @param newPoster New poster.
+     * @return uint 0=success, otherwise a failure.
+     *
+     * TODO: Should we add a second arg to verify, like a checksum of `newAnchorAdmin` address?
+     */
     function _setPoster(address newPoster) public returns (uint) {
         assert(poster != newPoster);
-        // Check caller = anchorAdmin
+        // Check caller = anchorAdmin.
         if (msg.sender != anchorAdmin) {
             return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PENDING_ANCHOR_ADMIN_OWNER_CHECK);
         }
 
-        // save current value, if any, for inclusion in log
+        // Save current value, if any, for inclusion in log.
         address oldPoster = poster;
-        // Store poster = newPoster
+        // Store poster = newPoster.
         poster = newPoster;
 
         emit NewPoster(oldPoster, newPoster);
@@ -733,16 +745,16 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice set new exchange rate model
-      * @dev function to set exchangeRateModel for an asset
-      * @param asset asset for which to set the exchangeRateModel
-      * @param exchangeRateModel exchangeRateModel address, if the exchangeRateModel is address(0), cancel the exchangeRates
-      * @param maxSwingDuration maxSwingDuration uint, Is a value greater than zero and less than a second of a week
-      * @return uint 0=success, otherwise a failure (see enum OracleError for details)
-      */
+     * @notice Set new exchange rate model.
+     * @dev Function to set exchangeRateModel for an asset.
+     * @param asset Asset to set the new `exchangeRateModel`.
+     * @param exchangeRateModel New `exchangeRateModel` cnotract address,
+     *                          if the `exchangeRateModel` is address(0), revert to cancle.
+     * @param maxSwingDuration A value greater than zero and less than the seconds of a week.
+     * @return uint 0=success, otherwise a failure (see enum OracleError for details).
+     */
     function setExchangeRate(address asset, address exchangeRateModel, uint maxSwingDuration) public returns (uint) {
-
-        // Check caller = anchorAdmin
+        // Check caller = anchorAdmin.
         if (msg.sender != anchorAdmin) {
             return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);
         }
@@ -750,7 +762,7 @@ contract PriceOracle is Exponential {
         require(exchangeRateModel != address(0), "setExchangeRate: exchangeRateModel cannot be a zero address.");
         require(
             maxSwingDuration > 0 && maxSwingDuration <= 604800,
-            "setExchangeRate: maxSwingDuration cannot be zero, less than 31536000 (seconds per week)."
+            "setExchangeRate: maxSwingDuration cannot be zero, less than 604800 (seconds per week)."
         );
 
         uint currentExchangeRate = ExchangeRateModel(exchangeRateModel).getExchangeRate();
@@ -759,7 +771,7 @@ contract PriceOracle is Exponential {
         uint maxSwingRate = ExchangeRateModel(exchangeRateModel).getMaxSwingRate(maxSwingDuration);
         require(
             maxSwingRate > 0 && maxSwingRate <= ExchangeRateModel(exchangeRateModel).getMaxSwingRate(604800),
-            "setExchangeRate: maxSwingRate cannot be zero, less than 31536000 (seconds per week)."
+            "setExchangeRate: maxSwingRate cannot be zero, less than 604800 (seconds per week)."
         );
 
         exchangeRates[asset].exchangeRateModel = exchangeRateModel;
@@ -772,14 +784,13 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice set new exchange rate maxSwingRate
-      * @dev function to set exchange rate maxSwingRate for an asset
-      * @param asset asset for which to set the exchange rate maxSwingRate
-      * @param maxSwingDuration Interval time
-      * @return uint 0=success, otherwise a failure (see enum OracleError for details)
-      */
+     * @notice Set a new `maxSwingRate`.
+     * @dev Function to set exchange rate `maxSwingRate` for an asset.
+     * @param asset Asset for which to set the exchange rate `maxSwingRate`.
+     * @param maxSwingDuration Interval time.
+     * @return uint 0=success, otherwise a failure (see enum OracleError for details)
+     */
     function setMaxSwingRate(address asset, uint maxSwingDuration) public returns (uint) {
-
         // Check caller = anchorAdmin
         if (msg.sender != anchorAdmin) {
             return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);
@@ -787,13 +798,13 @@ contract PriceOracle is Exponential {
 
         require(
             maxSwingDuration > 0 && maxSwingDuration <= 604800,
-            "setMaxSwingRate: maxSwingDuration cannot be zero, less than 31536000 (seconds per week)."
+            "setMaxSwingRate: maxSwingDuration cannot be zero, less than 604800 (seconds per week)."
         );
 
         ExchangeRateModel exchangeRateModel = ExchangeRateModel(exchangeRates[asset].exchangeRateModel);
         uint newMaxSwingRate = exchangeRateModel.getMaxSwingRate(maxSwingDuration);
         uint oldMaxSwingRate = exchangeRates[asset].maxSwingRate;
-        require(oldMaxSwingRate != newMaxSwingRate, "setMaxSwingRate: Old and new values cannot be the same.");
+        require(oldMaxSwingRate != newMaxSwingRate, "setMaxSwingRate: the same max swing rate.");
         require(
             newMaxSwingRate > 0 && newMaxSwingRate <= exchangeRateModel.getMaxSwingRate(604800),
             "setMaxSwingRate: maxSwingRate cannot be zero, less than 31536000 (seconds per week)."
@@ -807,14 +818,13 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice entry point for updating prices
-      * @dev function to set reader for an asset
-      * @param asset Asset for which to set the reader
-      * @param readAsset Reader address, if the reader is address(0), cancel the reader
-      * @return uint 0=success, otherwise a failure (see enum OracleError for details)
-      */
+     * @notice Entry point for updating prices.
+     * @dev Set reader for an asset.
+     * @param asset Asset for which to set the reader.
+     * @param readAsset Reader address, if the reader is address(0), cancel the reader.
+     * @return uint 0=success, otherwise a failure (see enum OracleError for details).
+     */
     function setReaders(address asset, address readAsset) public returns (uint) {
-
         // Check caller = anchorAdmin
         if (msg.sender != anchorAdmin) {
             return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);
@@ -833,6 +843,11 @@ contract PriceOracle is Exponential {
         return uint(OracleError.NO_ERROR);
     }
 
+    /**
+     * @dev Get price from reader.
+     * @param asset Asset for which to get the price.
+     * @return Uint mantissa of asset price (scaled by 1e18) or zero if unset.
+     */
     function getReaderPrice(address asset) public view returns (uint) {
         Reader memory reader = readers[asset];
         if (reader.asset == address(0))
@@ -847,13 +862,13 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice retrieves price of an asset
-      * @dev function to get price for an asset
-      * @param asset Asset for which to get the price
-      * @return uint mantissa of asset price (scaled by 1e18) or zero if unset or contract paused
-      */
+     * @notice Retrieves price of an asset.
+     * @dev Get price for an asset.
+     * @param asset Asset for which to get the price.
+     * @return Uint mantissa of asset price (scaled by 1e18) or zero if unset or contract paused.
+     */
     function assetPrices(address asset) public view returns (uint) {
-        // Note: zero is treated by the money market as an invalid
+        // Note: zero is treated by the xSwap as an invalid
         //       price and will cease operations with that asset
         //       when zero.
         //
@@ -879,7 +894,8 @@ contract PriceOracle is Exponential {
 
                 currentChangeRate = currentChangeRate / exchangeRateInfo.exchangeRate;
                 // require(currentExchangeRate >= exchangeRateInfo.exchangeRate && currentChangeRate <= exchangeRateInfo.maxSwingRate, "assetPrices: Abnormal exchange rate.");
-                if (currentExchangeRate < exchangeRateInfo.exchangeRate || currentChangeRate > exchangeRateInfo.maxSwingRate)
+                if (currentExchangeRate < exchangeRateInfo.exchangeRate
+                    || currentChangeRate > exchangeRateInfo.maxSwingRate)
                     return 0;
 
                 uint price;
@@ -895,21 +911,25 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice retrieves price of an asset
-      * @dev function to get price for an asset
-      * @param asset Asset for which to get the price
-      * @return uint mantissa of asset price (scaled by 1e18) or zero if unset or contract paused
-      */
+     * @notice Retrieves price of an asset.
+     * @dev Get price for an asset.
+     * @param asset Asset for which to get the price.
+     * @return Uint mantissa of asset price (scaled by 1e18) or zero if unset or contract paused.
+     */
     function getPrice(address asset) public view returns (uint) {
         return assetPrices(asset);
     }
 
     /**
-      * @notice retrieves exchange rate info of an asset
-      * @dev function to get exchange rate info for an asset
-      * @param asset Asset for which to get the exchange rate info
-      * @return exchange rate info
-      */
+     * @dev Get exchange rate info of an asset in the time of `interval`.
+     * @param asset Asset for which to get the exchange rate info.
+     * @param interval Time to get accmulator interest rate.
+     * @return Asset price, exchange rate model address, the token that is using this exchange rate model,
+     *         exchange rate model contract address,
+     *         the token that is using this exchange rate model,
+     *         exchange rate between token and wrapped token,
+     *         After the time of `interval`, get the accmulator interest rate.
+     */
     function getExchangeRateInfo(address asset, uint interval) public view returns (uint, address, address, uint, uint, uint) {
         if (exchangeRates[asset].exchangeRateModel == address(0))
             return (getReaderPrice(asset), address(0), address(0), 0, 0, 0);
@@ -936,12 +956,12 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice entry point for updating prices
-      * @dev function to set price for an asset
-      * @param asset Asset for which to set the price
-      * @param requestedPriceMantissa requested new price, scaled by 10**18
-      * @return uint 0=success, otherwise a failure (see enum OracleError for details)
-      */
+     * @notice Entry point for updating prices.
+     * @dev Set price for an asset.
+     * @param asset Asset for which to set the price.
+     * @param requestedPriceMantissa Requested new price, scaled by 10**18.
+     * @return Uint 0=success, otherwise a failure (see enum OracleError for details).
+     */
     function setPrice(address asset, uint requestedPriceMantissa) public returns (uint) {
         // Fail when msg.sender is not poster
         if (msg.sender != poster) {
@@ -1076,6 +1096,7 @@ contract PriceOracle is Exponential {
         return divExp(numerator, anchorPrice);
     }
 
+    // Base on the current anchor price, get the final valid price.
     function capToMax(Exp memory anchorPrice, Exp memory price) view internal returns (Error, bool, Exp memory) {
         Exp memory one = Exp({mantissa : mantissaOne});
         Exp memory onePlusMaxSwing;
@@ -1122,12 +1143,15 @@ contract PriceOracle is Exponential {
     }
 
     /**
-      * @notice entry point for updating multiple prices
-      * @dev function to set prices for a variable number of assets.
-      * @param assets a list of up to assets for which to set a price. required: 0 < assets.length == requestedPriceMantissas.length
-      * @param requestedPriceMantissas requested new prices for the assets, scaled by 10**18. required: 0 < assets.length == requestedPriceMantissas.length
-      * @return uint values in same order as inputs. For each: 0=success, otherwise a failure (see enum OracleError for details)
-      */
+     * @notice Entry point for updating multiple prices.
+     * @dev Set prices for a variable number of assets.
+     * @param assets A list of up to assets for which to set a price.
+     *        Notice: 0 < assets.length == requestedPriceMantissas.length
+     * @param requestedPriceMantissas Requested new prices for the assets, scaled by 10**18.
+     *        Notice: 0 < assets.length == requestedPriceMantissas.length
+     * @return Uint values in same order as inputs.
+     *         For each: 0=success, otherwise a failure (see enum OracleError for details)
+     */
     function setPrices(address[] memory assets, uint[] memory requestedPriceMantissas) public returns (uint[] memory) {
         uint numAssets = assets.length;
         uint numPrices = requestedPriceMantissas.length;
