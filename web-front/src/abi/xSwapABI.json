@@ -1,54 +1,238 @@
 [
 	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
+		"constant": false,
 		"inputs": [
 			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "authority",
-				"type": "address"
-			}
-		],
-		"name": "LogSetAuthority",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "LogSetOwner",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
+				"name": "_token",
 				"type": "address"
 			},
 			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
+				"name": "_receiver",
+				"type": "address"
+			},
+			{
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transferOut",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_open",
+				"type": "bool"
+			}
+		],
+		"name": "emergencyStop",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"name": "_output",
 				"type": "address"
 			}
 		],
-		"name": "OwnerUpdate",
-		"type": "event"
+		"name": "prices",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"name": "_OutputAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "tradeOut",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_token",
+				"type": "address"
+			}
+		],
+		"name": "getTokenLiquidation",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_token",
+				"type": "address"
+			}
+		],
+		"name": "disableLending",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"name": "_receiver",
+				"type": "address"
+			}
+		],
+		"name": "transferOutALL",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "isOpen",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "getUSRAmount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"name": "_inputAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "trade",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_lendFMe",
+				"type": "address"
+			},
+			{
+				"name": "_oracle",
+				"type": "address"
+			}
+		],
+		"name": "active",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"constant": false,
@@ -63,13 +247,31 @@
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_lendFMe",
+				"name": "authority_",
 				"type": "address"
 			}
 		],
-		"name": "active",
+		"name": "setAuthority",
 		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_oracle",
+				"type": "address"
+			}
+		],
+		"name": "setOracle",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -77,10 +279,9 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "authority",
+		"name": "oracle",
 		"outputs": [
 			{
-				"internalType": "contract DSAuthority",
 				"name": "",
 				"type": "address"
 			}
@@ -93,39 +294,16 @@
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "address",
 				"name": "_input",
 				"type": "address"
 			},
 			{
-				"internalType": "address",
 				"name": "_output",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_priceInOut",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_priceOutIn",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_fee",
-				"type": "uint256"
 			}
 		],
-		"name": "createPair",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"name": "enableTrade",
+		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -134,17 +312,15 @@
 		"constant": true,
 		"inputs": [
 			{
-				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "decimals",
+		"name": "supportLending",
 		"outputs": [
 			{
-				"internalType": "uint256",
 				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -152,24 +328,17 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
 			{
-				"internalType": "address",
-				"name": "_token",
+				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "disableLending",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -185,28 +354,6 @@
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "bool",
-				"name": "_open",
-				"type": "bool"
-			}
-		],
-		"name": "emergencyStop",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "_token",
 				"type": "address"
 			}
@@ -214,75 +361,12 @@
 		"name": "enableLending",
 		"outputs": [
 			{
-				"internalType": "bool",
 				"name": "",
 				"type": "bool"
 			}
 		],
 		"payable": false,
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "fee",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
-			}
-		],
-		"name": "getTokenLiquidation",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "isOpen",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -291,13 +375,155 @@
 		"name": "lendFMe",
 		"outputs": [
 			{
-				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "getChaiAmount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"name": "_OutputAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "getOutputPrice",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			},
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "tradesDisable",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"name": "_output",
+				"type": "address"
+			}
+		],
+		"name": "disableTrade",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			},
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "fee",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "authority",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_lendFMe",
+				"type": "address"
+			}
+		],
+		"name": "setLendFMe",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -306,50 +532,8 @@
 		"name": "newOwner",
 		"outputs": [
 			{
-				"internalType": "address",
 				"name": "",
 				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "prices",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -360,13 +544,29 @@
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "contract DSAuthority",
-				"name": "authority_",
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"name": "_inputAmount",
+				"type": "uint256"
+			},
+			{
+				"name": "_receiver",
 				"type": "address"
 			}
 		],
-		"name": "setAuthority",
-		"outputs": [],
+		"name": "trade",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -375,17 +575,14 @@
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "address",
 				"name": "_input",
 				"type": "address"
 			},
 			{
-				"internalType": "address",
 				"name": "_output",
 				"type": "address"
 			},
 			{
-				"internalType": "uint256",
 				"name": "_fee",
 				"type": "uint256"
 			}
@@ -393,7 +590,6 @@
 		"name": "setFee",
 		"outputs": [
 			{
-				"internalType": "bool",
 				"name": "",
 				"type": "bool"
 			}
@@ -406,46 +602,25 @@
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_lendFMe",
-				"type": "address"
-			}
-		],
-		"name": "setLendFMe",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "_input",
 				"type": "address"
 			},
 			{
-				"internalType": "address",
 				"name": "_output",
 				"type": "address"
 			},
 			{
-				"internalType": "uint256",
-				"name": "_price",
+				"name": "_OutputAmount",
 				"type": "uint256"
+			},
+			{
+				"name": "_receiver",
+				"type": "address"
 			}
 		],
-		"name": "setPrices",
+		"name": "tradeOut",
 		"outputs": [
 			{
-				"internalType": "bool",
 				"name": "",
 				"type": "bool"
 			}
@@ -458,56 +633,17 @@
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_input",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_output",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_priceInOut",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_priceOutIn",
-				"type": "uint256"
-			}
-		],
-		"name": "setPrices",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "_token",
 				"type": "address"
 			},
 			{
-				"internalType": "uint256",
-				"name": "_decimals",
+				"name": "_amount",
 				"type": "uint256"
 			}
 		],
-		"name": "setTokenDecimals",
+		"name": "transferIn",
 		"outputs": [
 			{
-				"internalType": "bool",
 				"name": "",
 				"type": "bool"
 			}
@@ -520,17 +656,23 @@
 		"constant": true,
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "",
+				"name": "_input",
 				"type": "address"
+			},
+			{
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"name": "_inputAmount",
+				"type": "uint256"
 			}
 		],
-		"name": "supportLending",
+		"name": "getInputPrice",
 		"outputs": [
 			{
-				"internalType": "bool",
 				"name": "",
-				"type": "bool"
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -541,157 +683,6 @@
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_input",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_output",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_inputAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "trade",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_input",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_output",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_inputAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_receiver",
-				"type": "address"
-			}
-		],
-		"name": "trade",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transferIn",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_receiver",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transferOut",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_receiver",
-				"type": "address"
-			}
-		],
-		"name": "transferOutALL",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "newOwner_",
 				"type": "address"
 			}
@@ -701,5 +692,52 @@
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "authority",
+				"type": "address"
+			}
+		],
+		"name": "LogSetAuthority",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "LogSetOwner",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnerUpdate",
+		"type": "event"
 	}
 ]

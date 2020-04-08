@@ -62,7 +62,8 @@ import {
   swap_click,
   handle_approve_click,
   get_exchange__get_fee,
-  handle_A_max
+  handle_A_max,
+  format_num_to_K
 } from './utils.js';
 
 
@@ -337,9 +338,20 @@ export default class App extends React.Component {
 
       console.log('*** get_my_balance ***');
       get_my_balance(this);
+      // this.calcnew_ex();
     }, 1000 * 5);
   }
 
+  // calcnew_ex = () => {
+  //   if (this.state.cur_exchange && this.state.cur_fee) {
+  //     var new_ex = this.bn(10 ** 18).sub(this.bn(this.state.cur_fee))
+  //       .mul(this.bn(this.state.cur_exchange))
+  //       .div(this.bn(10 ** 20))
+  //       .div(this.bn(10 ** 16))
+
+  //     console.log(new_ex);
+  //   }
+  // }
 
 
 
@@ -358,55 +370,103 @@ export default class App extends React.Component {
               {
                 this.state.cur_send_addr === 'USDx' &&
                 <span className="my-balance">
-                  {this.state.my_balance_USDx ? format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2) : '···'}
+                  {this.state.my_balance_USDx ? format_num_to_K(format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2)) : '···'}
                 </span>
               }
               {
                 this.state.cur_send_addr === 'USDT' &&
                 <span className="my-balance">
-                  {this.state.my_balance_USDT ? format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2) : '···'}
+                  {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
                 </span>
               }
               {
                 this.state.cur_send_addr === 'imBTC' &&
                 <span className="my-balance">
-                  {this.state.my_balance_imBTC ? format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2) : '···'}
+                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
                 </span>
               }
               {
                 this.state.cur_send_addr === 'HBTC' &&
                 <span className="my-balance">
-                  {this.state.my_balance_HBTC ? format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2) : '···'}
+                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
                 </span>
               }
               {
                 this.state.cur_send_addr === 'USDC' &&
                 <span className="my-balance">
-                  {this.state.my_balance_USDC ? format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2) : '···'}
+                  {this.state.my_balance_USDC ? format_num_to_K(format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2)) : '···'}
                 </span>
               }
               {
                 this.state.cur_send_addr === 'PAX' &&
                 <span className="my-balance">
-                  {this.state.my_balance_PAX ? format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2) : '···'}
+                  {this.state.my_balance_PAX ? format_num_to_K(format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2)) : '···'}
                 </span>
               }
               {
                 this.state.cur_send_addr === 'TUSD' &&
                 <span className="my-balance">
-                  {this.state.my_balance_TUSD ? format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2) : '···'}
+                  {this.state.my_balance_TUSD ? format_num_to_K(format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2)) : '···'}
                 </span>
               }
               {
                 this.state.cur_send_addr === 'DAI' &&
                 <span className="my-balance">
-                  {this.state.my_balance_DAI ? format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2) : '···'}
+                  {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
                 </span>
               }
             </div>
 
             <div className="token-balance-right">
               <FormattedMessage id='recive' />
+              {
+                this.state.cur_recive_addr === 'USDx' &&
+                <span className="my-balance">
+                  {this.state.my_balance_USDx ? format_num_to_K(format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'USDT' &&
+                <span className="my-balance">
+                  {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'imBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'HBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'USDC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_USDC ? format_num_to_K(format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'PAX' &&
+                <span className="my-balance">
+                  {this.state.my_balance_PAX ? format_num_to_K(format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'TUSD' &&
+                <span className="my-balance">
+                  {this.state.my_balance_TUSD ? format_num_to_K(format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'DAI' &&
+                <span className="my-balance">
+                  {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
+                </span>
+              }
             </div>
             <div className="clear"></div>
           </div>
@@ -442,6 +502,20 @@ export default class App extends React.Component {
                     }
 
                     {
+                      this.state.cur_recive_addr !== 'HBTC' &&
+                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('HBTC') }}>
+                        <img className="token-logo" src={this.state.token.HBTC} />
+                        <span className="token-title">
+                          HBTC
+                        </span>
+                        {
+                          this.state.cur_send_addr === 'HBTC' &&
+                          <img className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+
+                    {
                       this.state.cur_recive_addr !== 'USDT' &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDT') }}>
                         <img className="token-logo" src={this.state.token.USDT} />
@@ -451,20 +525,6 @@ export default class App extends React.Component {
                         </span>
                         {
                           this.state.cur_send_addr === 'USDT' &&
-                          <img className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-
-                    {
-                      this.state.cur_recive_addr !== 'HBTC' &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('HBTC') }}>
-                        <img className="token-logo" src={this.state.token.HBTC} />
-                        <span className="token-title">
-                          HBTC
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'HBTC' &&
                           <img className="token-isselected" src={is_selected} />
                         }
                       </div>
@@ -565,7 +625,16 @@ export default class App extends React.Component {
             <div className="other-tokens-rate">
               1 {this.state.cur_send_addr} = {' '}
               {
-                this.state.cur_exchange ? format_bn(this.state.cur_exchange, 18, 8) : '···'
+                this.state.cur_exchange && this.state.cur_fee ?
+                  // format_bn(this.state.cur_exchange, 18, 8) : '···'
+                  format_bn(
+                    (this.bn(10 ** 18).sub(this.bn(this.state.cur_fee))
+                      .mul(this.bn(this.state.cur_exchange))
+                      .div(this.bn(10 ** 20))
+                      .div(this.bn(10 ** 8))).toString(),
+                    8, 8
+                  )
+                  : '···'
               }
               {' ' + this.state.cur_recive_addr}
             </div>
@@ -613,7 +682,20 @@ export default class App extends React.Component {
                           <img className="token-isselected" src={is_selected} />
                         }
                       </div>
+                    }
 
+                    {
+                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HBTC') &&
+                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HBTC') }}>
+                        <img className="token-logo" src={this.state.token.HBTC} />
+                        <span className="token-title">
+                          HBTC
+                        </span>
+                        {
+                          this.state.cur_recive_addr === 'HBTC' &&
+                          <img className="token-isselected" src={is_selected} />
+                        }
+                      </div>
                     }
 
                     {
@@ -626,20 +708,6 @@ export default class App extends React.Component {
                         </span>
                         {
                           this.state.cur_recive_addr === 'USDT' &&
-                          <img className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-
-                    {
-                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HBTC') &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HBTC') }}>
-                        <img className="token-logo" src={this.state.token.HBTC} />
-                        <span className="token-title">
-                          HBTC
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'HBTC' &&
                           <img className="token-isselected" src={is_selected} />
                         }
                       </div>

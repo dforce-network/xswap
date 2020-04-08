@@ -1,7 +1,7 @@
 const en_US = {
-    send: 'SEND ',
-    recive: ' RECEIVE ',
-    history: 'HISTORY',
+    send: 'SEND',
+    recive: 'RECEIVE',
+    history: 'Recent Transactions',
     swap: 'SWAP',
     connect: 'Connect',
     slogon: 'The Best Way to Swap Stable Assets.',

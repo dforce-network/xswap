@@ -270,6 +270,13 @@
     .token-balance-right {
       float: right;
       width: 316px;
+
+      .my-balance {
+        width: 200px;
+        // background-color: green;
+        float: right;
+        text-align: right;
+      }
     }
   }
 

@@ -8,6 +8,7 @@ import zh_CN from '../language/zh_CN';
 import logo_exchange from '../images/logo_exchange.svg';
 import logo_exchange_pendding from '../images/logo_exchange_pendding.svg';
 import no_history from '../images/no-history.svg';
+import { format_num_to_K } from '../utils.js';
 
 
 export default class RecordBoard extends Component {
@@ -162,10 +163,10 @@ export default class RecordBoard extends Component {
                                         </div>
                                         <div className="history-item-right-bottom">
                                             <FormattedMessage id='send' />
-                                            {item.send_amount}
+                                            {' ' + format_num_to_K(item.send_amount) + ' '}
                                             {item.send_token},
                                             <FormattedMessage id='recive' />
-                                            {item.recive_amount}
+                                            {' ' + format_num_to_K(item.recive_amount) + ' '}
                                             {item.recive_token}
                                         </div>
                                     </div>

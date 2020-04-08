@@ -448,3 +448,13 @@ export const i_got_hash = (that, account, net_type, send_token, send_amount, rec
     that.setState({ load_new_history: Math.random() });
   }
 }
+
+export const format_num_to_K = (str_num) => {
+  var part_a = str_num.split('.')[0];
+  var part_b = str_num.split('.')[1];
+
+  var reg = /\d{1,3}(?=(\d{3})+$)/g;
+  part_a = (part_a + '').replace(reg, '$&,');
+
+  return part_a + '.' + part_b;
+}
