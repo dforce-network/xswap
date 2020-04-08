@@ -5,6 +5,7 @@ import './DSLibrary/ERC20SafeTransfer.sol';
 import './interface/IPriceOracle.sol';
 import './interface/ILendFMe.sol';
 import './interface/IChai.sol';
+import './interface/IUSR.sol';
 
 library DSMath {
     function add(uint x, uint y) internal pure returns (uint z) {
@@ -27,16 +28,21 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 
 	uint constant internal OFFSET = 10 ** 18;
 	//Mainnet
-	// address private chai = 0x06AF07097C9Eeb7fD685c692751D5C66dB49c215;
-	// IPot private pot = IPot(0x197E90f9FAD81970bA7976f33CbD77088E5D7cf7);
+	// address constant private chai = 0x06AF07097C9Eeb7fD685c692751D5C66dB49c215;
+	// IPot constant private pot = IPot(0x197E90f9FAD81970bA7976f33CbD77088E5D7cf7);
 	// uint constant RAY = 10 ** 27;
-	// address private dai  = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+	// address constant private dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+	// address constant private USR = 0xA3A59273494BB5B8F0a8FAcf21B3f666A47d6140;
+	// address constant private USDx = 0xeb269732ab75A6fD61Ea60b06fE994cD32a83549;
 
 	//Rinkeby
-	address private chai = 0x8a5C1BD4D75e168a4f65eB902c289400B90FD980;
-	IPot private pot = IPot(0xC5881103670131228E8FA62F756202f7D0f79872);
+	address constant private chai = 0x8a5C1BD4D75e168a4f65eB902c289400B90FD980;
+	IPot constant private pot = IPot(0xC5881103670131228E8FA62F756202f7D0f79872);
 	uint constant RAY = 10 ** 27;
-	address private dai  = 0xA3A59273494BB5B8F0a8FAcf21B3f666A47d6140;
+	address constant private dai = 0xA3A59273494BB5B8F0a8FAcf21B3f666A47d6140;
+
+	address constant private USR = 0x1f2B68512A0e4C2CcEFAd0af60E699B22588362a;
+	address constant private USDx = 0xD96cC7f80C1cb595eBcdC072531e1799B3a2436E;
 
 	bool private actived;
 	address public lendFMe;
@@ -71,10 +77,14 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
 		if(supportLending[_input]) {
 			if (_input == dai) {
+
 				IChai(chai).join(address(this), _inputAmount);
 				require(ILendFMe(lendFMe).supply(chai, IERC20(chai).balanceOf(address(this))) == 0, "");
-			}
-			else
+			} else if (_input == USDx) {
+
+				IUSR(USR).mint(address(this), _inputAmount);
+				require(ILendFMe(lendFMe).supply(USR, IERC20(USR).balanceOf(address(this))) == 0, "");
+			} else
 				require(ILendFMe(lendFMe).supply(_input, _inputAmount) == 0, "");
 		}
 		
@@ -83,10 +93,14 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		require(_amountToUser > 0, "");
 		if(supportLending[_output]) {
 			if (_output == dai) {
+
 				require(ILendFMe(lendFMe).withdraw(chai, getChaiAmount(_amountToUser)) == 0, ""); //assume chai / dai >= 1;
 				IChai(chai).draw(address(this), _amountToUser);
-			}
-			else
+			} else if (_output == USDx) {
+
+				require(ILendFMe(lendFMe).withdraw(USR, getUSRAmount(_amountToUser)) == 0, ""); //assume USR / USDx >= 1;
+				IUSR(USR).redeem(address(this), _amountToUser);
+			} else
 				require(ILendFMe(lendFMe).withdraw(_output, _amountToUser) == 0, "");
 		}
 		require(doTransferOut(_output, _receiver, _amountToUser));
@@ -107,19 +121,27 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
 		if(supportLending[_input]) {
 			if (_input == dai) {
+
 				IChai(chai).join(address(this), _inputAmount);
 				require(ILendFMe(lendFMe).supply(chai, IERC20(chai).balanceOf(address(this))) == 0, "");
-			}
-			else
+			} else if (_input == USDx) {
+
+				IUSR(USR).mint(address(this), _inputAmount);
+				require(ILendFMe(lendFMe).supply(USR, IERC20(USR).balanceOf(address(this))) == 0, "");
+			} else
 				require(ILendFMe(lendFMe).supply(_input, _inputAmount) == 0, "");
 		}
 
 		if(supportLending[_output]) {
 			if (_output == dai) {
+
 				require(ILendFMe(lendFMe).withdraw(chai, getChaiAmount(_OutputAmount)) == 0, ""); //assume chai / dai >= 1;
 				IChai(chai).draw(address(this), _OutputAmount);
-			}
-			else
+			} else if (_output == USDx) {
+
+				require(ILendFMe(lendFMe).withdraw(USR, getUSRAmount(_OutputAmount)) == 0, ""); //assume USR / USDx >= 1;
+				IUSR(USR).redeem(address(this), _OutputAmount);
+			} else
 				require(ILendFMe(lendFMe).withdraw(_output, _OutputAmount) == 0, "");
 		}
 		require(doTransferOut(_output, _receiver, _OutputAmount));
@@ -150,14 +172,27 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
         }
     }
 
+	function rmul(uint x, uint y) internal pure returns (uint z) {
+        // always rounds down
+        z = x.mul(y) / RAY;
+    }
+
 	function rdivup(uint x, uint y) internal pure returns (uint z) {
         z = x.mul(RAY).add(y.sub(1)) / y;
+    }
+
+	function divScale(uint x, uint y) internal pure returns (uint z) {
+        z = x.mul(OFFSET).add(y.sub(1)) / y;
     }
 
 	function getChaiAmount(uint _amount) public view returns (uint) {
 		uint _RAY = RAY;
 		uint _chi = rpow(pot.dsr(), now - pot.rho(), _RAY).mul(pot.chi()) / _RAY;
 		return rdivup(_amount, _chi);
+	}
+
+	function getUSRAmount(uint _amount) public view returns (uint) {
+		return rdivup(divScale(_amount, OFFSET.sub(IUSR(USR).originationFee())), IUSR(USR).getExchangeRate());
 	}
 
 	function prices(address _input, address _output) public view returns (uint) {
@@ -177,22 +212,40 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 
 	function getInputPrice(address _input, address _output, uint _inputAmount) public view returns (uint) {
 		IPriceOracle _oracle = IPriceOracle(oracle);
-		uint _tokenAmount = _inputAmount.mul(_oracle.assetPrices(_input)).div(_oracle.assetPrices(_output));
-		return _tokenAmount.mul(OFFSET.sub(fee[_input][_output])).div(OFFSET);
+		uint _tokenAmount = _inputAmount
+			.mul(_oracle.assetPrices(_input))
+			.div(_oracle.assetPrices(_output))
+			.mul(OFFSET.sub(fee[_input][_output])) / OFFSET;
+
+		return _output == USDx ? _tokenAmount.mul(OFFSET.sub(IUSR(USR).originationFee())) / OFFSET : _tokenAmount;
 	}
 
 	function getOutputPrice(address _input, address _output, uint _OutputAmount) public view returns (uint) {
 		IPriceOracle _oracle = IPriceOracle(oracle);
-		uint _tokenAmount = _OutputAmount.mul(_oracle.assetPrices(_output)).div(_oracle.assetPrices(_input));
-		return _tokenAmount.mul(OFFSET).div(OFFSET.sub(fee[_input][_output])).add(1);
+
+		uint _tokenAmount = _output == USDx ? divScale(_OutputAmount, OFFSET.sub(IUSR(USR).originationFee())) : _OutputAmount;
+
+		_tokenAmount = _tokenAmount
+			.mul(_oracle.assetPrices(_output))
+			.div(_oracle.assetPrices(_input))
+			.mul(OFFSET)
+			.div(OFFSET.sub(fee[_input][_output]))
+			.add(1);
+
+		return _tokenAmount;
 	}
 
 	function getTokenLiquidation(address _token) public view returns (uint) {
 		uint balanceInDefi;
 		if (_token == dai) {
+
 			uint balance = ILendFMe(lendFMe).getSupplyBalance(address(this), chai);
-			balanceInDefi = getChaiAmount(balance);
-		}else
+			balanceInDefi = rmul(balance, rpow(pot.dsr(), now - pot.rho(), RAY).mul(pot.chi()) / RAY);
+		} else if (_token == USDx) {
+
+			uint balance = ILendFMe(lendFMe).getSupplyBalance(address(this), USR);
+			balanceInDefi = rmul(balance, IUSR(USR).getExchangeRate());
+		} else
 			balanceInDefi = ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
 		return balanceInDefi.add(IERC20(_token).balanceOf(address(this)));
 	}
@@ -212,12 +265,19 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		supportLending[_token] = true;
 
 		if (_token == dai) {
+
 			if (IERC20(_token).allowance(address(this), chai) != uint(-1))
             	require(doApprove(_token, chai, uint(-1)), "");
 			if (IERC20(chai).allowance(address(this), lendFMe) != uint(-1))
             	require(doApprove(chai, lendFMe, uint(-1)), "");
-		}
-		else {
+		} else if (_token == USDx) {
+
+			if (IERC20(_token).allowance(address(this), USR) != uint(-1))
+            	require(doApprove(_token, USR, uint(-1)), "");
+			if (IERC20(USR).allowance(address(this), lendFMe) != uint(-1))
+            	require(doApprove(USR, lendFMe, uint(-1)), "");
+		} else {
+
 			if (IERC20(_token).allowance(address(this), lendFMe) != uint(-1))
             	require(doApprove(_token, lendFMe, uint(-1)), "");
 		}
@@ -225,10 +285,14 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		uint _balance = IERC20(_token).balanceOf(address(this));
 		if(_balance > 0) {
 			if (_token == dai) {
+
 				IChai(chai).join(address(this), _balance);
 				require(ILendFMe(lendFMe).supply(chai, IERC20(chai).balanceOf(address(this))) == 0, "");
-			}
-			else
+			} else if (_token == USDx) {
+
+				IUSR(USR).mint(address(this), _balance);
+				require(ILendFMe(lendFMe).supply(USR, IERC20(USR).balanceOf(address(this))) == 0, "");
+			} else
 				require(ILendFMe(lendFMe).supply(_token, _balance) == 0, "");
 		}
 		return true;
@@ -239,10 +303,14 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		supportLending[_token] = false;
 
 		if (_token == dai) {
+
 			require(ILendFMe(lendFMe).withdraw(chai, uint(-1)) == 0, "");
 			IChai(chai).exit(address(this), IERC20(chai).balanceOf(address(this)));
-		}
-		else
+		} else if (_token == USDx) {
+
+			require(ILendFMe(lendFMe).withdraw(USR, uint(-1)) == 0, "");
+			IUSR(USR).burn(address(this), IERC20(USR).balanceOf(address(this)));
+		} else
 			require(ILendFMe(lendFMe).withdraw(_token, uint(-1)) == 0, "");
 
 		return true;
@@ -272,10 +340,14 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	function transferOut(address _token, address _receiver, uint _amount) external auth returns (bool) {
 		if(supportLending[_token]) {
 			if (_token == dai) {
+
 				require(ILendFMe(lendFMe).withdraw(chai, getChaiAmount(_amount)) == 0, "");
 				IChai(chai).draw(address(this), _amount);
-			}
-			else
+			} else if (_token == USDx) {
+
+				require(ILendFMe(lendFMe).withdraw(USR, getUSRAmount(_amount)) == 0, "");
+				IUSR(USR).redeem(address(this), _amount);
+			} else
 				require(ILendFMe(lendFMe).withdraw(_token, _amount) == 0, "");
 		}
 		uint _balance = IERC20(_token).balanceOf(address(this));
@@ -289,29 +361,37 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	function transferOutALL(address _token, address _receiver) external auth returns (bool) {
 		if(supportLending[_token]) {
 			if (_token == dai) {
+
 				require(ILendFMe(lendFMe).withdraw(chai, uint(-1)) == 0, "");
 				IChai(chai).exit(address(this), IERC20(chai).balanceOf(address(this)));
-			}
-			else
+			} else if (_token == USDx) {
+
+				require(ILendFMe(lendFMe).withdraw(USR, uint(-1)) == 0, "");
+				IUSR(USR).burn(address(this), IERC20(USR).balanceOf(address(this)));
+			} else
 				require(ILendFMe(lendFMe).withdraw(_token, uint(-1)) == 0, "");
 		}
 		uint _balance = IERC20(_token).balanceOf(address(this));
-		if(_balance > 0) {
+		if(_balance > 0)
 			require(doTransferOut(_token, _receiver, _balance));
-		}
 
 		return true;
 	}
 
 	function transferIn(address _token, uint _amount) external auth returns (bool) {
 		require(doTransferFrom(_token, msg.sender, address(this), _amount));
+		uint _balance = IERC20(_token).balanceOf(address(this));
 		if(supportLending[_token]) {
 			if (_token == dai) {
-				IChai(chai).join(address(this), IERC20(dai).balanceOf(address(this)));
+
+				IChai(chai).join(address(this), _balance);
 				require(ILendFMe(lendFMe).supply(chai, IERC20(chai).balanceOf(address(this))) == 0, "");
-			}
-			else
-				require(ILendFMe(lendFMe).supply(_token, IERC20(_token).balanceOf(address(this))) == 0, "");
+			} else if (_token == USDx) {
+
+				IUSR(USR).mint(address(this), _balance);
+				require(ILendFMe(lendFMe).supply(USR, IERC20(USR).balanceOf(address(this))) == 0, "");
+			} else
+				require(ILendFMe(lendFMe).supply(_token, _balance) == 0, "");
 		}
 	    return true;
 	}

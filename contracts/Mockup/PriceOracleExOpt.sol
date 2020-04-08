@@ -824,7 +824,10 @@ contract PriceOracle is Exponential {
         // require(readAsset != oldReadAsset, "setReaders: Old and new values cannot be the same.");
 
         readers[asset].asset = readAsset;
-        readers[asset].decimalsDifference = int(IERC20(asset).decimals() - IERC20(readAsset).decimals());
+        if (readAsset == address(0))
+            readers[asset].decimalsDifference = 0;
+        else
+            readers[asset].decimalsDifference = int(IERC20(asset).decimals() - IERC20(readAsset).decimals());
 
         emit ReaderPosted(asset, oldReadAsset, readAsset, readers[asset].decimalsDifference);
         return uint(OracleError.NO_ERROR);
