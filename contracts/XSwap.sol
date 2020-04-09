@@ -52,6 +52,7 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	mapping(address => mapping(address => bool)) public tradesDisable; // 1 tokenA = ? tokenB
 	mapping(address => mapping(address => uint)) public fee;   // fee from tokenA to tokenB
 	mapping(address => bool) public supportLending;
+	mapping(address => bool) public tokensEnable; // 1 tokenA = ? tokenB
 
 	constructor() public {
 	}
@@ -72,7 +73,6 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 
 	function swap(address _input, address _output, uint _inputAmount, address _receiver) public returns (bool) {
 		require(isOpen, "not open");
-		require(!tradesDisable[_input][_output], "invalid token address");
 
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
 		if(supportLending[_input]) {
@@ -114,7 +114,6 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 
 	function swapTo(address _input, address _output, uint _OutputAmount, address _receiver) public returns (bool) {
 		require(isOpen, "not open");
-		require(!tradesDisable[_input][_output], "invalid token address");
 
 		uint _inputAmount = getAmountByOutput(_input, _output, _OutputAmount);
 		require(_inputAmount > 0, "");
@@ -196,17 +195,11 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	}
 
 	function exchangeRate(address _input, address _output) public view returns (uint) {
-
-		if (tradesDisable[_input][_output] || tradesDisable[_output][_input])
-			return 0;
-		IPriceOracle _oracle = IPriceOracle(oracle);
-		uint _outputPrice = _oracle.assetPrices(_output);
-		if (_outputPrice == 0)
-			return 0;
 		uint _amount = getAmountByInput(_input, _output, 10 ** IERC20(_input).decimals());
+		if (_amount == 0)
+			return 0;
 
 		uint _decimals = IERC20(_output).decimals();
-
 		if (_decimals < 18)
 			return _amount.mul(10 ** (18 - _decimals));
 
@@ -214,7 +207,14 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	}
 
 	function getAmountByInput(address _input, address _output, uint _inputAmount) public view returns (uint) {
+
+		if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output])
+			return 0;
+
 		IPriceOracle _oracle = IPriceOracle(oracle);
+		if (_oracle.assetPrices(_output) == 0)
+			return 0;
+
 		uint _tokenAmount = _inputAmount
 			.mul(_oracle.assetPrices(_input))
 			.div(_oracle.assetPrices(_output))
@@ -224,10 +224,15 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	}
 
 	function getAmountByOutput(address _input, address _output, uint _OutputAmount) public view returns (uint) {
+
+		if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output])
+			return 0;
+
 		IPriceOracle _oracle = IPriceOracle(oracle);
+		if (_oracle.assetPrices(_input) == 0)
+			return 0;
 
 		uint _tokenAmount = _output == USDx ? divScale(_OutputAmount, OFFSET.sub(IUSR(USR).originationFee())) : _OutputAmount;
-
 		_tokenAmount = _tokenAmount
 			.mul(_oracle.assetPrices(_output))
 			.div(_oracle.assetPrices(_input))
@@ -324,6 +329,14 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 			ILendFMe(lendFMe).withdraw(_token, uint(-1));
 
 		return true;
+	}
+
+	function disableToken(address _token) external auth {
+		tokensEnable[_token] = false;
+	}
+
+	function enableToken(address _token) external auth {
+		tokensEnable[_token] = true;
 	}
 	
 	function disableTrade(address _input, address _output) external auth {
