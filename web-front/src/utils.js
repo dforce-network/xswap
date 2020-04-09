@@ -2,22 +2,6 @@
 let address_map = require('./abi/address_map.json');
 
 
-export const handle_approve_click = (that, XSwap_addr) => {
-  that.state.cur_send_contract.methods.approve(XSwap_addr, -1).send(
-    {
-      from: that.state.my_account,
-    }, (reject, res_hash) => {
-      if (res_hash) {
-        console.log(res_hash);
-      }
-      if (reject) {
-        console.log(reject);
-      }
-    }
-  )
-}
-
-
 export const swap_click = (that, input_addr, output_addr) => {
   if (!that.state.is_wap_enable) {
     console.log('i return u');
@@ -26,8 +10,11 @@ export const swap_click = (that, input_addr, output_addr) => {
 
   that.state.cur_send_contract.methods.allowance(that.state.my_account, address_map[that.state.net_type]['XSwap']).call((err, res_allowance) => {
     if (that.bn(res_allowance).gt(that.bn('0'))) {
-      that.state.XSwap.methods.trade(input_addr, output_addr, that.state.side_A_amount_real.toString())
-        .send({ from: that.state.my_account, }, (reject, res_hash) => {
+      that.state.XSwap.methods.swap(input_addr, output_addr, that.state.side_A_amount_real.toString())
+        .send({
+          from: that.state.my_account,
+          gas: 1000000
+        }, (reject, res_hash) => {
           if (res_hash) {
             console.log(res_hash);
             let timestamp = new Date().getTime();
@@ -55,8 +42,11 @@ export const swap_click = (that, input_addr, output_addr) => {
         }, (reject, res_hash) => {
           if (res_hash) {
             console.log(res_hash);
-            that.state.XSwap.methods.trade(input_addr, output_addr, that.state.side_A_amount_real.toString())
-              .send({ from: that.state.my_account, }, (reject, res_hash) => {
+            that.state.XSwap.methods.swap(input_addr, output_addr, that.state.side_A_amount_real.toString())
+              .send({
+                from: that.state.my_account,
+                gas: 1000000
+              }, (reject, res_hash) => {
                 if (res_hash) {
                   console.log(res_hash);
                   let timestamp = new Date().getTime();
@@ -86,20 +76,99 @@ export const swap_click = (that, input_addr, output_addr) => {
     }
   });
 }
+export const swapTo_click = (that, input_addr, output_addr) => {
+  if (!that.state.is_wap_enable) {
+    console.log('i return u');
+    return false;
+  }
+
+  that.state.cur_send_contract.methods.allowance(that.state.my_account, address_map[that.state.net_type]['XSwap']).call((err, res_allowance) => {
+    if (that.bn(res_allowance).gt(that.bn('0'))) {
+      that.state.XSwap.methods.swapTo(input_addr, output_addr, that.state.side_B_amount_real.toString())
+        .send({
+          from: that.state.my_account,
+          gas: 1000000
+        }, (reject, res_hash) => {
+          if (res_hash) {
+            console.log(res_hash);
+            let timestamp = new Date().getTime();
+            i_got_hash(
+              that,
+              that.state.my_account,
+              that.state.net_type,
+              that.state.cur_send_addr,
+              // format_bn(that.state.side_A_amount_real, that.state.cur_send_decimals, 2),
+              that.state.side_A_amount,
+              that.state.cur_recive_addr,
+              // that.state.side_B_amount,
+              format_bn(that.state.side_B_amount_real, that.state.cur_recive_decimals, 2),
+              res_hash,
+              timestamp,
+              'pendding'
+            );
+          }
+          if (reject) {
+            console.log(reject);
+          }
+        })
+    } else {
+      that.state.cur_send_contract.methods.approve(address_map[that.state.net_type]['XSwap'], -1).send(
+        {
+          from: that.state.my_account,
+        }, (reject, res_hash) => {
+          if (res_hash) {
+            console.log(res_hash);
+            that.state.XSwap.methods.swapTo(input_addr, output_addr, that.state.side_B_amount_real.toString())
+              .send({
+                from: that.state.my_account,
+                gas: 1000000
+              }, (reject, res_hash) => {
+                if (res_hash) {
+                  console.log(res_hash);
+                  let timestamp = new Date().getTime();
+                  i_got_hash(
+                    that,
+                    that.state.my_account,
+                    that.state.net_type,
+                    that.state.cur_send_addr,
+                    // format_bn(that.state.side_A_amount_real, that.state.cur_send_decimals, 2),
+                    that.state.side_A_amount,
+                    that.state.cur_recive_addr,
+                    format_bn(that.state.side_B_amount_real, that.state.cur_send_decimals, 2),
+                    // that.state.side_B_amount,
+                    res_hash,
+                    timestamp,
+                    'pendding'
+                  );
+                }
+                if (reject) {
+                  console.log(reject);
+                }
+              })
+          }
+          if (reject) {
+            console.log(reject);
+          }
+        }
+      )
+    }
+  });
+}
+
 
 export const get_exchange__get_fee = (that, input_addr, output_addr) => {
-  that.state.XSwap.methods.prices(input_addr, output_addr).call().then(res_exchange_price => {
-    console.log(res_exchange_price);
+  that.state.XSwap.methods.exchangeRate(input_addr, output_addr).call().then(res_exchange_price => {
+    console.log('cur_exchange: ', res_exchange_price);
     that.setState({
       cur_exchange: res_exchange_price
     });
   })
-  that.state.XSwap.methods.fee(input_addr, output_addr).call().then(res_exchange_fee => {
-    console.log(res_exchange_fee);
-    that.setState({
-      cur_fee: res_exchange_fee
-    });
-  })
+  // that.state.XSwap.methods.fee(input_addr, output_addr).call().then(res_exchange_fee => {
+  //   console.log(res_exchange_fee);
+  //   that.setState({
+  //     cur_fee: res_exchange_fee
+  //   });
+  // })
 }
 
 
@@ -127,19 +196,19 @@ export const get_data_first = (that, address_XSwap, input_addr, output_addr) => 
     }
   });
 
-  that.state.XSwap.methods.prices(input_addr, output_addr).call().then(res_exchange_price => {
-    console.log(res_exchange_price);
+  that.state.XSwap.methods.exchangeRate(input_addr, output_addr).call().then(res_exchange_price => {
+    console.log('cur_exchange: ', res_exchange_price);
     that.setState({
       cur_exchange: res_exchange_price
     })
   })
 
-  that.state.XSwap.methods.fee(input_addr, output_addr).call().then(res_exchange_fee => {
-    console.log(res_exchange_fee);
-    that.setState({
-      cur_fee: res_exchange_fee
-    })
-  })
+  // that.state.XSwap.methods.fee(input_addr, output_addr).call().then(res_exchange_fee => {
+  //   console.log(res_exchange_fee);
+  //   that.setState({
+  //     cur_fee: res_exchange_fee
+  //   })
+  // })
 }
 
 
@@ -326,6 +395,10 @@ export const handle_A_change = (value, that) => {
     return;
   }
 
+  that.setState({
+    is_from_right_input: false
+  });
+
   var amount_bn;
   var temp_value = value;
   if (temp_value.indexOf('.') > 0) {
@@ -345,16 +418,24 @@ export const handle_A_change = (value, that) => {
 
   console.log(amount_bn.toString());
 
-  var to_show_recive = amount_bn.sub(amount_bn.mul(that.bn(that.state.cur_fee)).div(that.bn(10 ** 18)))
-    .mul(that.bn(that.state.cur_exchange)).div(that.bn(10 ** 18));
-  to_show_recive = format_bn(to_show_recive, that.state.cur_send_decimals, 4);
+  that.state.XSwap.methods.getAmountByInput(
+    address_map[that.state.net_type][that.state.cur_send_addr],
+    address_map[that.state.net_type][that.state.cur_recive_addr],
+    amount_bn.toString()
+  ).call().then(res_i_can_get => {
+    console.log('i_can_get token: ', res_i_can_get);
+    that.setState({
+      side_B_amount: format_bn(res_i_can_get, that.state.cur_recive_decimals, 4)
+    });
+  })
 
-  console.log(to_show_recive);
+  // var to_show_recive = amount_bn.sub(amount_bn.mul(that.bn(that.state.cur_fee)).div(that.bn(10 ** 18)))
+  //   .mul(that.bn(that.state.cur_exchange)).div(that.bn(10 ** 18));
+  // to_show_recive = format_bn(to_show_recive, that.state.cur_send_decimals, 4);
 
   that.setState({
     side_A_amount: value,
-    side_A_amount_real: amount_bn,
-    side_B_amount: to_show_recive
+    side_A_amount_real: amount_bn
   });
 
   if (amount_bn.toString() === '0') {
@@ -386,6 +467,82 @@ export const handle_A_change = (value, that) => {
 
   // console.log(t_balance);
   compare(that, t_balance, amount_bn.toString());
+}
+
+
+export const handle_B_change = (value, that) => {
+  if (value.length > 18) {
+    return;
+  }
+
+  that.setState({
+    is_from_right_input: true
+  });
+
+  var amount_bn;
+  var temp_value = value;
+  if (temp_value.indexOf('.') > 0) {
+    var sub_num = temp_value.length - temp_value.indexOf('.') - 1;// 3
+    if (sub_num > that.state.cur_recive_decimals) {
+      that.setState({
+        side_B_amount: value,
+        is_wap_enable: false
+      });
+      return false;
+    }
+    temp_value = temp_value.substr(0, temp_value.indexOf('.')) + temp_value.substr(value.indexOf('.') + 1);// '123456'
+    amount_bn = that.bn(temp_value).mul(that.bn(10 ** (that.state.cur_recive_decimals - sub_num)));// bn_'123456'
+  } else {
+    amount_bn = that.bn(value).mul(that.bn(10 ** that.state.cur_recive_decimals));
+  }
+
+  console.log(amount_bn.toString());
+
+  that.state.XSwap.methods.getAmountByOutput(
+    address_map[that.state.net_type][that.state.cur_send_addr],
+    address_map[that.state.net_type][that.state.cur_recive_addr],
+    amount_bn.toString()
+  ).call().then(res_i_can_send => {
+    console.log('i_can_ send token: ', res_i_can_send);
+    that.setState({
+      side_A_amount: format_bn(res_i_can_send, that.state.cur_send_decimals, 4)
+    });
+
+    console.log(that.state.cur_send_addr);
+    var t_balance;
+    if (that.state.cur_send_addr === 'USDT') {
+      t_balance = that.state.my_balance_USDT;
+    } else if (that.state.cur_send_addr === 'USDx') {
+      t_balance = that.state.my_balance_USDx;
+    } else if (that.state.cur_send_addr === 'USDC') {
+      t_balance = that.state.my_balance_USDC;
+    } else if (that.state.cur_send_addr === 'TUSD') {
+      t_balance = that.state.my_balance_TUSD;
+    } else if (that.state.cur_send_addr === 'PAX') {
+      t_balance = that.state.my_balance_PAX;
+    } else if (that.state.cur_send_addr === 'DAI') {
+      t_balance = that.state.my_balance_DAI;
+    } else if (that.state.cur_send_addr === 'HBTC') {
+      t_balance = that.state.my_balance_HBTC;
+    } else if (that.state.cur_send_addr === 'imBTC') {
+      t_balance = that.state.my_balance_imBTC;
+    }
+
+    // console.log(t_balance);
+    compare(that, t_balance, res_i_can_send);
+  })
+
+  that.setState({
+    side_B_amount: value,
+    side_B_amount_real: amount_bn
+  });
+
+  if (amount_bn.toString() === '0') {
+    that.setState({
+      is_wap_enable: false
+    });
+    return false;
+  }
 }
 
 const compare = (that, my_balance, input_balance) => {

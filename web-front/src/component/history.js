@@ -164,7 +164,8 @@ export default class RecordBoard extends Component {
                                         <div className="history-item-right-bottom">
                                             <FormattedMessage id='send' />
                                             {' ' + format_num_to_K(item.send_amount) + ' '}
-                                            {item.send_token},
+                                            {item.send_token}
+                                            {', '}
                                             <FormattedMessage id='recive' />
                                             {' ' + format_num_to_K(item.recive_amount) + ' '}
                                             {item.recive_token}
