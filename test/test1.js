@@ -63,19 +63,19 @@ contract('test', function(accounts) {
         const showLiquidation = async function (note) {
             console.log("-------------------------------------------")
             console.log(note)
-            console.log("usdx liquadation: ", f18(await xSwap.getTokenLiquidation(usdx.address)))
-            console.log("usdc liquadation: ", f6(await xSwap.getTokenLiquidation(usdc.address)))
-            console.log("usdt liquadation: ", f6(await xSwap.getTokenLiquidation(usdt.address)))
-            console.log("tusd liquadation: ", f18(await xSwap.getTokenLiquidation(tusd.address)))
-            console.log("pax  liquadation: ", f18(await xSwap.getTokenLiquidation(pax.address)))
-            console.log("dai  liquadation: ", f18(await xSwap.getTokenLiquidation(dai.address)))
+            console.log("usdx liquadation: ", f18(await xSwap.getLiquidity(usdx.address)))
+            console.log("usdc liquadation: ", f6(await xSwap.getLiquidity(usdc.address)))
+            console.log("usdt liquadation: ", f6(await xSwap.getLiquidity(usdt.address)))
+            console.log("tusd liquadation: ", f18(await xSwap.getLiquidity(tusd.address)))
+            console.log("pax  liquadation: ", f18(await xSwap.getLiquidity(pax.address)))
+            console.log("dai  liquadation: ", f18(await xSwap.getLiquidity(dai.address)))
         }
 
         const showABLiquidation = async function (note) {
             console.log("-------------------------------------------")
             console.log(note)
-            console.log("usdx liquadation: ", f18(await xSwap.getTokenLiquidation(usdx.address)))
-            console.log("usdc liquadation: ", f6(await xSwap.getTokenLiquidation(usdc.address)))
+            console.log("usdx liquadation: ", f18(await xSwap.getLiquidity(usdx.address)))
+            console.log("usdc liquadation: ", f6(await xSwap.getLiquidity(usdc.address)))
         }
 
         const showContractBalance = async function () {
@@ -161,38 +161,38 @@ contract('test', function(accounts) {
         // 1. 1000 usdx to swap usdc
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showLiquidation("1. 1000 usdx to usdc")
 
         // 2. 1000 usdc change usdx
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showLiquidation("2. 1000 usdc to usdx")
 
         // 3. 1000 usdt to tusd
         tx = await usdt.mint(user1, d6(1000))
         tx = await usdt.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdt.address, tusd.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdt.address, tusd.address, d6(1000), user1, {from: user1})
         await showLiquidation("3. 1000 usdt to tusd")
 
         // 4. 1000 tusd to usdt
         tx = await tusd.mint(user1, d18(1000))
         tx = await tusd.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(tusd.address, usdt.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(tusd.address, usdt.address, d18(1000), user1, {from: user1})
         await showLiquidation("4. 1000 tusd to usdt")
 
         // 5. 1000 pax to dai
         tx = await pax.mint(user1, d18(1000))
         tx = await pax.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(pax.address, dai.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(pax.address, dai.address, d18(1000), user1, {from: user1})
         await showLiquidation("5. 1000 pax to dai")
         await showContractBalance()
 
         // 6. 1000 dai to pax
         tx = await dai.mint(user1, d18(1000))
         tx = await dai.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(dai.address, pax.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(dai.address, pax.address, d18(1000), user1, {from: user1})
         await showLiquidation("6. 1000 dai to pax")
         await showContractBalance()
 
@@ -213,10 +213,10 @@ contract('test', function(accounts) {
         tx = await priceOracle.setReaders(usdt.address, test.address)
         tx = await priceOracle.setReaders(dai.address, test.address)
 
-        // should fail if trade
+        // should fail if swap
         tx = await usdx.mint(user1, d18(100))
         try {
-            await xSwap.trade(usdx.address, usdc.address, d18(100), {from: user1})
+            await xSwap.swap(usdx.address, usdc.address, d18(100), user1, {from: user1})
             assert.fail('Expected revert not received');
         } catch (error) {
             const revertFound = error.message.search('revert') >= 0;
@@ -224,7 +224,7 @@ contract('test', function(accounts) {
         }
         tx = await usdc.mint(user1, d6(100))
         try {
-            await xSwap.trade(usdc.address, usdx.address, d6(100), {from: user1})
+            await xSwap.swap(usdc.address, usdx.address, d6(100), user1, {from: user1})
             assert.fail('Expected revert not received');
         } catch (error) {
             const revertFound = error.message.search('revert') >= 0;
@@ -281,42 +281,42 @@ contract('test', function(accounts) {
         // 10. 1000 usdx to swap usdc
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showLiquidation("10. 1000 usdx to usdc")
         await showContractBalance()
 
         // 11. 1000 usdc change usdx
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showLiquidation("11. 1000 usdc to usdx")
         await showContractBalance()
 
         // 12. 1000 usdt to tusd
         tx = await usdt.mint(user1, d6(1000))
         tx = await usdt.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdt.address, tusd.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdt.address, tusd.address, d6(1000), user1, {from: user1})
         await showLiquidation("12. 1000 usdt to tusd")
         await showContractBalance()
 
         // 13. 1000 tusd to usdt
         tx = await tusd.mint(user1, d18(1000))
         tx = await tusd.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(tusd.address, usdt.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(tusd.address, usdt.address, d18(1000), user1, {from: user1})
         await showLiquidation("13. 1000 tusd to usdt")
         await showContractBalance()
 
         // 14. 1000 pax to dai
         tx = await pax.mint(user1, d18(1000))
         tx = await pax.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(pax.address, dai.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(pax.address, dai.address, d18(1000), user1, {from: user1})
         await showLiquidation("14. 1000 pax to dai")
         await showContractBalance()
 
         // 15. 1000 dai to pax
         tx = await dai.mint(user1, d18(1000))
         tx = await dai.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(dai.address, pax.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(dai.address, pax.address, d18(1000), user1, {from: user1})
         await showLiquidation("15. 1000 dai to pax")
         await showContractBalance()
 
@@ -329,14 +329,14 @@ contract('test', function(accounts) {
         // 17. 1000 usdx to swap usdc
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showLiquidation("17. 1000 usdx to usdc")
         await showContractBalance()
 
         // 18. 1000 usdc change usdx
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showLiquidation("18. 1000 usdc to usdx")
         await showContractBalance()
 
@@ -344,7 +344,7 @@ contract('test', function(accounts) {
         tx = await xSwap.emergencyStop(0)
         tx = await usdx.mint(user1, d18(100))
         try {
-            await xSwap.trade(usdx.address, usdc.address, d18(100), {from: user1})
+            await xSwap.swap(usdx.address, usdc.address, d18(100), user1, {from: user1})
             assert.fail('Expected revert not received');
         } catch (error) {
             const revertFound = error.message.search('revert') >= 0;
@@ -352,7 +352,7 @@ contract('test', function(accounts) {
         }
         tx = await usdc.mint(user1, d6(100))
         try {
-            await xSwap.trade(usdc.address, usdx.address, d6(100), {from: user1})
+            await xSwap.swap(usdc.address, usdx.address, d6(100), user1, {from: user1})
             assert.fail('Expected revert not received');
         } catch (error) {
             const revertFound = error.message.search('revert') >= 0;
@@ -365,14 +365,14 @@ contract('test', function(accounts) {
         // 19. 1000 usdx to swap usdc
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showLiquidation("19. 1000 usdx to usdc")
         await showContractBalance()
 
         // 20. 1000 usdc change usdx
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showLiquidation("20. 1000 usdc to usdx")
         await showContractBalance()
 
@@ -422,7 +422,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("28. 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -431,7 +431,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)        
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showABLiquidation("29. 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -448,7 +448,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("30. 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -462,7 +462,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(100))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(100), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(100), user1, {from: user1})
         await showABLiquidation("31. 100 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -480,7 +480,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("33. after disable usdx lending, 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -493,7 +493,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(100))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(100), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(100), user1, {from: user1})
         await showABLiquidation("34. after disable usdx lending, 100 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -516,7 +516,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("35. after ratio reset, 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -529,7 +529,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showABLiquidation("36. after ratio reset, 1000 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -545,7 +545,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("37. after reset A/B fee to 0%, 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -558,7 +558,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showABLiquidation("38. after reset A/B fee to 0%, 1000 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -598,7 +598,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("43. 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -611,7 +611,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showABLiquidation("44. 1000 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -628,7 +628,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("45. after reset rate, 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -641,7 +641,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showABLiquidation("46. after reset rate, 1000 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -659,7 +659,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("48. 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -672,7 +672,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showABLiquidation("49. 1000 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -694,7 +694,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(909.090909), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(909.090909), user1, {from: user1})
         await showABLiquidation("50. after reset rate, 909.090909 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -707,7 +707,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(99.9000999), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(99.9000999), user1, {from: user1})
         await showABLiquidation("51. after reset rate, 99.9000999 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance)
@@ -723,7 +723,7 @@ contract('test', function(accounts) {
         userBalance = await usdc.balanceOf(user1)
         tx = await usdx.mint(user1, d18(1000))
         tx = await usdx.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdx.address, usdc.address, d18(1000), {from: user1})
+        tx = await xSwap.swap(usdx.address, usdc.address, d18(1000), user1, {from: user1})
         await showABLiquidation("52. after set fee to 0, 1000 usdx to usdc")
         await showABContractBalance()
         await userDiff(usdc, userBalance)
@@ -736,7 +736,7 @@ contract('test', function(accounts) {
         userBalance = await usdx.balanceOf(user1)
         tx = await usdc.mint(user1, d6(1000))
         tx = await usdc.approvex(xSwap.address, {from: user1})
-        tx = await xSwap.trade(usdc.address, usdx.address, d6(1000), {from: user1})
+        tx = await xSwap.swap(usdc.address, usdx.address, d6(1000), user1, {from: user1})
         await showABLiquidation("53.after set fee to 0, 1000 usdc to usdx")
         await showABContractBalance()
         await userDiff(usdx, userBalance) 
