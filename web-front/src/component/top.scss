@@ -18,7 +18,7 @@
         .top-right-connect {
             float: right;
             cursor: pointer;
-            width: 104px;
+            width: 124px;
             text-align: center;
             height: 30px;
             line-height: 30px;
@@ -28,6 +28,18 @@
             font-weight: 500;
             color: rgba(255, 255, 255, 1);
             margin-top: 20px;
+            position: relative;
+            padding-left: 5px;
+
+            .top-dot {
+                position: absolute;
+                width: 7px;
+                height: 7px;
+                // background-color: red;
+                border-radius: 50%;
+                left: 5px;
+                top: 12px;
+            }
         }
 
         .top-meun {

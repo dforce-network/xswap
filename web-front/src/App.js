@@ -1,46 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.scss';
-import _ from 'lodash';
 import Web3 from 'web3';
-
-
-import logo_lock from './images/lock.svg';
 import is_selected from './images/is_selected.svg';
 import exchange from './images/exchange.svg';
 import show_tips from './images/show-tips.svg';
-
-
-import BTC from './images/BTC.svg';
 import imBTC from './images/imBTC.svg';
-import HUBTC from './images/HBTC.svg';
 import HBTC from './images/HBTC.svg';
 import USDx from './images/USDx.svg';
-import UUDD from './images/UUDD.svg';
 import USDT from './images/USDT.svg';
 import WETH from './images/WETH.svg';
-// import telegram from './images/telegram.svg';
-// import twitter from './images/twitter.svg';
-// import medium from './images/medium.svg';
-// import up from './images/up.svg';
-import UUTT from './images/USDT.svg';
 import WBTC from './images/WBTC.svg';
 import DAI from './images/DAI.svg';
+import HUSD from './images/HUSD.svg';
+import BUSD from './images/BUSD.svg';
 // png
 import usdc from './images/usdc.png';
 import tusd from './images/tusd.png';
 import pax from './images/pax.png';
-
-
 // add i18n.
 import { IntlProvider, FormattedMessage } from 'react-intl';
 import en_US from './language/en_US.js';
 import zh_CN from './language/zh_CN';
-
-
 import History from './component/history';
 import Top from './component/top';
-
 import Twitter from './images/Twitter.svg';
 import Medium from './images/Medium.svg';
 import Reddit from './images/Reddit.svg';
@@ -51,10 +33,7 @@ import Telegram from './images/Telegram.svg';
 import erweima from './images/erweima.png';
 import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
-
-
 import {
-  get_allowance,
   get_my_balance,
   handle_A_change,
   handle_B_change,
@@ -66,8 +45,6 @@ import {
   handle_A_max,
   format_num_to_K
 } from './utils.js';
-
-
 let tokens_abi = require('./abi/tokensABI.json');
 let xSwap_abi = require('./abi/xSwapABI.json');
 let address_map = require('./abi/address_map.json');
@@ -81,34 +58,38 @@ export default class App extends React.Component {
       data_is_ok: false,
       token: {
         WETH: WETH,
-        UUDD: UUDD,
         imBTC: imBTC,
         USDT: USDT,
         USDx: USDx,
-        HUBTC: HUBTC,
         HBTC: HBTC,
         USDC: usdc,
         TUSD: tusd,
-        UUTT: UUTT,
         PAX: pax,
         WBTC: WBTC,
-        DAI: DAI
+        DAI: DAI,
+        WBTC: WBTC,
+        HUSD: HUSD,
+        BUSD: BUSD
       },
       decimals: {
+        HUSD: 18,
+        BUSD: 18,
         USDx: 18,
-        USDC: 6,
-        USDT: 6,
         TUSD: 18,
         PAX: 18,
         DAI: 18,
+        USDC: 6,
+        USDT: 6,
+        imBTC: 8,
         HBTC: 18,
-        imBTC: 8
+        WBTC: 8
       },
       cur_language: navigator.language === 'zh-CN' ? '中文' : 'English',
       show_left_more_token: false,
       cur_send_addr: 'USDT',
       cur_recive_addr: 'USDx',
-      is_stable_coin_send: true
+      is_stable_coin_send: true,
+      is_stable_coin_receive: true
     }
 
     this.new_web3 = window.new_web3 = new Web3(Web3.givenProvider || null);
@@ -118,11 +99,15 @@ export default class App extends React.Component {
     this.new_web3.eth.net.getNetworkType().then(
       (net_type) => {
         console.log(net_type);
-        let XSwap = new this.new_web3.eth.Contract(xSwap_abi, address_map[net_type]['XSwap']);
-        let USDx = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['USDx']);
-        let imBTC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['imBTC']);
-        let USDT = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['USDT']);
         let HBTC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['HBTC']);
+        let HUSD = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['HUSD']);
+        let BUSD = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['BUSD']);
+        let imBTC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['imBTC']);
+        let WBTC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['WBTC']);
+        let XSwap_stable = new this.new_web3.eth.Contract(xSwap_abi, address_map[net_type]['XSwap_stable']);
+        let XSwap_btc = new this.new_web3.eth.Contract(xSwap_abi, address_map[net_type]['XSwap_btc']);
+        let USDx = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['USDx']);
+        let USDT = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['USDT']);
         let USDC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['USDC']);
         let PAX = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['PAX']);
         let TUSD = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['TUSD']);
@@ -130,7 +115,8 @@ export default class App extends React.Component {
         console.log(' *** init contract finished *** ');
         this.setState({
           net_type: net_type,
-          XSwap: XSwap,
+          XSwap_stable: XSwap_stable,
+          XSwap_btc: XSwap_btc,
           USDx: USDx,
           imBTC: imBTC,
           USDT: USDT,
@@ -139,6 +125,9 @@ export default class App extends React.Component {
           PAX: PAX,
           TUSD: TUSD,
           DAI: DAI,
+          WBTC: WBTC,
+          HUSD: HUSD,
+          BUSD: BUSD,
           cur_send_contract: USDT,
           cur_recive_contract: USDx,
           cur_send_addr: 'USDT',
@@ -155,24 +144,42 @@ export default class App extends React.Component {
             }, () => {
               get_data_first(
                 this,
-                address_map[net_type]['XSwap'],
+                address_map[net_type]['XSwap_stable'],
                 address_map[this.state.net_type][this.state.cur_send_addr],
                 address_map[this.state.net_type][this.state.cur_recive_addr]
               );
-
-
-              get_allowance(this, address_map[net_type]['XSwap']);
               get_my_balance(this);
             })
           })
         })
       }
     )
+
+    // add accounts changed
+    if (window.ethereum.on) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        // console.log('accountsChanged: ', accounts[0]);
+        this.setState({
+          my_account: accounts[0],
+        }, () => {
+          get_data_first(
+            this,
+            address_map[this.state.net_type]['XSwap_stable'],
+            address_map[this.state.net_type][this.state.cur_send_addr],
+            address_map[this.state.net_type][this.state.cur_recive_addr]
+          );
+          get_my_balance(this);
+        })
+      });
+    }
   }
 
 
   change_send_addr = (token) => {
-    console.log(token);
+    // console.log(token);
+    var t_bool;
+    var t_cur_recive_addr;
+
     this.setState({
       show_left_more_token: false
     });
@@ -180,10 +187,50 @@ export default class App extends React.Component {
       return false;
     }
 
-    if (token === 'imBTC' || token === 'HBTC') {
-      this.setState({ is_stable_coin_send: false })
+    if (token === 'imBTC' || token === 'HBTC' || token === 'WBTC') {
+      this.setState({
+        is_stable_coin_send: false,
+        is_stable_coin_receive: false
+      });
+      t_bool = false;
+      if (token === 'imBTC') {
+        this.setState({
+          cur_recive_addr: 'HBTC',
+          cur_recive_decimals: 18,
+          cur_recive_contract: this.state.HBTC
+        });
+        t_cur_recive_addr = 'HBTC';
+      } else if (token === 'HBTC' || token === 'WBTC') {
+        this.setState({
+          cur_recive_addr: 'imBTC',
+          cur_recive_decimals: 8,
+          cur_recive_contract: this.state.imBTC
+        })
+        t_cur_recive_addr = 'imBTC';
+      }
     } else {
-      this.setState({ is_stable_coin_send: true })
+      if (!this.state.is_stable_coin_send) {
+        if (token === 'USDT' || token === 'USDC' || token === 'PAX' || token === 'TUSD' || token === 'DAI' || token === 'HUSD' || token === 'BUSD') {
+          this.setState({
+            cur_recive_addr: 'USDx',
+            cur_recive_decimals: 18,
+            cur_recive_contract: this.state.USDx
+          })
+          t_cur_recive_addr = 'USDx';
+        } else {
+          this.setState({
+            cur_recive_addr: 'USDT',
+            cur_recive_decimals: 6,
+            cur_recive_contract: this.state.USDT
+          })
+          t_cur_recive_addr = 'USDT';
+        }
+      }
+      this.setState({
+        is_stable_coin_send: true,
+        is_stable_coin_receive: true
+      });
+      t_bool = true;
     }
 
     if (token === 'imBTC') {
@@ -192,17 +239,23 @@ export default class App extends React.Component {
         cur_send_decimals: 8,
         cur_send_contract: this.state.imBTC
       })
-    } else if (token === 'USDx') {
-      this.setState({
-        cur_send_addr: 'USDx',
-        cur_send_decimals: 18,
-        cur_send_contract: this.state.USDx
-      })
     } else if (token === 'HBTC') {
       this.setState({
         cur_send_addr: 'HBTC',
         cur_send_decimals: 18,
         cur_send_contract: this.state.HBTC
+      })
+    } else if (token === 'WBTC') {
+      this.setState({
+        cur_send_addr: 'WBTC',
+        cur_send_decimals: 8,
+        cur_send_contract: this.state.WBTC
+      })
+    } else if (token === 'USDx') {
+      this.setState({
+        cur_send_addr: 'USDx',
+        cur_send_decimals: 18,
+        cur_send_contract: this.state.USDx
       })
     } else if (token === 'DAI') {
       this.setState({
@@ -234,16 +287,34 @@ export default class App extends React.Component {
         cur_send_decimals: 6,
         cur_send_contract: this.state.USDC
       })
+    } else if (token === 'HUSD') {
+      this.setState({
+        cur_send_addr: 'HUSD',
+        cur_send_decimals: 18,
+        cur_send_contract: this.state.HUSD
+      })
+    } else if (token === 'BUSD') {
+      this.setState({
+        cur_send_addr: 'BUSD',
+        cur_send_decimals: 18,
+        cur_send_contract: this.state.BUSD
+      })
     }
 
+    if (!t_cur_recive_addr) {
+      t_cur_recive_addr = this.state.cur_recive_addr;
+    }
     get_exchange__get_fee(
       this,
       address_map[this.state.net_type][token],
-      address_map[this.state.net_type][this.state.cur_recive_addr]
+      address_map[this.state.net_type][t_cur_recive_addr],
+      t_bool
     );
   }
   change_recive_addr = (token) => {
-    console.log(token);
+    // console.log(token);
+    var t_bool;
+
     this.setState({
       show_right_more_token: false
     });
@@ -251,10 +322,12 @@ export default class App extends React.Component {
       return false;
     }
 
-    if (token === 'imBTC' || token === 'HBTC') {
+    if (token === 'imBTC' || token === 'HBTC' || token === 'WBTC') {
       this.setState({ is_stable_coin_receive: false })
+      t_bool = false;
     } else {
       this.setState({ is_stable_coin_receive: true })
+      t_bool = true;
     }
 
     if (token === 'imBTC') {
@@ -263,17 +336,23 @@ export default class App extends React.Component {
         cur_recive_decimals: 8,
         cur_recive_contract: this.state.imBTC
       })
-    } else if (token === 'USDx') {
-      this.setState({
-        cur_recive_addr: 'USDx',
-        cur_recive_decimals: 18,
-        cur_recive_contract: this.state.USDx
-      })
     } else if (token === 'HBTC') {
       this.setState({
         cur_recive_addr: 'HBTC',
         cur_recive_decimals: 18,
         cur_recive_contract: this.state.HBTC
+      })
+    } else if (token === 'WBTC') {
+      this.setState({
+        cur_recive_addr: 'WBTC',
+        cur_recive_decimals: 8,
+        cur_recive_contract: this.state.WBTC
+      })
+    } else if (token === 'USDx') {
+      this.setState({
+        cur_recive_addr: 'USDx',
+        cur_recive_decimals: 18,
+        cur_recive_contract: this.state.USDx
       })
     } else if (token === 'DAI') {
       this.setState({
@@ -305,15 +384,31 @@ export default class App extends React.Component {
         cur_recive_decimals: 6,
         cur_recive_contract: this.state.USDC
       })
+    } else if (token === 'HUSD') {
+      this.setState({
+        cur_recive_addr: 'HUSD',
+        cur_recive_decimals: 18,
+        cur_recive_contract: this.state.HUSD
+      })
+    } else if (token === 'BUSD') {
+      this.setState({
+        cur_recive_addr: 'BUSD',
+        cur_recive_decimals: 18,
+        cur_recive_contract: this.state.BUSD
+      })
     }
 
     get_exchange__get_fee(
       this,
       address_map[this.state.net_type][this.state.cur_send_addr],
-      address_map[this.state.net_type][token]
+      address_map[this.state.net_type][token],
+      t_bool
     );
   }
   change_send_to_recive = () => {
+    console.log('side_A_amount:', this.state.side_A_amount);
+    console.log('side_B_amount:', this.state.side_B_amount);
+
     var t_cur_recive_addr = this.state.cur_recive_addr;
     var t_cur_recive_decimals = this.state.cur_recive_decimals;
     var t_cur_recive_contract = this.state.cur_recive_contract;
@@ -328,6 +423,14 @@ export default class App extends React.Component {
         cur_send_addr: t_cur_recive_addr,
         cur_send_decimals: t_cur_recive_decimals,
         cur_send_contract: t_cur_recive_contract
+      }, () => {
+        if (!this.state.side_B_amount) {
+          return false;
+        }
+        handle_A_change(this.state.side_B_amount, this);
+        this.setState({
+          side_B_amount: ''
+        });
       })
     })
   }
@@ -360,6 +463,24 @@ export default class App extends React.Component {
     }
   }
 
+  connect = () => {
+    console.log('click connected');
+    this.new_web3.givenProvider.enable().then(res_accounts => {
+      this.setState({
+        my_account: res_accounts[0]
+      }, () => {
+        // console.log('connected: ', this.state.my_account)
+        get_data_first(
+          this,
+          address_map[this.state.net_type]['XSwap_stable'],
+          address_map[this.state.net_type][this.state.cur_send_addr],
+          address_map[this.state.net_type][this.state.cur_recive_addr]
+        );
+        get_my_balance(this);
+      })
+    })
+  }
+
 
 
   render() {
@@ -368,6 +489,7 @@ export default class App extends React.Component {
         <Top
           account={this.state.my_account}
           net_type={this.state.net_type}
+          fn_connect={() => { this.connect() }}
         />
 
         <div className="App">
@@ -384,18 +506,6 @@ export default class App extends React.Component {
                 this.state.cur_send_addr === 'USDT' &&
                 <span className="my-balance">
                   {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'imBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'HBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
                 </span>
               }
               {
@@ -422,6 +532,36 @@ export default class App extends React.Component {
                   {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
                 </span>
               }
+              {
+                this.state.cur_send_addr === 'WBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_WBTC ? format_num_to_K(format_bn(this.state.my_balance_WBTC, this.state.decimals.WBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_send_addr === 'imBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_send_addr === 'HBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_send_addr === 'HUSD' &&
+                <span className="my-balance">
+                  {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_send_addr === 'BUSD' &&
+                <span className="my-balance">
+                  {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
+                </span>
+              }
             </div>
 
             <div className="token-balance-right">
@@ -436,18 +576,6 @@ export default class App extends React.Component {
                 this.state.cur_recive_addr === 'USDT' &&
                 <span className="my-balance">
                   {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'imBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'HBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
                 </span>
               }
               {
@@ -474,6 +602,36 @@ export default class App extends React.Component {
                   {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
                 </span>
               }
+              {
+                this.state.cur_recive_addr === 'imBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'HBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'WBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_WBTC ? format_num_to_K(format_bn(this.state.my_balance_WBTC, this.state.decimals.WBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'HUSD' &&
+                <span className="my-balance">
+                  {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'BUSD' &&
+                <span className="my-balance">
+                  {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
+                </span>
+              }
             </div>
             <div className="clear"></div>
           </div>
@@ -485,7 +643,7 @@ export default class App extends React.Component {
                 onClick={() => { this.setState({ show_left_more_token: !this.state.show_left_more_token }) }}
                 onBlur={() => { this.change_send_addr('kong') }}
               >
-                <img className="token-logo" src={this.state.token[this.state.cur_send_addr]} />
+                <img alt='' className="token-logo" src={this.state.token[this.state.cur_send_addr]} />
                 <span className="token-title">
                   {this.state.cur_send_addr}
                 </span>
@@ -495,117 +653,149 @@ export default class App extends React.Component {
                   this.state.show_left_more_token &&
                   <div className="more-tokens">
                     {
+                      this.state.cur_recive_addr !== 'USDx' &&
+                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDx') }}>
+                        <img alt='' className="token-logo" src={this.state.token.USDx} />
+                        <span className="token-title">
+                          USDx
+                      </span>
+                        {
+                          this.state.cur_send_addr === 'USDx' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+                    {
                       this.state.cur_recive_addr !== 'USDT' &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDT') }}>
-                        <img className="token-logo" src={this.state.token.USDT} />
+                        <img alt='' className="token-logo" src={this.state.token.USDT} />
                         <span className="token-title">
                           USDT
                           <i>(Tether USD)</i>
                         </span>
                         {
                           this.state.cur_send_addr === 'USDT' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
+                    {
+                      this.state.cur_recive_addr !== 'DAI' &&
+                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('DAI') }}>
+                        <img alt='' className="token-logo" src={this.state.token.DAI} />
+                        <span className="token-title">
+                          DAI
+                        </span>
+                        {
+                          this.state.cur_send_addr === 'DAI' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+                    {
+                      this.state.cur_recive_addr !== 'HUSD' &&
+                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('HUSD') }}>
+                        <img alt='' className="token-logo" src={this.state.token.HUSD} />
+                        <span className="token-title">
+                          HUSD
+                        </span>
+                        {
+                          this.state.cur_send_addr === 'HUSD' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+                    {
+                      this.state.cur_recive_addr !== 'BUSD' &&
+                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('BUSD') }}>
+                        <img alt='' className="token-logo" src={this.state.token.BUSD} />
+                        <span className="token-title">
+                          BUSD
+                        </span>
+                        {
+                          this.state.cur_send_addr === 'BUSD' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
                     {
                       this.state.cur_recive_addr !== 'USDC' &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDC') }}>
-                        <img className="token-logo" src={this.state.token.USDC} />
+                        <img alt='' className="token-logo" src={this.state.token.USDC} />
                         <span className="token-title">
                           USDC
                           <i>(USD Coin)</i>
                         </span>
                         {
                           this.state.cur_send_addr === 'USDC' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
                     {
                       this.state.cur_recive_addr !== 'PAX' &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('PAX') }}>
-                        <img className="token-logo" src={this.state.token.PAX} />
+                        <img alt='' className="token-logo" src={this.state.token.PAX} />
                         <span className="token-title">
                           PAX
                           <i>(Paxos Standard)</i>
                         </span>
                         {
                           this.state.cur_send_addr === 'PAX' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
                     {
                       this.state.cur_recive_addr !== 'TUSD' &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('TUSD') }}>
-                        <img className="token-logo" src={this.state.token.TUSD} />
+                        <img alt='' className="token-logo" src={this.state.token.TUSD} />
                         <span className="token-title">
                           TUSD
                           <i>(True USD)</i>
                         </span>
                         {
                           this.state.cur_send_addr === 'TUSD' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
-                    {
-                      this.state.cur_recive_addr !== 'DAI' &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('DAI') }}>
-                        <img className="token-logo" src={this.state.token.DAI} />
-                        <span className="token-title">
-                          DAI
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'DAI' &&
-                          <img className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-
-                    {
-                      this.state.cur_recive_addr !== 'USDx' &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDx') }}>
-                        <img className="token-logo" src={this.state.token.USDx} />
-                        <span className="token-title">
-                          USDx
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'USDx' &&
-                          <img className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-
                     {
                       this.state.cur_recive_addr !== 'imBTC' &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('imBTC') }}>
-                        <img className="token-logo" src={this.state.token.imBTC} />
+                        <img alt='' className="token-logo" src={this.state.token.imBTC} />
                         <span className="token-title">
                           imBTC
                         </span>
                         {
                           this.state.cur_send_addr === 'imBTC' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
                     {
                       this.state.cur_recive_addr !== 'HBTC' &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('HBTC') }}>
-                        <img className="token-logo" src={this.state.token.HBTC} />
+                        <img alt='' className="token-logo" src={this.state.token.HBTC} />
                         <span className="token-title">
                           HBTC
                         </span>
                         {
                           this.state.cur_send_addr === 'HBTC' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+                    {
+                      this.state.cur_recive_addr !== 'WBTC' &&
+                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('WBTC') }}>
+                        <img alt='' className="token-logo" src={this.state.token.WBTC} />
+                        <span className="token-title">
+                          WBTC
+                        </span>
+                        {
+                          this.state.cur_send_addr === 'WBTC' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
@@ -641,14 +831,23 @@ export default class App extends React.Component {
           </div>
 
           <div className="exchange">
-            <img className='exc' src={exchange} onClick={() => { this.change_send_to_recive() }} />
+            <img alt='' className='exc' src={exchange} onClick={() => { this.change_send_to_recive() }} />
 
             {
               this.state.is_Insufficient_Balance &&
               <div className='show-tips'>
-                <img className='show-tips-img' src={show_tips} />
+                <img alt='' className='show-tips-img' src={show_tips} />
                 <span className='show-tips-text'>
                   Insufficient Balance
+                </span>
+              </div>
+            }
+            {
+              this.state.is_liquidity_limit &&
+              <div className='show-tips'>
+                <img alt='' className='show-tips-img' src={show_tips} />
+                <span className='show-tips-text'>
+                  Insufficient Liquidity
                 </span>
               </div>
             }
@@ -661,7 +860,7 @@ export default class App extends React.Component {
                 onClick={() => { this.setState({ show_right_more_token: !this.state.show_right_more_token }) }}
                 onBlur={() => { this.change_recive_addr('kong') }}
               >
-                <img className="token-logo" src={this.state.token[this.state.cur_recive_addr]} />
+                <img alt='' className="token-logo" src={this.state.token[this.state.cur_recive_addr]} />
                 <span className="token-title">
                   {this.state.cur_recive_addr}
                 </span>
@@ -671,117 +870,149 @@ export default class App extends React.Component {
                   this.state.show_right_more_token &&
                   <div className="more-tokens">
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDT') &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDT') }}>
-                        <img className="token-logo" src={this.state.token.USDT} />
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDx') &&
+                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDx') }}>
+                        <img alt='' className="token-logo" src={this.state.token.USDx} />
                         <span className="token-title">
-                          USDT
-                          <i>(Tether USD)</i>
-                        </span>
+                          USDx
+                      </span>
                         {
-                          this.state.cur_recive_addr === 'USDT' &&
-                          <img className="token-isselected" src={is_selected} />
+                          this.state.cur_recive_addr === 'USDx' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
+                    {
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDT') &&
+                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDT') }}>
+                        <img alt='' className="token-logo" src={this.state.token.USDT} />
+                        <span className="token-title">
+                          USDT
+                        <i>(Tether USD)</i>
+                        </span>
+                        {
+                          this.state.cur_recive_addr === 'USDT' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+                    {
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'DAI') &&
+                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('DAI') }}>
+                        <img alt='' className="token-logo" src={this.state.token.DAI} />
+                        <span className="token-title">
+                          DAI
+                      </span>
+                        {
+                          this.state.cur_recive_addr === 'DAI' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+                    {
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HUSD') &&
+                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HUSD') }}>
+                        <img alt='' className="token-logo" src={this.state.token.HUSD} />
+                        <span className="token-title">
+                          HUSD
+                      </span>
+                        {
+                          this.state.cur_recive_addr === 'HUSD' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+                    {
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'BUSD') &&
+                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('BUSD') }}>
+                        <img alt='' className="token-logo" src={this.state.token.BUSD} />
+                        <span className="token-title">
+                          BUSD
+                      </span>
+                        {
+                          this.state.cur_recive_addr === 'BUSD' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
                     {
                       (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDC') &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDC') }}>
-                        <img className="token-logo" src={this.state.token.USDC} />
+                        <img alt='' className="token-logo" src={this.state.token.USDC} />
                         <span className="token-title">
                           USDC
                           <i>(USD Coin)</i>
                         </span>
                         {
                           this.state.cur_recive_addr === 'USDC' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
                     {
                       (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'PAX') &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('PAX') }}>
-                        <img className="token-logo" src={this.state.token.PAX} />
+                        <img alt='' className="token-logo" src={this.state.token.PAX} />
                         <span className="token-title">
                           PAX
                           <i>(Paxos Standard)</i>
                         </span>
                         {
                           this.state.cur_recive_addr === 'PAX' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
                     {
                       (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'TUSD') &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('TUSD') }}>
-                        <img className="token-logo" src={this.state.token.TUSD} />
+                        <img alt='' className="token-logo" src={this.state.token.TUSD} />
                         <span className="token-title">
                           TUSD
                         <i>(True USD)</i>
                         </span>
                         {
                           this.state.cur_recive_addr === 'TUSD' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'DAI') &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('DAI') }}>
-                        <img className="token-logo" src={this.state.token.DAI} />
-                        <span className="token-title">
-                          DAI
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'DAI' &&
-                          <img className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDx') &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDx') }}>
-                        <img className="token-logo" src={this.state.token.USDx} />
-                        <span className="token-title">
-                          USDx
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'USDx' &&
-                          <img className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-
                     {
                       (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'imBTC') &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('imBTC') }}>
-                        <img className="token-logo" src={this.state.token.imBTC} />
+                        <img alt='' className="token-logo" src={this.state.token.imBTC} />
                         <span className="token-title">
                           imBTC
                         </span>
                         {
                           this.state.cur_recive_addr === 'imBTC' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
-
                     {
                       (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HBTC') &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HBTC') }}>
-                        <img className="token-logo" src={this.state.token.HBTC} />
+                        <img alt='' className="token-logo" src={this.state.token.HBTC} />
                         <span className="token-title">
                           HBTC
                         </span>
                         {
                           this.state.cur_recive_addr === 'HBTC' &&
-                          <img className="token-isselected" src={is_selected} />
+                          <img alt='' className="token-isselected" src={is_selected} />
+                        }
+                      </div>
+                    }
+                    {
+                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'WBTC') &&
+                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('WBTC') }}>
+                        <img alt='' className="token-logo" src={this.state.token.WBTC} />
+                        <span className="token-title">
+                          WBTC
+                        </span>
+                        {
+                          this.state.cur_recive_addr === 'WBTC' &&
+                          <img alt='' className="token-isselected" src={is_selected} />
                         }
                       </div>
                     }
@@ -829,7 +1060,7 @@ export default class App extends React.Component {
                 </a>
               </div>
               <div className="foot-item-content">
-                <a href='' target='_blank'>
+                <a href='' target='_blank' rel="noopener noreferrer">
                   FAQ
                 </a>
               </div>
@@ -865,7 +1096,7 @@ export default class App extends React.Component {
                   this.state.cur_language === '中文' &&
                   <span className='weixin-img-wrap'>
                     <img alt='' src={weixin} />
-                    <img className='weixin-img' alt='' src={erweima} />
+                    <img alt='' className='weixin-img' src={erweima} />
                   </span>
                 }
               </div>
@@ -877,7 +1108,7 @@ export default class App extends React.Component {
                   }
                 </div>
                 <span className='fixed-img'>
-                  <img src={arrow_u} alt='' />
+                  <img alt='' src={arrow_u} />
                 </span>
                 <div className='fixed2'>
                   <ul>

@@ -98,7 +98,7 @@ export default class RecordBoard extends Component {
     componentDidMount = () => {
         this.load_history();
         var timer = setInterval(() => {
-            console.log(this.props.account, this.props.net_type);
+            // console.log(this.props.account, this.props.net_type);
             if (this.props.account && this.props.net_type) {
                 clearInterval(timer);
                 this.load_history();
@@ -108,7 +108,7 @@ export default class RecordBoard extends Component {
 
     componentWillReceiveProps = (nextProps) => {
         if (this.props.load_new_history !== nextProps.load_new_history) {
-            console.log(this.props.load_new_history !== nextProps.load_new_history, 'i will load new history.');
+            // console.log(this.props.load_new_history !== nextProps.load_new_history, 'i will load new history.');
             this.load_history();
         }
     }
@@ -132,7 +132,7 @@ export default class RecordBoard extends Component {
                     {
                         (this.state.RecentTransactions).length === 0 &&
                         <div className="no-history">
-                            <img src={no_history} />
+                            <img alt='' src={no_history} />
                             <span className="no-history-span">
                                 <FormattedMessage id='no_history' />
                             </span>
@@ -149,7 +149,7 @@ export default class RecordBoard extends Component {
                             return (
                                 <div className="history-item" key={i}>
                                     <div className="history-item-left">
-                                        <img className={item.status === 'pendding' ? 'rotate' : ''} src={img_src} />
+                                        <img alt='' className={item.status === 'pendding' ? 'rotate' : ''} src={img_src} />
                                     </div>
 
                                     <div className="history-item-right">
