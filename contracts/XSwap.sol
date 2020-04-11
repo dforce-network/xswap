@@ -54,6 +54,8 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	mapping(address => bool) public supportLending;
 	mapping(address => bool) public tokensEnable; // 1 tokenA = ? tokenB
 
+	event Swap(address indexed from, address indexed to, address indexed input, uint inputAmount, address output, uint outputAmount);
+
 	constructor() public {
 	}
 
@@ -104,18 +106,19 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 				require(ILendFMe(lendFMe).withdraw(_output, _amountToUser) == 0, "");
 		}
 		require(doTransferOut(_output, _receiver, _amountToUser));
+		emit Swap(msg.sender, _receiver, _input, _inputAmount, _output, _amountToUser);
 		return true;
 	}
 
 	// swap _inputAmount of _input token to get _output token
-	function swapTo(address _input, address _output, uint _OutputAmount) public returns (bool) {
-		return swapTo(_input, _output, _OutputAmount, msg.sender);
+	function swapTo(address _input, address _output, uint _outputAmount) public returns (bool) {
+		return swapTo(_input, _output, _outputAmount, msg.sender);
 	}
 
-	function swapTo(address _input, address _output, uint _OutputAmount, address _receiver) public returns (bool) {
+	function swapTo(address _input, address _output, uint _outputAmount, address _receiver) public returns (bool) {
 		require(isOpen, "not open");
 
-		uint _inputAmount = getAmountByOutput(_input, _output, _OutputAmount);
+		uint _inputAmount = getAmountByOutput(_input, _output, _outputAmount);
 		require(_inputAmount > 0, "");
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
 		if(supportLending[_input]) {
@@ -134,16 +137,17 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		if(supportLending[_output]) {
 			if (_output == dai) {
 
-				require(ILendFMe(lendFMe).withdraw(chai, getChaiAmount(_OutputAmount)) == 0, ""); //assume chai / dai >= 1;
-				IChai(chai).draw(address(this), _OutputAmount);
+				require(ILendFMe(lendFMe).withdraw(chai, getChaiAmount(_outputAmount)) == 0, ""); //assume chai / dai >= 1;
+				IChai(chai).draw(address(this), _outputAmount);
 			} else if (_output == USDx) {
 
-				require(ILendFMe(lendFMe).withdraw(USR, getUSRAmount(_OutputAmount)) == 0, ""); //assume USR / USDx >= 1;
-				IUSR(USR).redeem(address(this), _OutputAmount);
+				require(ILendFMe(lendFMe).withdraw(USR, getUSRAmount(_outputAmount)) == 0, ""); //assume USR / USDx >= 1;
+				IUSR(USR).redeem(address(this), _outputAmount);
 			} else
-				require(ILendFMe(lendFMe).withdraw(_output, _OutputAmount) == 0, "");
+				require(ILendFMe(lendFMe).withdraw(_output, _outputAmount) == 0, "");
 		}
-		require(doTransferOut(_output, _receiver, _OutputAmount));
+		require(doTransferOut(_output, _receiver, _outputAmount));
+		emit Swap(msg.sender, _receiver, _input, _inputAmount, _output, _outputAmount);
 		return true;
 	}
 
@@ -223,7 +227,7 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		return _output == USDx ? _tokenAmount.mul(OFFSET.sub(IUSR(USR).originationFee())) / OFFSET : _tokenAmount;
 	}
 
-	function getAmountByOutput(address _input, address _output, uint _OutputAmount) public view returns (uint) {
+	function getAmountByOutput(address _input, address _output, uint _outputAmount) public view returns (uint) {
 
 		if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output])
 			return 0;
@@ -232,7 +236,7 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		if (_oracle.assetPrices(_input) == 0)
 			return 0;
 
-		uint _tokenAmount = _output == USDx ? divScale(_OutputAmount, OFFSET.sub(IUSR(USR).originationFee())) : _OutputAmount;
+		uint _tokenAmount = _output == USDx ? divScale(_outputAmount, OFFSET.sub(IUSR(USR).originationFee())) : _outputAmount;
 		_tokenAmount = _tokenAmount
 			.mul(_oracle.assetPrices(_output))
 			.div(_oracle.assetPrices(_input))
