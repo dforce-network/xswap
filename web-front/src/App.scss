@@ -85,12 +85,13 @@
           top: 60px;
           width: 316px;
           background-color: #fff;
-          overflow: hidden;
+          overflow: auto;
           z-index: 9999;
           left: 0;
           border: 1px solid rgba(229, 230, 242, 1);
           box-shadow: 0px 8px 30px 0px rgba(7, 2, 55, 0.08);
           border-radius: 4px;
+          max-height: 325px;
 
           .more-tokens-token {
             position: relative;

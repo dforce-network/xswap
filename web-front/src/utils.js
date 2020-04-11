@@ -174,8 +174,8 @@ export const get_exchange__get_fee = (that, input_addr, output_addr, t_bool) => 
       cur_exchange: res_exchange_price
     });
   })
-  t_Contract.methods.getLiquidity(input_addr).call().then(res_getLiquidity => {
-    console.log('cur_liquidaty: ', res_getLiquidity);
+  t_Contract.methods.getLiquidity(output_addr).call().then(res_getLiquidity => {
+    console.log('cur liquidaty: ', res_getLiquidity);
     that.setState({
       cur_liquidaty: res_getLiquidity
     });
@@ -214,8 +214,8 @@ export const get_data_first = (that, address_XSwap, input_addr, output_addr) => 
     })
   })
 
-  that.state.XSwap_stable.methods.getLiquidity(input_addr).call().then(res_getLiquidity => {
-    console.log('cur_liquidaty: ', res_getLiquidity);
+  that.state.XSwap_stable.methods.getLiquidity(output_addr).call().then(res_getLiquidity => {
+    console.log('cur liquidaty: ', res_getLiquidity);
     that.setState({
       cur_liquidaty: res_getLiquidity
     });
