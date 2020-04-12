@@ -8,6 +8,8 @@ const en_US = {
     no_history: 'No History',
     Contract_US: 'Contact',
     Community: 'Community',
-    Resource: 'Resource'
+    Resource: 'Resource',
+    Insufficient_Balance: 'Insufficient Balance',
+    Insufficient_Liquidity: 'Insufficient Liquidity'
 }
 export default en_US;

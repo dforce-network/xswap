@@ -150,3 +150,23 @@
         color: rgba(37, 33, 82, 1);
     }
 }
+
+
+// 
+@media screen and (max-width: 767px) {
+    .top {
+        display: none;
+    }
+
+    .slogon {
+        // background-color: red;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        text-align: center;
+        margin-top: 70px;
+        margin-bottom: 40px;
+        font-size: 36px;
+        font-weight: bold;
+        color: rgba(37, 33, 82, 1);
+    }
+}

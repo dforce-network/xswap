@@ -409,7 +409,7 @@ export const handle_A_max = (that) => {
 
   that.setState({
     is_wap_enable: true,
-    side_A_amount: format_bn(t_balance, that.state.cur_send_decimals, that.state.cur_send_decimals),
+    side_A_amount: format_bn(t_balance, that.state.cur_send_decimals, 4),
     side_A_amount_real: that.bn(t_balance),
     is_Insufficient_Balance: false
   });
@@ -418,6 +418,17 @@ export const handle_A_max = (that) => {
 
 export const handle_A_change = (value, that) => {
   if (value.length > 18) {
+    return;
+  }
+  if (value === '') {
+    // console.log('nullllllllll');
+    that.setState({
+      side_A_amount: '',
+      is_wap_enable: false,
+      side_B_amount: '',
+      is_Insufficient_Balance: false,
+      is_liquidity_limit: false
+    });
     return;
   }
 
@@ -501,6 +512,17 @@ export const handle_A_change = (value, that) => {
 
 export const handle_B_change = (value, that) => {
   if (value.length > 18) {
+    return;
+  }
+  if (value === '') {
+    // console.log('nullllllllll');
+    that.setState({
+      side_A_amount: '',
+      is_wap_enable: false,
+      side_B_amount: '',
+      is_Insufficient_Balance: false,
+      is_liquidity_limit: false
+    });
     return;
   }
 

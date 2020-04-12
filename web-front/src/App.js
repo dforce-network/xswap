@@ -72,7 +72,7 @@ export default class App extends React.Component {
         BUSD: BUSD
       },
       decimals: {
-        HUSD: 18,
+        HUSD: 8,
         BUSD: 18,
         USDx: 18,
         TUSD: 18,
@@ -169,6 +169,7 @@ export default class App extends React.Component {
             address_map[this.state.net_type][this.state.cur_recive_addr]
           );
           get_my_balance(this);
+          this.setState({ load_new_history: Math.random() });
         })
       });
     }
@@ -181,7 +182,9 @@ export default class App extends React.Component {
     var t_cur_recive_addr;
 
     this.setState({
-      show_left_more_token: false
+      show_left_more_token: false,
+      side_A_amount: '',
+      side_B_amount: ''
     });
     if (token === 'kong') {
       return false;
@@ -316,7 +319,9 @@ export default class App extends React.Component {
     var t_bool;
 
     this.setState({
-      show_right_more_token: false
+      show_right_more_token: false,
+      side_A_amount: '',
+      side_B_amount: ''
     });
     if (token === 'kong') {
       return false;
@@ -406,8 +411,15 @@ export default class App extends React.Component {
     );
   }
   change_send_to_recive = () => {
-    console.log('side_A_amount:', this.state.side_A_amount);
-    console.log('side_B_amount:', this.state.side_B_amount);
+    // console.log('side_A_amount:', this.state.side_A_amount);
+    // console.log('side_B_amount:', this.state.side_B_amount);
+    this.setState({
+      side_A_amount: '',
+      is_wap_enable: false,
+      side_B_amount: '',
+      is_Insufficient_Balance: false,
+      is_liquidity_limit: false
+    })
 
     var t_cur_recive_addr = this.state.cur_recive_addr;
     var t_cur_recive_decimals = this.state.cur_recive_decimals;
@@ -424,13 +436,13 @@ export default class App extends React.Component {
         cur_send_decimals: t_cur_recive_decimals,
         cur_send_contract: t_cur_recive_contract
       }, () => {
-        if (!this.state.side_B_amount) {
-          return false;
-        }
-        handle_A_change(this.state.side_B_amount, this);
-        this.setState({
-          side_B_amount: ''
-        });
+        // if (!this.state.side_B_amount) {
+        //   return false;
+        // }
+        // handle_A_change(this.state.side_B_amount, this);
+        // this.setState({
+        //   side_B_amount: ''
+        // });
       })
     })
   }
@@ -838,7 +850,7 @@ export default class App extends React.Component {
               <div className='show-tips'>
                 <img alt='' className='show-tips-img' src={show_tips} />
                 <span className='show-tips-text'>
-                  Insufficient Balance
+                  <FormattedMessage id='Insufficient_Balance' />
                 </span>
               </div>
             }
@@ -847,7 +859,7 @@ export default class App extends React.Component {
               <div className='show-tips'>
                 <img alt='' className='show-tips-img' src={show_tips} />
                 <span className='show-tips-text'>
-                  Insufficient Liquidity
+                  <FormattedMessage id='Insufficient_Liquidity' />
                 </span>
               </div>
             }
