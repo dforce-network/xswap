@@ -293,7 +293,7 @@ export default class App extends React.Component {
     } else if (token === 'HUSD') {
       this.setState({
         cur_send_addr: 'HUSD',
-        cur_send_decimals: 18,
+        cur_send_decimals: 8,
         cur_send_contract: this.state.HUSD
       })
     } else if (token === 'BUSD') {
@@ -392,7 +392,7 @@ export default class App extends React.Component {
     } else if (token === 'HUSD') {
       this.setState({
         cur_recive_addr: 'HUSD',
-        cur_recive_decimals: 18,
+        cur_recive_decimals: 8,
         cur_recive_contract: this.state.HUSD
       })
     } else if (token === 'BUSD') {
