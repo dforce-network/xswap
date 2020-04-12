@@ -465,6 +465,32 @@ export const handle_A_change = (value, that) => {
     that.setState({
       side_B_amount: format_bn(res_i_can_get, that.state.cur_recive_decimals, 4)
     });
+
+    var t_balance;
+    if (that.state.cur_send_addr === 'USDT') {
+      t_balance = that.state.my_balance_USDT;
+    } else if (that.state.cur_send_addr === 'USDx') {
+      t_balance = that.state.my_balance_USDx;
+    } else if (that.state.cur_send_addr === 'USDC') {
+      t_balance = that.state.my_balance_USDC;
+    } else if (that.state.cur_send_addr === 'TUSD') {
+      t_balance = that.state.my_balance_TUSD;
+    } else if (that.state.cur_send_addr === 'PAX') {
+      t_balance = that.state.my_balance_PAX;
+    } else if (that.state.cur_send_addr === 'DAI') {
+      t_balance = that.state.my_balance_DAI;
+    } else if (that.state.cur_send_addr === 'HBTC') {
+      t_balance = that.state.my_balance_HBTC;
+    } else if (that.state.cur_send_addr === 'imBTC') {
+      t_balance = that.state.my_balance_imBTC;
+    } else if (that.state.cur_send_addr === 'WBTC') {
+      t_balance = that.state.my_balance_WBTC;
+    } else if (that.state.cur_send_addr === 'HUSD') {
+      t_balance = that.state.my_balance_HUSD;
+    } else if (that.state.cur_send_addr === 'BUSD') {
+      t_balance = that.state.my_balance_BUSD;
+    }
+    compare(that, t_balance, res_i_can_get, that.state.cur_liquidaty);
   })
 
   that.setState({
@@ -478,35 +504,6 @@ export const handle_A_change = (value, that) => {
     });
     return false;
   }
-
-  console.log(that.state.cur_send_addr);
-
-  var t_balance;
-  if (that.state.cur_send_addr === 'USDT') {
-    t_balance = that.state.my_balance_USDT;
-  } else if (that.state.cur_send_addr === 'USDx') {
-    t_balance = that.state.my_balance_USDx;
-  } else if (that.state.cur_send_addr === 'USDC') {
-    t_balance = that.state.my_balance_USDC;
-  } else if (that.state.cur_send_addr === 'TUSD') {
-    t_balance = that.state.my_balance_TUSD;
-  } else if (that.state.cur_send_addr === 'PAX') {
-    t_balance = that.state.my_balance_PAX;
-  } else if (that.state.cur_send_addr === 'DAI') {
-    t_balance = that.state.my_balance_DAI;
-  } else if (that.state.cur_send_addr === 'HBTC') {
-    t_balance = that.state.my_balance_HBTC;
-  } else if (that.state.cur_send_addr === 'imBTC') {
-    t_balance = that.state.my_balance_imBTC;
-  } else if (that.state.cur_send_addr === 'WBTC') {
-    t_balance = that.state.my_balance_WBTC;
-  } else if (that.state.cur_send_addr === 'HUSD') {
-    t_balance = that.state.my_balance_HUSD;
-  } else if (that.state.cur_send_addr === 'BUSD') {
-    t_balance = that.state.my_balance_BUSD;
-  }
-
-  compare(that, t_balance, amount_bn.toString(), that.state.cur_liquidaty);
 }
 
 
@@ -586,7 +583,7 @@ export const handle_B_change = (value, that) => {
       t_balance = that.state.my_balance_BUSD;
     }
 
-    compare(that, t_balance, res_i_can_send, that.state.cur_liquidaty);
+    compare_receive(that, res_i_can_send, t_balance, amount_bn.toString(), that.state.cur_liquidaty);
   })
 
   that.setState({
@@ -602,6 +599,36 @@ export const handle_B_change = (value, that) => {
   }
 }
 
+const compare_receive = (that, i_can_send, my_balance, receive_balance, liquidity_amount) => {
+  if (that.bn(i_can_send).gt(that.bn(my_balance))) {
+    console.log('no such balance');
+    that.setState({
+      is_wap_enable: false,
+      is_Insufficient_Balance: true,
+      is_liquidity_limit: false
+    });
+  } else {
+    console.log('u can swap');
+    that.setState({
+      is_wap_enable: true,
+      is_Insufficient_Balance: false
+    }, () => {
+      if (that.bn(receive_balance).gt(that.bn(liquidity_amount))) {
+        console.log('liquidity limit');
+        that.setState({
+          is_wap_enable: false,
+          is_liquidity_limit: true
+        });
+      } else {
+        console.log('u can swap');
+        that.setState({
+          is_wap_enable: true,
+          is_liquidity_limit: false
+        });
+      }
+    });
+  }
+}
 const compare = (that, my_balance, input_balance, liquidity_amount) => {
   if (that.bn(input_balance).gt(that.bn(my_balance))) {
     console.log('no such balance');

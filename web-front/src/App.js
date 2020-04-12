@@ -191,7 +191,9 @@ export default class App extends React.Component {
     this.setState({
       show_left_more_token: false,
       side_A_amount: '',
-      side_B_amount: ''
+      side_B_amount: '',
+      is_Insufficient_Balance: false,
+      is_liquidity_limit: false
     });
     if (token === 'kong') {
       return false;
@@ -328,7 +330,9 @@ export default class App extends React.Component {
     this.setState({
       show_right_more_token: false,
       side_A_amount: '',
-      side_B_amount: ''
+      side_B_amount: '',
+      is_Insufficient_Balance: false,
+      is_liquidity_limit: false
     });
     if (token === 'kong') {
       return false;
