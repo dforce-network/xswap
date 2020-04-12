@@ -10,6 +10,7 @@ const zh_CN = {
     Community: '社区',
     Resource: 'Resource',
     Insufficient_Balance: '余额不足',
-    Insufficient_Liquidity: '流动性不足'
+    Insufficient_Liquidity: '流动性不足',
+    balance: '余额'
 }
 export default zh_CN;

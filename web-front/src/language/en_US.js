@@ -10,6 +10,7 @@ const en_US = {
     Community: 'Community',
     Resource: 'Resource',
     Insufficient_Balance: 'Insufficient Balance',
-    Insufficient_Liquidity: 'Insufficient Liquidity'
+    Insufficient_Liquidity: 'Insufficient Liquidity',
+    balance: 'Balance'
 }
 export default en_US;

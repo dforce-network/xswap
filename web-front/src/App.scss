@@ -261,10 +261,22 @@
       // background-color: green;
 
       .my-balance {
-        width: 200px;
+        // width: 200px;
         // background-color: green;
         float: right;
         text-align: right;
+      }
+
+      .my-balance-title {
+        // width: 200px;
+        // background-color: green;
+        float: right;
+        text-align: right;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(89, 88, 105, 1);
+        padding-top: 1px;
+        margin-right: 3px;
       }
     }
 
@@ -273,10 +285,22 @@
       width: 316px;
 
       .my-balance {
-        width: 200px;
+        // width: 200px;
         // background-color: green;
         float: right;
         text-align: right;
+      }
+
+      .my-balance-title {
+        // width: 200px;
+        // background-color: green;
+        float: right;
+        text-align: right;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(89, 88, 105, 1);
+        padding-top: 1px;
+        margin-right: 3px;
       }
     }
   }

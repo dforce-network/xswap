@@ -161,6 +161,11 @@ export default class App extends React.Component {
         // console.log('accountsChanged: ', accounts[0]);
         this.setState({
           my_account: accounts[0],
+          side_A_amount: '',
+          is_wap_enable: false,
+          side_B_amount: '',
+          is_Insufficient_Balance: false,
+          is_liquidity_limit: false
         }, () => {
           get_data_first(
             this,
@@ -169,7 +174,9 @@ export default class App extends React.Component {
             address_map[this.state.net_type][this.state.cur_recive_addr]
           );
           get_my_balance(this);
-          this.setState({ load_new_history: Math.random() });
+          this.setState({
+            load_new_history: Math.random()
+          });
         })
       });
     }
@@ -443,6 +450,13 @@ export default class App extends React.Component {
         // this.setState({
         //   side_B_amount: ''
         // });
+        get_exchange__get_fee(
+          this,
+          address_map[this.state.net_type][this.state.cur_send_addr],
+          address_map[this.state.net_type][this.state.cur_recive_addr],
+          (this.state.cur_send_addr === 'imBTC' || this.state.cur_send_addr === 'HBTC' || this.state.cur_send_addr === 'WBTC') ?
+            false : true
+        );
       })
     })
   }
@@ -574,6 +588,9 @@ export default class App extends React.Component {
                   {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
                 </span>
               }
+              <span className="my-balance-title">
+                <FormattedMessage id='balance' />:
+              </span>
             </div>
 
             <div className="token-balance-right">
@@ -644,6 +661,9 @@ export default class App extends React.Component {
                   {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
                 </span>
               }
+              <span className="my-balance-title">
+                <FormattedMessage id='balance' />:
+              </span>
             </div>
             <div className="clear"></div>
           </div>
