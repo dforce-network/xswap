@@ -54,7 +54,7 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	mapping(address => bool) public supportLending;
 	mapping(address => bool) public tokensEnable; // 1 tokenA = ? tokenB
 
-	event Swap(address indexed from, address indexed to, address indexed input, uint inputAmount, address output, uint outputAmount);
+	event Swap(address from, address to, address input, uint inputAmount, address output, uint outputAmount);
 
 	constructor() public {
 	}
