@@ -838,6 +838,7 @@ contract PriceOracle is Exponential {
 
         address oldReadAsset = readers[asset].asset;
         // require(readAsset != oldReadAsset, "setReaders: Old and new values cannot be the same.");
+        require(readAsset != asset, "setReaders: asset and readAsset cannot be the same.");
 
         readers[asset].asset = readAsset;
         if (readAsset == address(0))
