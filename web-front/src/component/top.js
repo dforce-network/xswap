@@ -4,7 +4,7 @@ import "./top.scss";
 import { IntlProvider, FormattedMessage } from 'react-intl';
 import en_US from '../language/en_US.js';
 import zh_CN from '../language/zh_CN';
-import logo_xswap from '../images/logo-xswap.svg';
+import logo_xswap from '../images/logo-dforce.svg';
 import arrow_down from '../images/arrow-down.svg';
 
 
