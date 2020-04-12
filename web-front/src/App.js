@@ -157,28 +157,36 @@ export default class App extends React.Component {
 
     // add accounts changed
     if (window.ethereum.on) {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        // console.log('accountsChanged: ', accounts[0]);
-        this.setState({
-          my_account: accounts[0],
-          side_A_amount: '',
-          is_wap_enable: false,
-          side_B_amount: '',
-          is_Insufficient_Balance: false,
-          is_liquidity_limit: false
-        }, () => {
-          get_data_first(
-            this,
-            address_map[this.state.net_type]['XSwap_stable'],
-            address_map[this.state.net_type][this.state.cur_send_addr],
-            address_map[this.state.net_type][this.state.cur_recive_addr]
-          );
-          get_my_balance(this);
+      this.new_web3.eth.net.getNetworkType().then(
+        (net_type) => {
           this.setState({
-            load_new_history: Math.random()
-          });
-        })
-      });
+            net_type: net_type
+          }, () => {
+            window.ethereum.on('accountsChanged', (accounts) => {
+              // console.log('accountsChanged: ', accounts[0]);
+              this.setState({
+                my_account: accounts[0],
+                side_A_amount: '',
+                is_wap_enable: false,
+                side_B_amount: '',
+                is_Insufficient_Balance: false,
+                is_liquidity_limit: false
+              }, () => {
+                get_data_first(
+                  this,
+                  address_map[this.state.net_type]['XSwap_stable'],
+                  address_map[this.state.net_type][this.state.cur_send_addr],
+                  address_map[this.state.net_type][this.state.cur_recive_addr]
+                );
+                get_my_balance(this);
+                this.setState({
+                  load_new_history: Math.random()
+                });
+              })
+            });
+          })
+        }
+      )
     }
   }
 
@@ -476,6 +484,10 @@ export default class App extends React.Component {
     }, 1000 * 5);
   }
   before_swap_click = () => {
+    if (!this.state.side_A_amount) {
+      return false;
+    }
+
     if (this.state.is_from_right_input) {
       console.log('*** swapTo ***');
       swapTo_click(

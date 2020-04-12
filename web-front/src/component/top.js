@@ -56,7 +56,7 @@ export default class top extends Component {
                                         <a href='https://www.lendf.me/' target='_blank' rel="noopener noreferrer">
                                             <span className='title'>LendfMe</span>
                                         </a>
-                                        <span className='details'>Lend and Borrow with Incredible Interests</span>
+                                        <span className='details'>Lend and Borrow</span>
                                     </li>
                                 </ul>
                             </div>

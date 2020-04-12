@@ -7,6 +7,9 @@ export const swap_click = (that, input_addr, output_addr) => {
     console.log('i return u');
     return false;
   }
+  that.setState({
+    is_wap_enable: false
+  })
 
   var t_str_xswap = that.state.is_stable_coin_send ? 'XSwap_stable' : 'XSwap_btc';
   var t_obj_xswap = that.state.is_stable_coin_send ? that.state.XSwap_stable : that.state.XSwap_btc;
@@ -33,9 +36,17 @@ export const swap_click = (that, input_addr, output_addr) => {
               timestamp,
               'pendding'
             );
+            that.setState({
+              is_wap_enable: true,
+              side_A_amount: '',
+              side_B_amount: ''
+            })
           }
           if (reject) {
             console.log(reject);
+            that.setState({
+              is_wap_enable: true
+            })
           }
         })
     } else {
@@ -65,14 +76,25 @@ export const swap_click = (that, input_addr, output_addr) => {
                     timestamp,
                     'pendding'
                   );
+                  that.setState({
+                    is_wap_enable: true,
+                    side_A_amount: '',
+                    side_B_amount: ''
+                  })
                 }
                 if (reject) {
                   console.log(reject);
+                  that.setState({
+                    is_wap_enable: true
+                  })
                 }
               })
           }
           if (reject) {
             console.log(reject);
+            that.setState({
+              is_wap_enable: true
+            })
           }
         }
       )
@@ -84,6 +106,9 @@ export const swapTo_click = (that, input_addr, output_addr) => {
     console.log('i return u');
     return false;
   }
+  that.setState({
+    is_wap_enable: false
+  })
 
   var t_str_xswap = that.state.is_stable_coin_send ? 'XSwap_stable' : 'XSwap_btc';
   var t_obj_xswap = that.state.is_stable_coin_send ? that.state.XSwap_stable : that.state.XSwap_btc;
@@ -112,9 +137,17 @@ export const swapTo_click = (that, input_addr, output_addr) => {
               timestamp,
               'pendding'
             );
+            that.setState({
+              is_wap_enable: true,
+              side_A_amount: '',
+              side_B_amount: ''
+            })
           }
           if (reject) {
             console.log(reject);
+            that.setState({
+              is_wap_enable: true
+            })
           }
         })
     } else {
@@ -133,27 +166,30 @@ export const swapTo_click = (that, input_addr, output_addr) => {
                   console.log(res_hash);
                   let timestamp = new Date().getTime();
                   i_got_hash(
-                    that,
-                    that.state.my_account,
-                    that.state.net_type,
-                    that.state.cur_send_addr,
-                    // format_bn(that.state.side_A_amount_real, that.state.cur_send_decimals, 2),
-                    that.state.side_A_amount,
-                    that.state.cur_recive_addr,
-                    format_bn(that.state.side_B_amount_real, that.state.cur_send_decimals, 2),
-                    // that.state.side_B_amount,
-                    res_hash,
-                    timestamp,
-                    'pendding'
+                    that, that.state.my_account, that.state.net_type,
+                    that.state.cur_send_addr, that.state.side_A_amount,
+                    that.state.cur_recive_addr, format_bn(that.state.side_B_amount_real, that.state.cur_send_decimals, 2),
+                    res_hash, timestamp, 'pendding'
                   );
+                  that.setState({
+                    is_wap_enable: true,
+                    side_A_amount: '',
+                    side_B_amount: ''
+                  })
                 }
                 if (reject) {
                   console.log(reject);
+                  that.setState({
+                    is_wap_enable: true
+                  })
                 }
               })
           }
           if (reject) {
             console.log(reject);
+            that.setState({
+              is_wap_enable: true
+            })
           }
         }
       )
@@ -490,7 +526,7 @@ export const handle_A_change = (value, that) => {
     } else if (that.state.cur_send_addr === 'BUSD') {
       t_balance = that.state.my_balance_BUSD;
     }
-    compare(that, t_balance, res_i_can_get, that.state.cur_liquidaty);
+    compare(that, t_balance, amount_bn.toString(), res_i_can_get, that.state.cur_liquidaty);
   })
 
   that.setState({
@@ -629,12 +665,13 @@ const compare_receive = (that, i_can_send, my_balance, receive_balance, liquidit
     });
   }
 }
-const compare = (that, my_balance, input_balance, liquidity_amount) => {
+const compare = (that, my_balance, input_balance, i_can_get, liquidity_amount) => {
   if (that.bn(input_balance).gt(that.bn(my_balance))) {
     console.log('no such balance');
     that.setState({
       is_wap_enable: false,
-      is_Insufficient_Balance: true
+      is_Insufficient_Balance: true,
+      is_liquidity_limit: false
     });
   } else {
     console.log('u can swap');
@@ -642,7 +679,7 @@ const compare = (that, my_balance, input_balance, liquidity_amount) => {
       is_wap_enable: true,
       is_Insufficient_Balance: false
     }, () => {
-      if (that.bn(input_balance).gt(that.bn(liquidity_amount))) {
+      if (that.bn(i_can_get).gt(that.bn(liquidity_amount))) {
         console.log('liquidity limit');
         that.setState({
           is_wap_enable: false,
