@@ -3,6 +3,7 @@ import './App.scss';
 import Web3 from 'web3';
 import is_selected from './images/is_selected.svg';
 import exchange from './images/exchange.svg';
+import exchange_mob from './images/exchange_mob.svg';
 import show_tips from './images/show-tips.svg';
 import imBTC from './images/imBTC.svg';
 import HBTC from './images/HBTC.svg';
@@ -13,6 +14,9 @@ import WBTC from './images/WBTC.svg';
 import DAI from './images/DAI.svg';
 import HUSD from './images/HUSD.svg';
 import BUSD from './images/BUSD.svg';
+import logo_xswap from './images/logo-dforce.svg';
+import close from './images/close.svg';
+import close_new from './images/close-new.svg';
 // png
 import usdc from './images/usdc.png';
 import tusd from './images/tusd.png';
@@ -33,6 +37,7 @@ import Telegram from './images/Telegram.svg';
 import erweima from './images/erweima.png';
 import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
+import arrow_d from './images/arrow_d.svg';
 import {
   get_my_balance,
   handle_A_change,
@@ -89,7 +94,8 @@ export default class App extends React.Component {
       cur_send_addr: 'USDT',
       cur_recive_addr: 'USDx',
       is_stable_coin_send: true,
-      is_stable_coin_receive: true
+      is_stable_coin_receive: true,
+      showonly: false
     }
 
     this.new_web3 = window.new_web3 = new Web3(Web3.givenProvider || null);
@@ -528,14 +534,78 @@ export default class App extends React.Component {
   render() {
     return (
       <IntlProvider locale={'en'} messages={this.state.cur_language === '中文' ? zh_CN : en_US} >
+        {/* mobile tips */}
+        <div className={this.state.showonly ? 'mobile-only' : 'disn'}>
+          <div className='wrap-mob'>
+            <div className='only-left'>
+              <img src={logo_xswap} alt='' />
+            </div>
+            <div className='only-right'>
+              <img src={close_new} alt='' onClick={() => { this.setState({ showonly: false }) }} />
+            </div>
+            <div className='clear'></div>
+          </div>
+          <div className='only-kong'></div>
+
+          <h1>
+            {/* <FormattedMessage id='Protocols' /> */}
+            dForce Stablecoin
+            <span>
+              <img src={this.state.meun1 ? arrow_u : arrow_d} onClick={() => { this.setState({ meun1: !this.state.meun1 }) }} />
+            </span>
+          </h1>
+          <div className={this.state.meun1 ? 'meun1' : 'only1px'}>
+            <div className='m-item'>
+              <a href='https://usdx.dforce.network/' target='_blank' rel="noopener noreferrer">
+                <span className='title'>USDx</span>
+              </a>
+              <span className='details'>Portal</span>
+            </div>
+
+            <div className='m-item'>
+              <a href='https://dip001.dforce.network/' target='_blank' rel="noopener noreferrer">
+                <span className='title'>DIP001</span>
+              </a>
+              <span className='details'>Collateral lending dashboard</span>
+            </div>
+          </div>
+
+
+          <h1>
+            {/* <FormattedMessage id='Developers' /> */}
+            Yield Market
+            <span>
+              <img src={this.state.meun2 ? arrow_u : arrow_d} onClick={() => { this.setState({ meun2: !this.state.meun2 }) }} />
+            </span>
+          </h1>
+          <div className={this.state.meun2 ? 'meun1' : 'only1px'}>
+            <div className='m-item'>
+              <a href='https://www.lendf.me/' target='_blank' rel="noopener noreferrer">
+                <span className='title'>LendfMe</span>
+              </a>
+              <span className='details'>Lend and Borrow</span>
+            </div>
+          </div>
+        </div>
+
+
+        <div className='wrap-mob'>
+          <div className='only-left'>
+            <img src={logo_xswap} alt='' />
+          </div>
+          <div className='only-right'>
+            <img src={close} alt='' onClick={() => { this.setState({ showonly: true }) }} />
+          </div>
+          <div className='clear'></div>
+        </div>
         <Top
           account={this.state.my_account}
           net_type={this.state.net_type}
           fn_connect={() => { this.connect() }}
         />
-
         <div className="App">
-          <div className="token-balance">
+          {/* left */}
+          <div className="other-tokens float-left">
             <div className="token-balance-left">
               <FormattedMessage id='send' />
               {
@@ -609,83 +679,6 @@ export default class App extends React.Component {
               </span>
             </div>
 
-            <div className="token-balance-right">
-              <FormattedMessage id='recive' />
-              {
-                this.state.cur_recive_addr === 'USDx' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDx ? format_num_to_K(format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'USDT' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'USDC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDC ? format_num_to_K(format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'PAX' &&
-                <span className="my-balance">
-                  {this.state.my_balance_PAX ? format_num_to_K(format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'TUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_TUSD ? format_num_to_K(format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'DAI' &&
-                <span className="my-balance">
-                  {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'imBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'HBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'WBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_WBTC ? format_num_to_K(format_bn(this.state.my_balance_WBTC, this.state.decimals.WBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'HUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'BUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
-                </span>
-              }
-              <span className="my-balance-title">
-                <FormattedMessage id='balance' />:
-              </span>
-            </div>
-            <div className="clear"></div>
-          </div>
-
-          {/* left */}
-          <div className="other-tokens float-left">
             <div className="other-tokens-left">
               <button
                 onClick={() => { this.setState({ show_left_more_token: !this.state.show_left_more_token }) }}
@@ -880,6 +873,7 @@ export default class App extends React.Component {
 
           <div className="exchange">
             <img alt='' className='exc' src={exchange} onClick={() => { this.change_send_to_recive() }} />
+            <img alt='' className='exc_mob' src={exchange_mob} onClick={() => { this.change_send_to_recive() }} />
 
             {
               this.state.is_Insufficient_Balance &&
@@ -903,6 +897,79 @@ export default class App extends React.Component {
 
           {/* right */}
           <div className="other-tokens float-right">
+            <div className="token-balance-left">
+              <FormattedMessage id='recive' />
+              {
+                this.state.cur_recive_addr === 'USDx' &&
+                <span className="my-balance">
+                  {this.state.my_balance_USDx ? format_num_to_K(format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'USDT' &&
+                <span className="my-balance">
+                  {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'USDC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_USDC ? format_num_to_K(format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'PAX' &&
+                <span className="my-balance">
+                  {this.state.my_balance_PAX ? format_num_to_K(format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'TUSD' &&
+                <span className="my-balance">
+                  {this.state.my_balance_TUSD ? format_num_to_K(format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'DAI' &&
+                <span className="my-balance">
+                  {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'imBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'HBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'WBTC' &&
+                <span className="my-balance">
+                  {this.state.my_balance_WBTC ? format_num_to_K(format_bn(this.state.my_balance_WBTC, this.state.decimals.WBTC, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'HUSD' &&
+                <span className="my-balance">
+                  {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
+                </span>
+              }
+              {
+                this.state.cur_recive_addr === 'BUSD' &&
+                <span className="my-balance">
+                  {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
+                </span>
+              }
+              <span className="my-balance-title">
+                <FormattedMessage id='balance' />:
+              </span>
+            </div>
+
             <div className="other-tokens-left">
               <button
                 onClick={() => { this.setState({ show_right_more_token: !this.state.show_right_more_token }) }}
@@ -1103,12 +1170,12 @@ export default class App extends React.Component {
                 <FormattedMessage id='Resource' />
               </div>
               <div className="foot-item-content">
-                <a href='' target='_blank' rel="noopener noreferrer">
+                <a href='https://github.com/dforce-network/xswap.git' target='_blank' rel="noopener noreferrer">
                   GitHub
                 </a>
               </div>
               <div className="foot-item-content">
-                <a href='' target='_blank' rel="noopener noreferrer">
+                <a href='https://github.com/dforce-network/xswap.git' target='_blank' rel="noopener noreferrer">
                   FAQ
                 </a>
               </div>

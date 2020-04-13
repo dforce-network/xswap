@@ -133,10 +133,13 @@
 // 
 @media screen and (max-width: 767px) {
     .history-title {
-        margin-bottom: 10px;
+        padding-bottom: 10px;
         font-size: 14px;
         font-weight: 500;
         color: rgba(37, 33, 82, 1);
+        // background-color: red;
+        width: 94%;
+        margin: 0 auto;
     }
 
     .history {
@@ -187,6 +190,8 @@
                 padding-left: 10px;
                 padding-top: 12px;
                 font-weight: 500;
+                // background-color: red;
+                max-width: 85%;
 
                 .history-item-right-top {
                     font-size: 12px;

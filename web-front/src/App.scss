@@ -1,9 +1,18 @@
+$totalwidth: 94vw;
+
 .clear {
   clear: both;
 }
 
 // > 768
 @media screen and (min-width: 768px) {
+
+  .wrap-mob,
+  .mobile-only,
+  .disn {
+    display: none;
+  }
+
   .App {
     width: 710px;
     margin: 0 auto;
@@ -17,6 +26,33 @@
     position: relative;
     border: 1px solid rgba(229, 230, 242, 1);
     border-radius: 5px;
+
+    .token-balance-left {
+      position: absolute;
+      width: 316px;
+      // background-color: green;
+      top: -20px;
+      font-size: 14px;
+
+      .my-balance {
+        // width: 200px;
+        // background-color: green;
+        float: right;
+        text-align: right;
+      }
+
+      .my-balance-title {
+        // width: 200px;
+        // background-color: green;
+        float: right;
+        text-align: right;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(89, 88, 105, 1);
+        padding-top: 1px;
+        margin-right: 3px;
+      }
+    }
 
     .other-tokens-left {
       float: left;
@@ -184,6 +220,10 @@
       cursor: pointer;
     }
 
+    img.exc_mob {
+      display: none;
+    }
+
     .show-tips {
       position: absolute;
       top: 80px;
@@ -255,30 +295,7 @@
     font-weight: 500;
     color: rgba(37, 33, 82, 1);
 
-    .token-balance-left {
-      float: left;
-      width: 316px;
-      // background-color: green;
 
-      .my-balance {
-        // width: 200px;
-        // background-color: green;
-        float: right;
-        text-align: right;
-      }
-
-      .my-balance-title {
-        // width: 200px;
-        // background-color: green;
-        float: right;
-        text-align: right;
-        font-size: 12px;
-        font-weight: 400;
-        color: rgba(89, 88, 105, 1);
-        padding-top: 1px;
-        margin-right: 3px;
-      }
-    }
 
     .token-balance-right {
       float: right;
@@ -465,6 +482,105 @@
 
 // 
 @media screen and (max-width: 767px) {
+  .mobile-only {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 9999;
+    background: #fff;
+
+    .only-kong {
+      height: 30px;
+    }
+
+    h1 {
+      width: 100%;
+      margin-top: 20px;
+      font-size: 16px;
+      color: rgba(7, 2, 55, 1);
+      padding-left: 10px;
+      padding-right: 15px;
+
+      span {
+        float: right;
+
+        img {
+          width: 14px;
+        }
+      }
+    }
+
+    .only1px {
+      height: 1px;
+      overflow: hidden;
+      // transition: 0.3s;
+    }
+
+    .meun1 {
+      // transition: 0.3s;
+      height: auto;
+      // background-color: red;
+      width: 300px;
+
+      // height:1px;
+      // overflow: hidden;
+      .m-item {
+        // background-color: red;
+
+        a {
+          text-decoration: none;
+          display: block;
+          font-size: 14px;
+          color: rgba(7, 2, 55, 1);
+          // line-height: 34px;
+          padding-left: 20px;
+          padding-right: 20px;
+          margin-top: 15px;
+        }
+
+        .details {
+          display: block;
+          padding-left: 20px;
+          font-size: 13px;
+          font-weight: 400;
+          color: rgba(139, 142, 165, 1);
+          margin-top: 5px;
+        }
+      }
+
+    }
+  }
+
+  .disn {
+    display: none;
+  }
+
+  .wrap-mob {
+    // background-color: red;
+    width: 94%;
+    margin: 0 auto;
+
+    .only-left {
+      float: left;
+      padding: 10px 0 0 0;
+
+      img {
+        width: 80px;
+      }
+    }
+
+    .only-right {
+      float: right;
+      padding: 16px 0 0 0;
+
+      img {
+        width: 16px;
+      }
+    }
+  }
+
   .App {
     width: 100%;
     // margin: 0 auto;
@@ -473,13 +589,44 @@
 
   .other-tokens {
     height: 54px;
-    width: 90%;
+    width: 94%;
+    // width: 355px;
     background-color: #fff;
     position: relative;
     border: 1px solid rgba(229, 230, 242, 1);
     border-radius: 5px;
     // background-color: #f00;
     margin: 0 auto;
+    margin-left: 3%;
+    display: flex;
+
+    .token-balance-left {
+      position: absolute;
+      width: 100%;
+      // background-color: green;
+      top: -20px;
+      font-size: 14px;
+
+      .my-balance {
+        // width: 200px;
+        // background-color: green;
+        float: right;
+        text-align: right;
+      }
+
+      .my-balance-title {
+        // width: 200px;
+        // background-color: green;
+        float: right;
+        text-align: right;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(89, 88, 105, 1);
+        padding-top: 1px;
+        margin-right: 3px;
+      }
+    }
+
 
     .other-tokens-left {
       float: left;
@@ -547,6 +694,8 @@
           position: absolute;
           top: 60px;
           width: 316px;
+          width: $totalwidth;
+          // width: 100%;
           background-color: #fff;
           overflow: auto;
           z-index: 9999;
@@ -554,7 +703,8 @@
           border: 1px solid rgba(229, 230, 242, 1);
           box-shadow: 0px 8px 30px 0px rgba(7, 2, 55, 0.08);
           border-radius: 4px;
-          max-height: 325px;
+          max-height: 217px;
+          // background-color: red;
 
           .more-tokens-token {
             position: relative;
@@ -602,7 +752,8 @@
 
     .other-tokens-right {
       float: right;
-      width: 207px;
+      // width: 207px;
+      flex: 1;
       border-radius: 6px;
       overflow: hidden;
       position: relative;
@@ -637,22 +788,28 @@
   }
 
   .exchange {
-    display: inline-block;
-    padding-left: 28px;
-    padding-top: 18px;
+    clear: both;
+    display: block;
     position: relative;
+    // background-color: red;
+    padding-top: 40px;
+    margin-bottom: 30px;
+    text-align: center;
 
     img.exc {
+      display: none;
+    }
+
+    img.exc_mob {
       width: 20px;
       cursor: pointer;
     }
 
     .show-tips {
       position: absolute;
-      top: 80px;
+      top: 154px;
       // background: red;
-      width: 300px;
-      left: -112px;
+      width: 100%;
       text-align: center;
 
       .show-tips-img {
@@ -675,6 +832,8 @@
 
   .float-right {
     float: right;
+    margin-right: 3%;
+    margin-left: 0;
   }
 
   .btn-wrap {
@@ -684,7 +843,7 @@
     text-align: center;
     margin: 0 auto;
     background-color: #29BB92;
-    margin-top: 50px;
+    margin-top: 30px;
     font-size: 16px;
     font-weight: bold;
     color: rgba(255, 255, 255, 1);
@@ -701,7 +860,7 @@
     text-align: center;
     margin: 0 auto;
     background-color: #cdcedc;
-    margin-top: 50px;
+    margin-top: 30px;
     font-size: 16px;
     font-weight: bold;
     color: rgba(255, 255, 255, 1);
@@ -718,18 +877,7 @@
     font-weight: 500;
     color: rgba(37, 33, 82, 1);
 
-    .token-balance-left {
-      float: left;
-      width: 316px;
-      // background-color: green;
 
-      .my-balance {
-        width: 200px;
-        // background-color: green;
-        float: right;
-        text-align: right;
-      }
-    }
 
     .token-balance-right {
       float: right;
@@ -747,6 +895,86 @@
 
   // foot
   .foot {
-    display: none;
+    // padding-top: 50px;
+    // width: 1200px;
+    // background-color: red;
+    width: 94%;
+    margin: 0 auto;
+    padding-bottom: 4px;
+
+    .foot-item {
+      // float: left;
+      // width: 270px;
+      // background-color: palegoldenrod;
+      width: 100%;
+      float: left;
+
+      .foot-item-title {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #070237;
+        height: 30px;
+      }
+
+      .foot-item-content {
+        font-size: 12px;
+        color: #070237;
+        height: 26px;
+
+        a {
+          text-decoration: none;
+          font-size: 12px;
+          color: #070237;
+          transition: 0.3s;
+          position: relative;
+
+          &:hover {
+            color: #29BB92;
+          }
+
+          img {
+            width: 20px;
+          }
+        }
+
+        .weixin-img {
+          display: none;
+          position: absolute;
+          width: 80px !important;
+          left: 0px;
+          bottom: 24px;
+        }
+
+        .weixin-img-wrap {
+          position: relative;
+
+          img {
+            width: 20px;
+          }
+        }
+
+        .weixin-img-wrap:hover {
+          .weixin-img {
+            display: block;
+          }
+        }
+      }
+
+      .footer-right-fixed {
+        display: none;
+      }
+
+    }
+
+    .foot-item:nth-child(3n) {
+      width: 100%;
+      // background-color: red;
+    }
+
+    .icom-a {
+      a {
+        margin-right: 15px;
+      }
+    }
   }
 }
