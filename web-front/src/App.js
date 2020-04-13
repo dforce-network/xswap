@@ -48,7 +48,8 @@ import {
   swapTo_click,
   get_exchange__get_fee,
   handle_A_max,
-  format_num_to_K
+  format_num_to_K,
+  handle_B_max
 } from './utils.js';
 let tokens_abi = require('./abi/tokensABI.json');
 let xSwap_abi = require('./abi/xSwapABI.json');
@@ -868,6 +869,10 @@ export default class App extends React.Component {
                   : '···'
               }
               {' ' + this.state.cur_recive_addr}
+              {'(including fees)'}
+            </div>
+            <div className="other-tokens-rate-p">
+              {'Fee: 0.00%'}
             </div>
           </div>
 
@@ -1142,6 +1147,22 @@ export default class App extends React.Component {
                 placeholder={this.placeholder}
                 onChange={(e) => handle_B_change(e.target.value, this)}
               />
+            </div>
+
+            <div className="other-tokens-rate text-right">
+              {
+                this.state.is_liquidity_limit &&
+                <div className='Liquidity-tips'>
+                  <span className='Liquidity-tit'>
+                    MAX Liquidity:
+                  </span>
+                  <span className='Liquidity-num' onClick={() => handle_B_max(this)}>
+                    {
+                      format_bn((this.bn(this.state.cur_liquidaty)).toString(), this.state.cur_recive_decimals, 2)
+                    }
+                  </span>
+                </div>
+              }
             </div>
           </div>
 

@@ -441,6 +441,8 @@ export const handle_A_max = (that) => {
     that.setState({
       side_B_amount: format_bn(res_i_can_get, that.state.cur_recive_decimals, 4)
     });
+
+    compare(that, t_balance, t_balance, res_i_can_get, that.state.cur_liquidaty);
   })
 
   that.setState({
@@ -694,4 +696,31 @@ const compare = (that, my_balance, input_balance, i_can_get, liquidity_amount) =
       }
     });
   }
+}
+
+export const handle_B_max = (that) => {
+  that.setState({
+    is_from_right_input: true
+  });
+  var t_obj_xswap = that.state.is_stable_coin_send ? that.state.XSwap_stable : that.state.XSwap_btc;
+
+  t_obj_xswap.methods.getAmountByOutput(
+    address_map[that.state.net_type][that.state.cur_send_addr],
+    address_map[that.state.net_type][that.state.cur_recive_addr],
+    that.state.cur_liquidaty
+  ).call().then(res_i_will_send => {
+    console.log('i_can_send token: ', res_i_will_send);
+    that.setState({
+      side_A_amount: format_bn(res_i_will_send, that.state.cur_send_decimals, 4)
+    });
+
+    // compare(that, t_balance, t_balance, that.state.cur_liquidaty, that.state.cur_liquidaty);
+  })
+
+  that.setState({
+    is_wap_enable: true,
+    side_B_amount: format_bn(that.state.cur_liquidaty, that.state.cur_recive_decimals, 4),
+    side_B_amount_real: that.bn(that.state.cur_liquidaty),
+    is_Insufficient_Balance: false
+  });
 }

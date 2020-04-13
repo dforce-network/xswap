@@ -207,6 +207,33 @@ $totalwidth: 94vw;
       color: rgba(164, 167, 190, 1);
     }
 
+    .other-tokens-rate-p {
+      position: absolute;
+      left: 0;
+      top: 80px;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(164, 167, 190, 1);
+    }
+
+    .text-right {
+      text-align: right;
+      // background-color: red;
+      width: 100%;
+
+      .Liquidity-tips {
+        font-style: italic;
+
+        .Liquidity-tit {
+          margin-right: 5px;
+        }
+
+        .Liquidity-num {
+          color: #FF3939;
+          cursor: pointer;
+        }
+      }
+    }
   }
 
   .exchange {
@@ -261,7 +288,7 @@ $totalwidth: 94vw;
     text-align: center;
     margin: 0 auto;
     background-color: #29BB92;
-    margin-top: 50px;
+    margin-top: 70px;
     font-size: 16px;
     font-weight: bold;
     color: rgba(255, 255, 255, 1);
@@ -278,7 +305,7 @@ $totalwidth: 94vw;
     text-align: center;
     margin: 0 auto;
     background-color: #cdcedc;
-    margin-top: 50px;
+    margin-top: 70px;
     font-size: 16px;
     font-weight: bold;
     color: rgba(255, 255, 255, 1);
@@ -785,6 +812,34 @@ $totalwidth: 94vw;
       color: rgba(164, 167, 190, 1);
     }
 
+    .other-tokens-rate-p {
+      position: absolute;
+      left: 0;
+      top: 80px;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(164, 167, 190, 1);
+    }
+
+    .text-right {
+      // text-align: right;
+      // background-color: red;
+      width: 100%;
+
+      .Liquidity-tips {
+        font-style: italic;
+
+        .Liquidity-tit {
+          margin-right: 5px;
+        }
+
+        .Liquidity-num {
+          color: #FF3939;
+          cursor: pointer;
+        }
+      }
+    }
+
   }
 
   .exchange {
@@ -807,7 +862,7 @@ $totalwidth: 94vw;
 
     .show-tips {
       position: absolute;
-      top: 154px;
+      top: 170px;
       // background: red;
       width: 100%;
       text-align: center;
@@ -843,7 +898,7 @@ $totalwidth: 94vw;
     text-align: center;
     margin: 0 auto;
     background-color: #29BB92;
-    margin-top: 30px;
+    margin-top: 50px;
     font-size: 16px;
     font-weight: bold;
     color: rgba(255, 255, 255, 1);
@@ -860,7 +915,7 @@ $totalwidth: 94vw;
     text-align: center;
     margin: 0 auto;
     background-color: #cdcedc;
-    margin-top: 30px;
+    margin-top: 50px;
     font-size: 16px;
     font-weight: bold;
     color: rgba(255, 255, 255, 1);
