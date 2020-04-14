@@ -7,6 +7,7 @@ import en_US from '../language/en_US.js';
 import zh_CN from '../language/zh_CN';
 import logo_exchange from '../images/logo_exchange.svg';
 import logo_exchange_pendding from '../images/logo_exchange_pendding.svg';
+import logo_exchange_fail from '../images/logo_exchange_fail.svg';
 import no_history from '../images/no-history.svg';
 import { format_num_to_K } from '../utils.js';
 
@@ -144,6 +145,8 @@ export default class RecordBoard extends Component {
                             var img_src = logo_exchange;
                             if (item.status === 'pendding') {
                                 img_src = logo_exchange_pendding;
+                            } else if (item.status === 'fail') {
+                                img_src = logo_exchange_fail;
                             }
 
                             return (
@@ -162,11 +165,11 @@ export default class RecordBoard extends Component {
                                             </span>
                                         </div>
                                         <div className="history-item-right-bottom">
-                                            <FormattedMessage id='send' />
+                                            <FormattedMessage id='send_l' />
                                             {' ' + format_num_to_K(item.send_amount) + ' '}
                                             {item.send_token}
                                             {', '}
-                                            <FormattedMessage id='recive' />
+                                            <FormattedMessage id='recive_l' />
                                             {' ' + format_num_to_K(item.recive_amount) + ' '}
                                             {item.recive_token}
                                         </div>

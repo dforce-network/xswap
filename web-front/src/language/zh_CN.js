@@ -1,6 +1,8 @@
 const zh_CN = {
     send: '发送',
     recive: '接收',
+    send_l: '发送',
+    recive_l: '接收',
     history: '历史',
     swap: '兑换',
     connect: '连接钱包',

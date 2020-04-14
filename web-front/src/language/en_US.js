@@ -1,6 +1,8 @@
 const en_US = {
     send: 'SEND',
     recive: 'RECEIVE',
+    send_l: 'Send',
+    recive_l: 'Receive',
     history: 'Recent Transactions',
     swap: 'SWAP',
     connect: 'Connect',

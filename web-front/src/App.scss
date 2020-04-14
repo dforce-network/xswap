@@ -792,7 +792,7 @@ $totalwidth: 94vw;
       input {
         height: 52px;
         width: 100%;
-        font-size: 14px;
+        font-size: 16px;
         padding-left: 10px;
         background-color: #fff;
       }
@@ -820,7 +820,7 @@ $totalwidth: 94vw;
     .other-tokens-rate-p {
       position: absolute;
       left: 0;
-      top: 80px;
+      top: 76px;
       font-size: 11px;
       font-weight: 400;
       color: #252152;
@@ -869,14 +869,14 @@ $totalwidth: 94vw;
 
     .show-tips {
       position: absolute;
-      top: 170px;
+      top: 178px;
       // background: red;
       width: 100%;
       text-align: center;
 
       .show-tips-img {
-        width: 20px;
-        margin-bottom: -3px;
+        width: 16px;
+        margin-bottom: -2px;
         margin-right: 5px;
       }
 
@@ -905,12 +905,12 @@ $totalwidth: 94vw;
     text-align: center;
     margin: 0 auto;
     background-color: #29BB92;
-    margin-top: 50px;
+    margin-top: 58px;
     font-size: 16px;
     font-weight: bold;
     color: rgba(255, 255, 255, 1);
     cursor: pointer;
-    margin-bottom: 40px;
+    margin-bottom: 28px;
     box-shadow: 0px 8px 19px 0px rgba(41, 187, 146, 0.4);
     border-radius: 25px;
   }
@@ -922,12 +922,12 @@ $totalwidth: 94vw;
     text-align: center;
     margin: 0 auto;
     background-color: #cdcedc;
-    margin-top: 50px;
+    margin-top: 58px;
     font-size: 16px;
     font-weight: bold;
     color: rgba(255, 255, 255, 1);
     cursor: pointer;
-    margin-bottom: 40px;
+    margin-bottom: 28px;
     box-shadow: 0px 8px 19px 0px rgba(205, 206, 220, 0.4);
     border-radius: 25px;
   }
@@ -963,6 +963,8 @@ $totalwidth: 94vw;
     width: 94%;
     margin: 0 auto;
     padding-bottom: 4px;
+    border-top: 1px solid rgba(229, 230, 242, 0.7);
+    // border-top: 1px solid rgba(229, 0, 0, 1);
 
     .foot-item {
       // float: left;
@@ -974,19 +976,19 @@ $totalwidth: 94vw;
       .foot-item-title {
         margin-top: 30px;
         font-size: 14px;
-        color: #070237;
+        color: #6d6b85;
         height: 30px;
       }
 
       .foot-item-content {
         font-size: 12px;
-        color: #070237;
+        color: #868593;
         height: 26px;
 
         a {
           text-decoration: none;
           font-size: 12px;
-          color: #070237;
+          color: #868593;
           transition: 0.3s;
           position: relative;
 

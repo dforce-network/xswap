@@ -45,3 +45,11 @@ a {
   outline: 0 none !important;
   /* blr: expression(this.onFocus=this.blur()); */
 }
+
+input,
+input:focus,
+input:active {
+  user-select: text;
+  -webkit-user-select: text;
+  zoom: 1
+}
