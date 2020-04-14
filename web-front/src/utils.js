@@ -638,60 +638,60 @@ export const handle_B_change = (value, that) => {
 }
 
 const compare_receive = (that, i_can_send, my_balance, receive_balance, liquidity_amount) => {
-  if (that.bn(i_can_send).gt(that.bn(my_balance))) {
-    console.log('no such balance');
+  if (that.bn(receive_balance).gt(that.bn(liquidity_amount))) {
+    console.log('liquidity limit');
     that.setState({
       is_wap_enable: false,
-      is_Insufficient_Balance: true,
-      is_liquidity_limit: false
+      is_liquidity_limit: true,
+      is_Insufficient_Balance: false
     });
   } else {
     console.log('u can swap');
     that.setState({
       is_wap_enable: true,
-      is_Insufficient_Balance: false
+      is_liquidity_limit: false
     }, () => {
-      if (that.bn(receive_balance).gt(that.bn(liquidity_amount))) {
-        console.log('liquidity limit');
+      if (that.bn(i_can_send).gt(that.bn(my_balance))) {
+        console.log('no such balance');
         that.setState({
           is_wap_enable: false,
-          is_liquidity_limit: true
+          is_Insufficient_Balance: true
         });
       } else {
         console.log('u can swap');
         that.setState({
           is_wap_enable: true,
-          is_liquidity_limit: false
+          is_Insufficient_Balance: false
         });
       }
     });
   }
 }
 const compare = (that, my_balance, input_balance, i_can_get, liquidity_amount) => {
-  if (that.bn(input_balance).gt(that.bn(my_balance))) {
-    console.log('no such balance');
+  if (that.bn(i_can_get).gt(that.bn(liquidity_amount))) {
+    console.log('liquidity limit');
     that.setState({
       is_wap_enable: false,
-      is_Insufficient_Balance: true,
-      is_liquidity_limit: false
+      is_liquidity_limit: true,
+      is_Insufficient_Balance: false
     });
   } else {
     console.log('u can swap');
     that.setState({
       is_wap_enable: true,
-      is_Insufficient_Balance: false
+      is_liquidity_limit: false
     }, () => {
-      if (that.bn(i_can_get).gt(that.bn(liquidity_amount))) {
-        console.log('liquidity limit');
+      if (that.bn(input_balance).gt(that.bn(my_balance))) {
+        console.log('no such balance');
         that.setState({
           is_wap_enable: false,
-          is_liquidity_limit: true
+          is_Insufficient_Balance: true
         });
       } else {
         console.log('u can swap');
         that.setState({
           is_wap_enable: true,
-          is_liquidity_limit: false
+          is_Insufficient_Balance: false
         });
       }
     });

@@ -201,7 +201,7 @@ export default class App extends React.Component {
 
 
   change_send_addr = (token) => {
-    // console.log(token);
+    console.log(token);
     var t_bool;
     var t_cur_recive_addr;
 
