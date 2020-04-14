@@ -4,7 +4,7 @@ const en_US = {
     history: 'Recent Transactions',
     swap: 'SWAP',
     connect: 'Connect',
-    slogon: 'The Best Way to Swap Stable Assets.',
+    slogon: 'Instant Swap of Stable Assets',
     no_history: 'No History',
     Contract_US: 'Contact',
     Community: 'Community',

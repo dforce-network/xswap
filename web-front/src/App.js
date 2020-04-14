@@ -96,7 +96,9 @@ export default class App extends React.Component {
       cur_recive_addr: 'USDx',
       is_stable_coin_send: true,
       is_stable_coin_receive: true,
-      showonly: false
+      showonly: false,
+      meun1: true,
+      meun2: true
     }
 
     this.new_web3 = window.new_web3 = new Web3(Web3.givenProvider || null);
@@ -548,11 +550,11 @@ export default class App extends React.Component {
           </div>
           <div className='only-kong'></div>
 
-          <h1>
+          <h1 onClick={() => { this.setState({ meun1: !this.state.meun1 }) }}>
             {/* <FormattedMessage id='Protocols' /> */}
             dForce Stablecoin
             <span>
-              <img src={this.state.meun1 ? arrow_u : arrow_d} onClick={() => { this.setState({ meun1: !this.state.meun1 }) }} />
+              <img src={this.state.meun1 ? arrow_u : arrow_d} />
             </span>
           </h1>
           <div className={this.state.meun1 ? 'meun1' : 'only1px'}>
@@ -572,11 +574,11 @@ export default class App extends React.Component {
           </div>
 
 
-          <h1>
+          <h1 onClick={() => { this.setState({ meun2: !this.state.meun2 }) }}>
             {/* <FormattedMessage id='Developers' /> */}
             Yield Market
             <span>
-              <img src={this.state.meun2 ? arrow_u : arrow_d} onClick={() => { this.setState({ meun2: !this.state.meun2 }) }} />
+              <img src={this.state.meun2 ? arrow_u : arrow_d} />
             </span>
           </h1>
           <div className={this.state.meun2 ? 'meun1' : 'only1px'}>
@@ -1159,6 +1161,7 @@ export default class App extends React.Component {
                   <span className='Liquidity-num' onClick={() => handle_B_max(this)}>
                     {
                       format_bn((this.bn(this.state.cur_liquidaty)).toString(), this.state.cur_recive_decimals, 2)
+                      // '12345'
                     }
                   </span>
                 </div>

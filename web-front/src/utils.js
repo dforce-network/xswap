@@ -700,7 +700,8 @@ const compare = (that, my_balance, input_balance, i_can_get, liquidity_amount) =
 
 export const handle_B_max = (that) => {
   that.setState({
-    is_from_right_input: true
+    is_from_right_input: true,
+    is_liquidity_limit: false
   });
   var t_obj_xswap = that.state.is_stable_coin_send ? that.state.XSwap_stable : that.state.XSwap_btc;
 
