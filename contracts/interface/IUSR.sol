@@ -8,4 +8,5 @@ interface IUSR {
     function getExchangeRate() external view returns (uint);
     function getFixedInterestRate(uint _interval) external view returns (uint);
     function originationFee() external view returns (uint);
+    function getRedeemAmount(uint _wad) external view returns (uint);
 }
