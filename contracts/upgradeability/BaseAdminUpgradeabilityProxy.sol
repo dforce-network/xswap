@@ -19,12 +19,26 @@ contract BaseAdminUpgradeabilityProxy is BaseUpgradeabilityProxy {
   event AdminChanged(address previousAdmin, address newAdmin);
 
   /**
+   * @dev Issued when the new administrator accepts ownership.
+   * @param newAdmin Address of the new admin.
+   */
+  event AdminUpdated(address newAdmin);
+
+  /**
    * @dev Storage slot with the admin of the contract.
    * This is the keccak-256 hash of "eip1967.proxy.admin" subtracted by 1, and is
    * validated in the constructor.
    */
 
   bytes32 internal constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
+
+  /**
+   * @dev Storage slot with the pending admin of the contract.
+   * This is the keccak-256 hash of "eip1967.proxy.pending.admin" subtracted by 1, and is
+   * validated in the constructor.
+   */
+
+  bytes32 private constant PENDING_ADMIN_SLOT = 0x4df6442ced3c3fc3ed8f4e91c7cf63e720e8c3c9fbe8f614f5441bb4d1916bde;
 
   /**
    * @dev Modifier to check whether the `msg.sender` is the admin.
@@ -34,22 +48,29 @@ contract BaseAdminUpgradeabilityProxy is BaseUpgradeabilityProxy {
   modifier ifAdmin() {
     if (msg.sender == _admin()) {
       _;
-    } else {
+    }/* else {
       _fallback();
-    }
+    }*/
   }
 
   /**
    * @return The address of the proxy admin.
    */
-  function admin() external ifAdmin returns (address) {
+  function admin() external view ifAdmin returns (address) {
     return _admin();
+  }
+
+  /**
+   * @return The address of the proxy pending admin.
+   */
+  function pendingAdmin() external view ifAdmin returns (address) {
+    return _pendingAdmin();
   }
 
   /**
    * @return The address of the implementation.
    */
-  function implementation() external ifAdmin returns (address) {
+  function implementation() external view ifAdmin returns (address) {
     return _implementation();
   }
 
@@ -60,8 +81,19 @@ contract BaseAdminUpgradeabilityProxy is BaseUpgradeabilityProxy {
    */
   function changeAdmin(address newAdmin) external ifAdmin {
     require(newAdmin != address(0), "Cannot change the admin of a proxy to the zero address");
+    require(newAdmin != _admin(), "The current and new admin cannot be the same .");
+    require(newAdmin != _pendingAdmin(), "Cannot set the newAdmin of a proxy to the same address .");
+    _setPendingAdmin(newAdmin);
     emit AdminChanged(_admin(), newAdmin);
+  }
+
+  function updateAdmin() external {
+    address newAdmin = _pendingAdmin();
+    require(newAdmin != address(0), "Cannot change the admin of a proxy to the zero address");
+    require(msg.sender == newAdmin, "msg.sender and newAdmin must be the same .");
     _setAdmin(newAdmin);
+    _setPendingAdmin(address(0));
+    emit AdminUpdated(newAdmin);
   }
 
   /**
@@ -99,6 +131,16 @@ contract BaseAdminUpgradeabilityProxy is BaseUpgradeabilityProxy {
   }
 
   /**
+   * @return The pendingAdmin slot.
+   */
+  function _pendingAdmin() internal view returns (address pendingAdm) {
+    bytes32 slot = PENDING_ADMIN_SLOT;
+    assembly {
+      pendingAdm := sload(slot)
+    }
+  }
+
+  /**
    * @dev Sets the address of the proxy admin.
    * @param newAdmin Address of the new proxy admin.
    */
@@ -111,10 +153,22 @@ contract BaseAdminUpgradeabilityProxy is BaseUpgradeabilityProxy {
   }
 
   /**
+   * @dev Sets the address of the proxy pending admin.
+   * @param pendingAdm Address of the proxy pending admin.
+   */
+  function _setPendingAdmin(address pendingAdm) internal {
+    bytes32 slot = PENDING_ADMIN_SLOT;
+
+    assembly {
+      sstore(slot, pendingAdm)
+    }
+  }
+
+  /**
    * @dev Only fall back when the sender is not the admin.
    */
   function _willFallback() internal {
-    require(msg.sender != _admin(), "Cannot call fallback function from the proxy admin");
+    // require(msg.sender != _admin(), "Cannot call fallback function from the proxy admin");
     super._willFallback();
   }
 }
