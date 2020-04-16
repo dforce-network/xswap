@@ -13,6 +13,7 @@ const zh_CN = {
     Resource: 'Resource',
     Insufficient_Balance: '余额不足',
     Insufficient_Liquidity: '流动性不足',
-    balance: '余额'
+    balance: '余额',
+    No_SUPPORTED: '不支持兑换'
 }
 export default zh_CN;

@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.scss';
 import Web3 from 'web3';
+import { Modal } from 'antd';
+import 'antd/dist/antd.css';
 import is_selected from './images/is_selected.svg';
 import exchange from './images/exchange.svg';
 import exchange_mob from './images/exchange_mob.svg';
@@ -37,7 +39,8 @@ import Telegram from './images/Telegram.svg';
 import erweima from './images/erweima.png';
 import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
-import arrow_d from './images/arrow_d.svg';
+import arrow_d from './images/arrow_d.svg';//
+import img_is_open from './images/img_is_open.svg';
 import {
   get_my_balance,
   handle_A_change,
@@ -49,7 +52,8 @@ import {
   get_exchange__get_fee,
   handle_A_max,
   format_num_to_K,
-  handle_B_max
+  handle_B_max,
+  check_TokensEnable
 } from './utils.js';
 let tokens_abi = require('./abi/tokensABI.json');
 let xSwap_abi = require('./abi/xSwapABI.json');
@@ -98,7 +102,8 @@ export default class App extends React.Component {
       is_stable_coin_receive: true,
       showonly: false,
       meun1: true,
-      meun2: true
+      meun2: true,
+      is_open: true
     }
 
     this.new_web3 = window.new_web3 = new Web3(Web3.givenProvider || null);
@@ -151,13 +156,30 @@ export default class App extends React.Component {
               my_account: res_accounts[0],
               load_new_history: Math.random()
             }, () => {
-              get_data_first(
-                this,
-                address_map[net_type]['XSwap_stable'],
-                address_map[this.state.net_type][this.state.cur_send_addr],
-                address_map[this.state.net_type][this.state.cur_recive_addr]
-              );
-              get_my_balance(this);
+              this.state.XSwap_stable.methods.isOpen().call((err, res_isopen_stable) => {
+                this.state.XSwap_btc.methods.isOpen().call((err, res_isopen_btc) => {
+                  // console.log(res_isopen_stable, res_isopen_btc);
+                  if (res_isopen_stable && res_isopen_btc) {
+                    this.setState({
+                      i_am_ready: true,
+                      is_open: true
+                    })
+                    get_data_first(
+                      this,
+                      address_map[net_type]['XSwap_stable'],
+                      address_map[this.state.net_type][this.state.cur_send_addr],
+                      address_map[this.state.net_type][this.state.cur_recive_addr]
+                    );
+                    get_my_balance(this);
+                    check_TokensEnable(this);
+                  } else {
+                    this.setState({
+                      i_am_ready: false,
+                      is_open: false
+                    })
+                  }
+                })
+              })
             })
           })
         })
@@ -493,7 +515,7 @@ export default class App extends React.Component {
     }, 1000 * 5);
   }
   before_swap_click = () => {
-    if (!this.state.side_A_amount) {
+    if (!this.state.side_A_amount || this.state.is_no_supported) {
       return false;
     }
 
@@ -537,6 +559,28 @@ export default class App extends React.Component {
   render() {
     return (
       <IntlProvider locale={'en'} messages={this.state.cur_language === '中文' ? zh_CN : en_US} >
+        <Modal
+          keyboard={false}
+          maskClosable={false}
+          visible={!this.state.is_open}
+          // onOk={this.handleOk}
+          // onCancel={this.handleCancel_add_handler}
+          centered={true}
+          cancelText={'quxiao'}
+          footer={false}
+          // visible={true}
+          closable={false}
+        >
+          <div className='popup-is-open'>
+            <img src={img_is_open} alt='' />
+            <div className='popup-is-open-text'>
+              Oracle System Maintain, Come back Soon...
+            </div>
+            <div className='popup-is-open-text'>
+              Oracle系统维护，敬请期待...
+            </div>
+          </div>
+        </Modal>
         {/* mobile tips */}
         <div className={this.state.showonly ? 'mobile-only' : 'disn'}>
           <div className='wrap-mob'>
@@ -697,7 +741,7 @@ export default class App extends React.Component {
                   this.state.show_left_more_token &&
                   <div className="more-tokens">
                     {
-                      this.state.cur_recive_addr !== 'USDx' &&
+                      this.state.cur_recive_addr !== 'USDx' && this.state.is_tokensEnable_USDx &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDx') }}>
                         <img alt='' className="token-logo" src={this.state.token.USDx} />
                         <span className="token-title">
@@ -710,7 +754,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'USDT' &&
+                      this.state.cur_recive_addr !== 'USDT' && this.state.is_tokensEnable_USDT &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDT') }}>
                         <img alt='' className="token-logo" src={this.state.token.USDT} />
                         <span className="token-title">
@@ -724,7 +768,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'DAI' &&
+                      this.state.cur_recive_addr !== 'DAI' && this.state.is_tokensEnable_DAI &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('DAI') }}>
                         <img alt='' className="token-logo" src={this.state.token.DAI} />
                         <span className="token-title">
@@ -737,7 +781,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'HUSD' &&
+                      this.state.cur_recive_addr !== 'HUSD' && this.state.is_tokensEnable_HUSD &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('HUSD') }}>
                         <img alt='' className="token-logo" src={this.state.token.HUSD} />
                         <span className="token-title">
@@ -750,7 +794,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'BUSD' &&
+                      this.state.cur_recive_addr !== 'BUSD' && this.state.is_tokensEnable_BUSD &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('BUSD') }}>
                         <img alt='' className="token-logo" src={this.state.token.BUSD} />
                         <span className="token-title">
@@ -763,7 +807,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'USDC' &&
+                      this.state.cur_recive_addr !== 'USDC' && this.state.is_tokensEnable_USDC &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDC') }}>
                         <img alt='' className="token-logo" src={this.state.token.USDC} />
                         <span className="token-title">
@@ -777,7 +821,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'PAX' &&
+                      this.state.cur_recive_addr !== 'PAX' && this.state.is_tokensEnable_PAX &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('PAX') }}>
                         <img alt='' className="token-logo" src={this.state.token.PAX} />
                         <span className="token-title">
@@ -791,7 +835,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'TUSD' &&
+                      this.state.cur_recive_addr !== 'TUSD' && this.state.is_tokensEnable_TUSD &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('TUSD') }}>
                         <img alt='' className="token-logo" src={this.state.token.TUSD} />
                         <span className="token-title">
@@ -805,7 +849,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'imBTC' &&
+                      this.state.cur_recive_addr !== 'imBTC' && this.state.is_tokensEnable_imBTC &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('imBTC') }}>
                         <img alt='' className="token-logo" src={this.state.token.imBTC} />
                         <span className="token-title">
@@ -818,7 +862,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'HBTC' &&
+                      this.state.cur_recive_addr !== 'HBTC' && this.state.is_tokensEnable_HBTC &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('HBTC') }}>
                         <img alt='' className="token-logo" src={this.state.token.HBTC} />
                         <span className="token-title">
@@ -831,7 +875,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      this.state.cur_recive_addr !== 'WBTC' &&
+                      this.state.cur_recive_addr !== 'WBTC' && this.state.is_tokensEnable_WBTC &&
                       <div className="more-tokens-token" onClick={() => { this.change_send_addr('WBTC') }}>
                         <img alt='' className="token-logo" src={this.state.token.WBTC} />
                         <span className="token-title">
@@ -871,7 +915,7 @@ export default class App extends React.Component {
                   : '···'
               }
               {' ' + this.state.cur_recive_addr}
-              {'(including fees)'}
+              {' (inclusive of fees)'}
             </div>
             <div className="other-tokens-rate-p">
               {'Fee: 0.00%'}
@@ -897,6 +941,15 @@ export default class App extends React.Component {
                 <img alt='' className='show-tips-img' src={show_tips} />
                 <span className='show-tips-text'>
                   <FormattedMessage id='Insufficient_Liquidity' />
+                </span>
+              </div>
+            }
+            {
+              this.state.is_no_supported &&
+              <div className='show-tips'>
+                <img alt='' className='show-tips-img' src={show_tips} />
+                <span className='show-tips-text'>
+                  <FormattedMessage id='No_SUPPORTED' />
                 </span>
               </div>
             }
@@ -992,7 +1045,7 @@ export default class App extends React.Component {
                   this.state.show_right_more_token &&
                   <div className="more-tokens">
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDx') &&
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDx') && this.state.is_tokensEnable_USDx &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDx') }}>
                         <img alt='' className="token-logo" src={this.state.token.USDx} />
                         <span className="token-title">
@@ -1005,7 +1058,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDT') &&
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDT') && this.state.is_tokensEnable_USDT &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDT') }}>
                         <img alt='' className="token-logo" src={this.state.token.USDT} />
                         <span className="token-title">
@@ -1019,7 +1072,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'DAI') &&
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'DAI') && this.state.is_tokensEnable_DAI &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('DAI') }}>
                         <img alt='' className="token-logo" src={this.state.token.DAI} />
                         <span className="token-title">
@@ -1032,7 +1085,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HUSD') &&
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HUSD') && this.state.is_tokensEnable_HUSD &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HUSD') }}>
                         <img alt='' className="token-logo" src={this.state.token.HUSD} />
                         <span className="token-title">
@@ -1045,7 +1098,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'BUSD') &&
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'BUSD') && this.state.is_tokensEnable_BUSD &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('BUSD') }}>
                         <img alt='' className="token-logo" src={this.state.token.BUSD} />
                         <span className="token-title">
@@ -1058,7 +1111,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDC') &&
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDC') && this.state.is_tokensEnable_USDC &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDC') }}>
                         <img alt='' className="token-logo" src={this.state.token.USDC} />
                         <span className="token-title">
@@ -1072,7 +1125,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'PAX') &&
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'PAX') && this.state.is_tokensEnable_PAX &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('PAX') }}>
                         <img alt='' className="token-logo" src={this.state.token.PAX} />
                         <span className="token-title">
@@ -1086,7 +1139,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'TUSD') &&
+                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'TUSD') && this.state.is_tokensEnable_TUSD &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('TUSD') }}>
                         <img alt='' className="token-logo" src={this.state.token.TUSD} />
                         <span className="token-title">
@@ -1100,7 +1153,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'imBTC') &&
+                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'imBTC') && this.state.is_tokensEnable_imBTC &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('imBTC') }}>
                         <img alt='' className="token-logo" src={this.state.token.imBTC} />
                         <span className="token-title">
@@ -1113,7 +1166,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HBTC') &&
+                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HBTC') && this.state.is_tokensEnable_HBTC &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HBTC') }}>
                         <img alt='' className="token-logo" src={this.state.token.HBTC} />
                         <span className="token-title">
@@ -1126,7 +1179,7 @@ export default class App extends React.Component {
                       </div>
                     }
                     {
-                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'WBTC') &&
+                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'WBTC') && this.state.is_tokensEnable_WBTC &&
                       <div className="more-tokens-token" onClick={() => { this.change_recive_addr('WBTC') }}>
                         <img alt='' className="token-logo" src={this.state.token.WBTC} />
                         <span className="token-title">
@@ -1173,7 +1226,7 @@ export default class App extends React.Component {
 
           <div
             onClick={() => { this.before_swap_click() }}
-            className={this.state.is_wap_enable ? "btn-wrap" : "btn-wrap-disable"}
+            className={this.state.is_wap_enable && !this.state.is_no_supported ? "btn-wrap" : "btn-wrap-disable"}
           >
             <FormattedMessage id='swap' />
           </div>

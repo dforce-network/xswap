@@ -7,6 +7,29 @@ $totalwidth: 94vw;
 // > 768
 @media screen and (min-width: 768px) {
 
+  .ant-modal {
+    width: 400px !important;
+
+    .popup-is-open {
+      text-align: center;
+      padding: 20px 0 10px;
+
+      img {
+        height: 52px;
+        margin-bottom: 20px;
+      }
+
+      .popup-is-open-text {
+        // background-color: red;
+        font-size: 14px;
+        font-weight: 400;
+        color: rgba(37, 33, 82, 1);
+        line-height: 24px;
+      }
+    }
+  }
+
+
   .wrap-mob,
   .mobile-only,
   .disn {
@@ -31,7 +54,7 @@ $totalwidth: 94vw;
       position: absolute;
       width: 316px;
       // background-color: green;
-      top: -20px;
+      top: -24px;
       font-size: 14px;
 
       .my-balance {
@@ -49,7 +72,7 @@ $totalwidth: 94vw;
         font-size: 12px;
         font-weight: 400;
         color: rgba(89, 88, 105, 1);
-        padding-top: 1px;
+        padding-top: 3px;
         margin-right: 3px;
       }
     }
@@ -92,7 +115,7 @@ $totalwidth: 94vw;
           // background-color: green;
           display: block;
           float: left;
-          padding-top: 7px;
+          padding-top: 3px;
           padding-left: 5px;
         }
 
@@ -193,7 +216,7 @@ $totalwidth: 94vw;
         color: #29BB92;
         position: absolute;
         right: 10px;
-        top: 19px;
+        top: 15px;
         font-size: 14px;
         cursor: pointer;
       }
@@ -257,7 +280,7 @@ $totalwidth: 94vw;
 
     .show-tips {
       position: absolute;
-      top: 80px;
+      top: 95px;
       // background: red;
       width: 300px;
       left: -112px;
@@ -265,7 +288,7 @@ $totalwidth: 94vw;
 
       .show-tips-img {
         width: 20px;
-        margin-bottom: -3px;
+        margin-bottom: 4px;
         margin-right: 5px;
       }
 
@@ -347,7 +370,7 @@ $totalwidth: 94vw;
         font-size: 12px;
         font-weight: 400;
         color: rgba(89, 88, 105, 1);
-        padding-top: 1px;
+        padding-top: 3px;
         margin-right: 3px;
       }
     }
@@ -513,6 +536,28 @@ $totalwidth: 94vw;
 
 // 
 @media screen and (max-width: 767px) {
+  .ant-modal {
+    width: 90% !important;
+
+    .popup-is-open {
+      text-align: center;
+      padding: 20px 0 10px;
+
+      img {
+        height: 52px;
+        margin-bottom: 20px;
+      }
+
+      .popup-is-open-text {
+        // background-color: red;
+        font-size: 14px;
+        font-weight: 400;
+        color: rgba(37, 33, 82, 1);
+        line-height: 24px;
+      }
+    }
+  }
+
   .mobile-only {
     position: fixed;
     top: 0;
@@ -635,7 +680,7 @@ $totalwidth: 94vw;
       position: absolute;
       width: 100%;
       // background-color: green;
-      top: -20px;
+      top: -24px;
       font-size: 14px;
 
       .my-balance {
@@ -653,7 +698,7 @@ $totalwidth: 94vw;
         font-size: 12px;
         font-weight: 400;
         color: rgba(89, 88, 105, 1);
-        padding-top: 1px;
+        padding-top: 3px;
         margin-right: 3px;
       }
     }
@@ -697,7 +742,7 @@ $totalwidth: 94vw;
           // background-color: green;
           display: block;
           float: left;
-          padding-top: 7px;
+          padding-top: 3px;
           padding-left: 5px;
         }
 
@@ -801,7 +846,7 @@ $totalwidth: 94vw;
         color: #29BB92;
         position: absolute;
         right: 10px;
-        top: 19px;
+        top: 15px;
         font-size: 14px;
         cursor: pointer;
       }
@@ -876,7 +921,7 @@ $totalwidth: 94vw;
 
       .show-tips-img {
         width: 16px;
-        margin-bottom: -2px;
+        margin-bottom: 2px;
         margin-right: 5px;
       }
 
