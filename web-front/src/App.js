@@ -199,7 +199,7 @@ export default class App extends React.Component {
           is_liquidity_limit: false
         }, () => {
           console.log(this.state.my_account);
-          if (!this.state.my_account) {
+          if (!this.state.my_account || !this.state.net_type) {
             return;
           }
           get_data_first(
