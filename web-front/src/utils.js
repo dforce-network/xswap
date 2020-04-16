@@ -197,6 +197,77 @@ export const swapTo_click = (that, input_addr, output_addr) => {
   });
 }
 
+export const check_TokensEnable = (that) => {
+  that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['USDx']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_USDx: res_TokensEnable
+    })
+  })
+  that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['USDT']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_USDT: res_TokensEnable
+    })
+  })
+  that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['USDC']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_USDC: res_TokensEnable
+    })
+  })
+  that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['PAX']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_PAX: res_TokensEnable
+    })
+  })
+  that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['TUSD']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_TUSD: res_TokensEnable
+    })
+  })
+  that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['DAI']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_DAI: res_TokensEnable
+    })
+  })
+  that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['HUSD']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_HUSD: res_TokensEnable
+    })
+  })
+  that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['BUSD']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_BUSD: res_TokensEnable
+    })
+  })
+
+
+  that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['imBTC']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_imBTC: res_TokensEnable
+    })
+  })
+  that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['HBTC']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_HBTC: res_TokensEnable
+    })
+  })
+  that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['WBTC']).call().then(res_TokensEnable => {
+    // console.log(res_TokensEnable);
+    that.setState({
+      is_tokensEnable_WBTC: res_TokensEnable
+    })
+  })
+}
+
 
 export const get_exchange__get_fee = (that, input_addr, output_addr, t_bool) => {
   // console.log(t_bool);
@@ -204,17 +275,30 @@ export const get_exchange__get_fee = (that, input_addr, output_addr, t_bool) => 
   // console.log(output_addr);
   var t_Contract = t_bool ? that.state.XSwap_stable : that.state.XSwap_btc;
 
-  t_Contract.methods.exchangeRate(input_addr, output_addr).call().then(res_exchange_price => {
-    console.log('cur_exchange: ', res_exchange_price);
-    that.setState({
-      cur_exchange: res_exchange_price
-    });
-  })
-  t_Contract.methods.getLiquidity(output_addr).call().then(res_getLiquidity => {
-    console.log('cur liquidaty: ', res_getLiquidity);
-    that.setState({
-      cur_liquidaty: res_getLiquidity
-    });
+  t_Contract.methods.tradesDisable(input_addr, output_addr).call().then(res_disableTrade => {
+    console.log('res tradesDisable: ', res_disableTrade);
+    if (!res_disableTrade) {
+      that.setState({
+        is_no_supported: false
+      });
+
+      t_Contract.methods.exchangeRate(input_addr, output_addr).call().then(res_exchange_price => {
+        console.log('cur_exchange: ', res_exchange_price);
+        that.setState({
+          cur_exchange: res_exchange_price
+        });
+      })
+      t_Contract.methods.getLiquidity(output_addr).call().then(res_getLiquidity => {
+        console.log('cur liquidaty: ', res_getLiquidity);
+        that.setState({
+          cur_liquidaty: res_getLiquidity
+        });
+      })
+    } else {
+      that.setState({
+        is_no_supported: true
+      });
+    }
   })
 }
 
@@ -243,18 +327,31 @@ export const get_data_first = (that, address_XSwap, input_addr, output_addr) => 
     }
   });
 
-  that.state.XSwap_stable.methods.exchangeRate(input_addr, output_addr).call().then(res_exchange_price => {
-    console.log('cur_exchange: ', res_exchange_price);
-    that.setState({
-      cur_exchange: res_exchange_price
-    })
-  })
+  that.state.XSwap_stable.methods.tradesDisable(input_addr, output_addr).call().then(res_disableTrade => {
+    console.log('res tradesDisable: ', res_disableTrade);
+    if (!res_disableTrade) {
+      that.setState({
+        is_no_supported: false
+      });
 
-  that.state.XSwap_stable.methods.getLiquidity(output_addr).call().then(res_getLiquidity => {
-    console.log('cur liquidaty: ', res_getLiquidity);
-    that.setState({
-      cur_liquidaty: res_getLiquidity
-    });
+      that.state.XSwap_stable.methods.exchangeRate(input_addr, output_addr).call().then(res_exchange_price => {
+        console.log('cur_exchange: ', res_exchange_price);
+        that.setState({
+          cur_exchange: res_exchange_price
+        })
+      })
+
+      that.state.XSwap_stable.methods.getLiquidity(output_addr).call().then(res_getLiquidity => {
+        console.log('cur liquidaty: ', res_getLiquidity);
+        that.setState({
+          cur_liquidaty: res_getLiquidity
+        });
+      })
+    } else {
+      that.setState({
+        is_no_supported: true
+      });
+    }
   })
 }
 

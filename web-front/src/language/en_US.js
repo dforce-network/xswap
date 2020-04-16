@@ -13,6 +13,7 @@ const en_US = {
     Resource: 'Resource',
     Insufficient_Balance: 'Insufficient Balance',
     Insufficient_Liquidity: 'Insufficient Liquidity',
-    balance: 'Balance'
+    balance: 'Balance',
+    No_SUPPORTED: 'No SUPPORTED'
 }
 export default en_US;
