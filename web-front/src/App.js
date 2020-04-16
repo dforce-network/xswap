@@ -1,8 +1,8 @@
 import React from 'react';
 import './App.scss';
 import Web3 from 'web3';
-import { Modal } from 'antd';
-import 'antd/dist/antd.css';
+// import { Modal } from 'antd';
+// import 'antd/dist/antd.css';
 import is_selected from './images/is_selected.svg';
 import exchange from './images/exchange.svg';
 import exchange_mob from './images/exchange_mob.svg';
@@ -188,36 +188,32 @@ export default class App extends React.Component {
 
     // add accounts changed
     if (window.ethereum.on) {
-      this.new_web3.eth.net.getNetworkType().then(
-        (net_type) => {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        // console.log('accountsChanged: ', accounts[0]);
+        this.setState({
+          my_account: accounts[0],
+          side_A_amount: '',
+          is_wap_enable: false,
+          side_B_amount: '',
+          is_Insufficient_Balance: false,
+          is_liquidity_limit: false
+        }, () => {
+          console.log(this.state.my_account);
+          if (!this.state.my_account) {
+            return;
+          }
+          get_data_first(
+            this,
+            address_map[this.state.net_type]['XSwap_stable'],
+            address_map[this.state.net_type][this.state.cur_send_addr],
+            address_map[this.state.net_type][this.state.cur_recive_addr]
+          );
+          get_my_balance(this);
           this.setState({
-            net_type: net_type
-          }, () => {
-            window.ethereum.on('accountsChanged', (accounts) => {
-              // console.log('accountsChanged: ', accounts[0]);
-              this.setState({
-                my_account: accounts[0],
-                side_A_amount: '',
-                is_wap_enable: false,
-                side_B_amount: '',
-                is_Insufficient_Balance: false,
-                is_liquidity_limit: false
-              }, () => {
-                get_data_first(
-                  this,
-                  address_map[this.state.net_type]['XSwap_stable'],
-                  address_map[this.state.net_type][this.state.cur_send_addr],
-                  address_map[this.state.net_type][this.state.cur_recive_addr]
-                );
-                get_my_balance(this);
-                this.setState({
-                  load_new_history: Math.random()
-                });
-              })
-            });
-          })
-        }
-      )
+            load_new_history: Math.random()
+          });
+        })
+      });
     }
   }
 
@@ -542,7 +538,6 @@ export default class App extends React.Component {
       this.setState({
         my_account: res_accounts[0]
       }, () => {
-        // console.log('connected: ', this.state.my_account)
         get_data_first(
           this,
           address_map[this.state.net_type]['XSwap_stable'],
@@ -559,28 +554,22 @@ export default class App extends React.Component {
   render() {
     return (
       <IntlProvider locale={'en'} messages={this.state.cur_language === '中文' ? zh_CN : en_US} >
-        <Modal
-          keyboard={false}
-          maskClosable={false}
-          visible={!this.state.is_open}
-          // onOk={this.handleOk}
-          // onCancel={this.handleCancel_add_handler}
-          centered={true}
-          cancelText={'quxiao'}
-          footer={false}
-          // visible={true}
-          closable={false}
-        >
-          <div className='popup-is-open'>
-            <img src={img_is_open} alt='' />
-            <div className='popup-is-open-text'>
-              Oracle System Maintain, Come back Soon...
-            </div>
-            <div className='popup-is-open-text'>
-              Oracle系统维护，敬请期待...
+        {
+          !this.state.is_open &&
+          <div className='ant-modal'>
+            <div className='popup-is-open'>
+              <img src={img_is_open} alt='' />
+              <div className='popup-is-open-text'>
+                Oracle System Maintain, Come back Soon...
+              </div>
+              <div className='popup-is-open-text'>
+                Oracle系统维护，敬请期待...
+              </div>
             </div>
           </div>
-        </Modal>
+        }
+
+
         {/* mobile tips */}
         <div className={this.state.showonly ? 'mobile-only' : 'disn'}>
           <div className='wrap-mob'>
@@ -945,13 +934,13 @@ export default class App extends React.Component {
               </div>
             }
             {
-              this.state.is_no_supported &&
-              <div className='show-tips'>
-                <img alt='' className='show-tips-img' src={show_tips} />
-                <span className='show-tips-text'>
-                  <FormattedMessage id='No_SUPPORTED' />
-                </span>
-              </div>
+              // this.state.is_no_supported &&
+              // <div className='show-tips'>
+              //   <img alt='' className='show-tips-img' src={show_tips} />
+              //   <span className='show-tips-text'>
+              //     <FormattedMessage id='No_SUPPORTED' />
+              //   </span>
+              // </div>
             }
           </div>
 
@@ -1228,7 +1217,12 @@ export default class App extends React.Component {
             onClick={() => { this.before_swap_click() }}
             className={this.state.is_wap_enable && !this.state.is_no_supported ? "btn-wrap" : "btn-wrap-disable"}
           >
-            <FormattedMessage id='swap' />
+            {
+              this.state.is_no_supported ?
+                <FormattedMessage id='Not_SUPPORTED' />
+                :
+                <FormattedMessage id='swap' />
+            }
           </div>
 
           <History
