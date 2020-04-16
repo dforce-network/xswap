@@ -32,7 +32,7 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	// IPot constant private pot = IPot(0x197E90f9FAD81970bA7976f33CbD77088E5D7cf7);
 	// uint constant RAY = 10 ** 27;
 	// address constant private dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-	// address constant private USR = 0xA3A59273494BB5B8F0a8FAcf21B3f666A47d6140;
+	// address constant private USR = 0xd298221F84F621033D209DD4998ccE0f664243Cf;
 	// address constant private USDx = 0xeb269732ab75A6fD61Ea60b06fE994cD32a83549;
 
 	//Rinkeby
@@ -76,6 +76,8 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	function swap(address _input, address _output, uint _inputAmount, address _receiver) public returns (bool) {
 		require(isOpen, "not open");
 
+		uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
+		require(_amountToUser > 0, "");
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
 		if(supportLending[_input]) {
 			if (_input == dai) {
@@ -90,9 +92,6 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 				require(ILendFMe(lendFMe).supply(_input, _inputAmount) == 0, "");
 		}
 		
-		uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
-
-		require(_amountToUser > 0, "");
 		if(supportLending[_output]) {
 			if (_output == dai) {
 
@@ -262,7 +261,7 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 
 				_supplyBalance = ILendFMe(lendFMe).getSupplyBalance(address(this), USR);
 				_balance = IERC20(USR).balanceOf(lendFMe);
-				return rmul(_balance < _supplyBalance ? _balance : _supplyBalance, IUSR(USR).getExchangeRate());
+				return IUSR(USR).getRedeemAmount(_balance < _supplyBalance ? _balance : _supplyBalance);
 			} else
 				return ILendFMe(lendFMe).getSupplyBalance(address(this), _token);
 		}
@@ -280,7 +279,7 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 	}
 
 	function enableLending(address _token) public auth returns (bool) {
-		require(!supportLending[_token], "the token is already supported lending");
+		// require(!supportLending[_token], "the token is already supported lending");
 		supportLending[_token] = true;
 
 		if (_token == dai) {
@@ -321,16 +320,15 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 		require(supportLending[_token], "the token doesnt support lending");
 		supportLending[_token] = false;
 
-		if (_token == dai) {
+		address _asset = _token == dai ? chai : (_token == USDx ? USR : _token);
+		if (ILendFMe(lendFMe).getSupplyBalance(address(this), _asset) == 0)
+			return true;
 
-			ILendFMe(lendFMe).withdraw(chai, uint(-1));
-			IChai(chai).exit(address(this), IERC20(chai).balanceOf(address(this)));
-		} else if (_token == USDx) {
-
-			ILendFMe(lendFMe).withdraw(USR, uint(-1));
-			IUSR(USR).burn(address(this), IERC20(USR).balanceOf(address(this)));
-		} else
-			ILendFMe(lendFMe).withdraw(_token, uint(-1));
+		ILendFMe(lendFMe).withdraw(_asset, uint(-1));
+		if (_token == dai)
+			IChai(_asset).exit(address(this), IERC20(_asset).balanceOf(address(this)));
+		else if (_token == USDx)
+			IUSR(_asset).burn(address(this), IERC20(_asset).balanceOf(address(this)));
 
 		return true;
 	}
@@ -387,16 +385,16 @@ contract XSwap is DSAuth, ERC20SafeTransfer {
 
 	function transferOutALL(address _token, address _receiver) external auth returns (bool) {
 		if(supportLending[_token]) {
-			if (_token == dai) {
 
-				ILendFMe(lendFMe).withdraw(chai, uint(-1));
-				IChai(chai).exit(address(this), IERC20(chai).balanceOf(address(this)));
-			} else if (_token == USDx) {
+			address _asset = _token == dai ? chai : (_token == USDx ? USR : _token);
+			if (ILendFMe(lendFMe).getSupplyBalance(address(this), _asset) == 0)
+				return true;
 
-				ILendFMe(lendFMe).withdraw(USR, uint(-1));
-				IUSR(USR).burn(address(this), IERC20(USR).balanceOf(address(this)));
-			} else
-				ILendFMe(lendFMe).withdraw(_token, uint(-1));
+			ILendFMe(lendFMe).withdraw(_asset, uint(-1));
+			if (_token == dai)
+				IChai(_asset).exit(address(this), IERC20(_asset).balanceOf(address(this)));
+			else if (_token == USDx)
+				IUSR(_asset).burn(address(this), IERC20(_asset).balanceOf(address(this)));
 		}
 		uint _balance = IERC20(_token).balanceOf(address(this));
 		if(_balance > 0)
