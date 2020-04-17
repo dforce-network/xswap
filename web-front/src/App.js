@@ -1237,7 +1237,7 @@ export default class App extends React.Component {
                   </span>
                     <span className='Liquidity-num' onClick={() => handle_B_max(this)}>
                       {
-                        format_bn((this.bn(this.state.cur_liquidaty)).toString(), this.state.cur_recive_decimals, 2)
+                        format_num_to_K(format_bn((this.bn(this.state.cur_liquidaty)).toString(), this.state.cur_recive_decimals, 2))
                         // '12345'
                       }
                     </span>
