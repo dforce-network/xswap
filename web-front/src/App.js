@@ -105,6 +105,7 @@ export default class App extends React.Component {
       showonly: false,
       meun1: true,
       meun2: true,
+      meun3: true,
       is_open: true
     }
 
@@ -590,6 +591,22 @@ export default class App extends React.Component {
   render() {
     return (
       <IntlProvider locale={'en'} messages={this.state.cur_language === '中文' ? zh_CN : en_US} >
+        {
+          !this.state.is_open &&
+          <div className='ant-modal'>
+            <div className='popup-is-open'>
+              <img src={img_is_open} alt='' />
+              <div className='popup-is-open-text'>
+                Oracle System Maintain, Come back Soon...
+            </div>
+              <div className='popup-is-open-text'>
+                Oracle系统维护，敬请期待...
+            </div>
+            </div>
+          </div>
+        }
+
+
         <div className={'header'}>
           <a href="/" className={'header__logo'}>
             <img src={logo_xswap} alt="logo" />
@@ -681,25 +698,6 @@ export default class App extends React.Component {
           </div>
         </div>
 
-
-
-
-        {
-          !this.state.is_open &&
-          <div className='ant-modal'>
-            <div className='popup-is-open'>
-              <img src={img_is_open} alt='' />
-              <div className='popup-is-open-text'>
-                Oracle System Maintain, Come back Soon...
-              </div>
-              <div className='popup-is-open-text'>
-                Oracle系统维护，敬请期待...
-              </div>
-            </div>
-          </div>
-        }
-
-
         {/* mobile tips */}
         <div className={this.state.showonly ? 'mobile-only' : 'disn'}>
           <div className='wrap-mob'>
@@ -752,6 +750,23 @@ export default class App extends React.Component {
               <span className='details'>Lend and Borrow</span>
             </div>
           </div>
+
+
+          <h1 onClick={() => { this.setState({ meun3: !this.state.meun3 }) }}>
+            Exchange Market
+            <span>
+              <img src={this.state.meun3 ? arrow_u : arrow_d} />
+            </span>
+          </h1>
+          <div className={this.state.meun3 ? 'meun1' : 'only1px'}>
+            <div className='m-item'>
+              <a href='/' target='_blank' rel="noopener noreferrer">
+                <span className='title'>Instant Swap</span>
+              </a>
+              <span className='details'>Instant Swap of Stable Assets</span>
+            </div>
+          </div>
+
         </div>
 
 
@@ -1425,7 +1440,7 @@ export default class App extends React.Component {
               <div className='footer-right-fixed'>
                 <div className='fixed1'>
                   {
-                    this.state.cur_language
+                    this.state.cur_language === '中文' ? '中文简体' : 'English'
                   }
                 </div>
                 <span className='fixed-img'>
@@ -1433,7 +1448,7 @@ export default class App extends React.Component {
                 </span>
                 <div className='fixed2'>
                   <ul>
-                    <li onClick={() => { this.setState({ cur_language: '中文' }) }}>{'中文'}</li>
+                    <li onClick={() => { this.setState({ cur_language: '中文' }) }}>{'中文简体'}</li>
                     <li onClick={() => { this.setState({ cur_language: 'English' }) }}>{'English'}</li>
                   </ul>
                 </div>
