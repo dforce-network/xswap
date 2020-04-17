@@ -1,10 +1,13 @@
 // >768
 @media screen and (min-width: 768px) {
     .history-title {
+        width: 710px;
+        margin: 0 auto;
         margin-bottom: 10px;
         font-size: 14px;
         font-weight: 500;
         color: rgba(37, 33, 82, 1);
+        // background-color: red;
     }
 
     .history {
