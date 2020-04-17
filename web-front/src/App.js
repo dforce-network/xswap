@@ -568,6 +568,21 @@ export default class App extends React.Component {
     })
   }
 
+  clear_open = (e) => {
+    // console.log(e);
+    // console.log(e.currentTarget);
+    if (this.state.show_left_more_token) {
+      this.setState({
+        show_left_more_token: false
+      })
+    }
+    if (this.state.show_right_more_token) {
+      this.setState({
+        show_right_more_token: false
+      })
+    }
+  }
+
 
 
   render() {
@@ -644,592 +659,594 @@ export default class App extends React.Component {
         </div>
 
 
-        <div className='wrap-mob'>
-          <div className='only-left'>
-            <img src={logo_xswap} alt='' />
-          </div>
-          <div className='only-right'>
-            <img src={close} alt='' onClick={() => { this.setState({ showonly: true }) }} />
-          </div>
-          <div className='clear'></div>
-        </div>
-        <Top
-          account={this.state.my_account}
-          net_type={this.state.net_type}
-          fn_connect={() => { this.connect() }}
-        />
-        <div className="App">
-          {/* left */}
-          <div className="other-tokens float-left">
-            <div className="token-balance-left">
-              <FormattedMessage id='send' />
-              {
-                this.state.cur_send_addr === 'USDx' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDx ? format_num_to_K(format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'USDT' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'USDC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDC ? format_num_to_K(format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'PAX' &&
-                <span className="my-balance">
-                  {this.state.my_balance_PAX ? format_num_to_K(format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'TUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_TUSD ? format_num_to_K(format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'DAI' &&
-                <span className="my-balance">
-                  {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'WBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_WBTC ? format_num_to_K(format_bn(this.state.my_balance_WBTC, this.state.decimals.WBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'imBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'HBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'HUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_send_addr === 'BUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
-                </span>
-              }
-              <span className="my-balance-title">
-                <FormattedMessage id='balance' />:
-              </span>
+        <div className="App" onClick={(e) => { this.clear_open(e) }}>
+
+          <div className='wrap-mob'>
+            <div className='only-left'>
+              <img src={logo_xswap} alt='' />
             </div>
+            <div className='only-right'>
+              <img src={close} alt='' onClick={() => { this.setState({ showonly: true }) }} />
+            </div>
+            <div className='clear'></div>
+          </div>
 
-            <div className="other-tokens-left">
-              <button
-                onClick={() => { this.setState({ show_left_more_token: !this.state.show_left_more_token }) }}
-                onBlur={() => { this.change_send_addr('kong') }}
-              >
-                <img alt='' className="token-logo" src={this.state.token[this.state.cur_send_addr]} />
-                <span className="token-title">
-                  {this.state.cur_send_addr}
-                </span>
-                <span className={this.state.show_left_more_token ? "token-tips-re" : "token-tips"}></span>
+          <Top account={this.state.my_account} fn_connect={() => { this.connect() }} />
 
+
+          <div className='other-tokens-wrap'>
+            {/* left */}
+            <div className="other-tokens float-left">
+              <div className="token-balance-left">
+                <FormattedMessage id='send' />
                 {
-                  this.state.show_left_more_token &&
-                  <div className="more-tokens">
-                    {
-                      this.state.cur_recive_addr !== 'USDx' && this.state.is_tokensEnable_USDx &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDx') }}>
-                        <img alt='' className="token-logo" src={this.state.token.USDx} />
-                        <span className="token-title">
-                          USDx
-                      </span>
-                        {
-                          this.state.cur_send_addr === 'USDx' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'USDT' && this.state.is_tokensEnable_USDT &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDT') }}>
-                        <img alt='' className="token-logo" src={this.state.token.USDT} />
-                        <span className="token-title">
-                          USDT
-                          <i>(Tether USD)</i>
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'USDT' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'DAI' && this.state.is_tokensEnable_DAI &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('DAI') }}>
-                        <img alt='' className="token-logo" src={this.state.token.DAI} />
-                        <span className="token-title">
-                          DAI
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'DAI' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'HUSD' && this.state.is_tokensEnable_HUSD &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('HUSD') }}>
-                        <img alt='' className="token-logo" src={this.state.token.HUSD} />
-                        <span className="token-title">
-                          HUSD
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'HUSD' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'BUSD' && this.state.is_tokensEnable_BUSD &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('BUSD') }}>
-                        <img alt='' className="token-logo" src={this.state.token.BUSD} />
-                        <span className="token-title">
-                          BUSD
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'BUSD' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'USDC' && this.state.is_tokensEnable_USDC &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDC') }}>
-                        <img alt='' className="token-logo" src={this.state.token.USDC} />
-                        <span className="token-title">
-                          USDC
-                          <i>(USD Coin)</i>
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'USDC' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'PAX' && this.state.is_tokensEnable_PAX &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('PAX') }}>
-                        <img alt='' className="token-logo" src={this.state.token.PAX} />
-                        <span className="token-title">
-                          PAX
-                          <i>(Paxos Standard)</i>
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'PAX' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'TUSD' && this.state.is_tokensEnable_TUSD &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('TUSD') }}>
-                        <img alt='' className="token-logo" src={this.state.token.TUSD} />
-                        <span className="token-title">
-                          TUSD
-                          <i>(True USD)</i>
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'TUSD' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'imBTC' && this.state.is_tokensEnable_imBTC &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('imBTC') }}>
-                        <img alt='' className="token-logo" src={this.state.token.imBTC} />
-                        <span className="token-title">
-                          imBTC
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'imBTC' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'HBTC' && this.state.is_tokensEnable_HBTC &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('HBTC') }}>
-                        <img alt='' className="token-logo" src={this.state.token.HBTC} />
-                        <span className="token-title">
-                          HBTC
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'HBTC' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      this.state.cur_recive_addr !== 'WBTC' && this.state.is_tokensEnable_WBTC &&
-                      <div className="more-tokens-token" onClick={() => { this.change_send_addr('WBTC') }}>
-                        <img alt='' className="token-logo" src={this.state.token.WBTC} />
-                        <span className="token-title">
-                          WBTC
-                        </span>
-                        {
-                          this.state.cur_send_addr === 'WBTC' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-
-                  </div>
-                }
-              </button>
-            </div>
-
-            <div className="other-tokens-right">
-              <input
-                value={this.state.side_A_amount || ''}
-                onChange={(e) => handle_A_change(e.target.value, this)}
-                placeholder={this.placeholder}
-              />
-              <span
-                onClick={() => handle_A_max(this)}
-                className="other-tokens-right-max"
-              >
-                MAX
-              </span>
-            </div>
-
-            <div className="other-tokens-rate">
-              1 {this.state.cur_send_addr} = {' '}
-              {
-                this.state.cur_exchange ?
-                  format_bn((this.bn(this.state.cur_exchange).div(this.bn(10 ** 10))).toString(), 8, 8)
-                  : '···'
-              }
-              {' ' + this.state.cur_recive_addr}
-              {' (inclusive of fees)'}
-            </div>
-            <div className="other-tokens-rate-p">
-              {'Fee: 0.00%'}
-            </div>
-          </div>
-
-          <div className="exchange">
-            <img alt='' className='exc' src={exchange} onClick={() => { this.change_send_to_recive() }} />
-            <img alt='' className='exc_mob' src={exchange_mob} onClick={() => { this.change_send_to_recive() }} />
-
-            {
-              this.state.is_Insufficient_Balance &&
-              <div className='show-tips'>
-                <img alt='' className='show-tips-img' src={show_tips} />
-                <span className='show-tips-text'>
-                  <FormattedMessage id='Insufficient_Balance' />
-                </span>
-              </div>
-            }
-            {
-              this.state.is_liquidity_limit &&
-              <div className='show-tips'>
-                <img alt='' className='show-tips-img' src={show_tips} />
-                <span className='show-tips-text'>
-                  <FormattedMessage id='Insufficient_Liquidity' />
-                </span>
-              </div>
-            }
-            {
-              // this.state.is_no_supported &&
-              // <div className='show-tips'>
-              //   <img alt='' className='show-tips-img' src={show_tips} />
-              //   <span className='show-tips-text'>
-              //     <FormattedMessage id='No_SUPPORTED' />
-              //   </span>
-              // </div>
-            }
-          </div>
-
-          {/* right */}
-          <div className="other-tokens float-right">
-            <div className="token-balance-left">
-              <FormattedMessage id='recive' />
-              {
-                this.state.cur_recive_addr === 'USDx' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDx ? format_num_to_K(format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'USDT' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'USDC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_USDC ? format_num_to_K(format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'PAX' &&
-                <span className="my-balance">
-                  {this.state.my_balance_PAX ? format_num_to_K(format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'TUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_TUSD ? format_num_to_K(format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'DAI' &&
-                <span className="my-balance">
-                  {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'imBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'HBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'WBTC' &&
-                <span className="my-balance">
-                  {this.state.my_balance_WBTC ? format_num_to_K(format_bn(this.state.my_balance_WBTC, this.state.decimals.WBTC, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'HUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
-                </span>
-              }
-              {
-                this.state.cur_recive_addr === 'BUSD' &&
-                <span className="my-balance">
-                  {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
-                </span>
-              }
-              <span className="my-balance-title">
-                <FormattedMessage id='balance' />:
-              </span>
-            </div>
-
-            <div className="other-tokens-left">
-              <button
-                onClick={() => { this.setState({ show_right_more_token: !this.state.show_right_more_token }) }}
-                onBlur={() => { this.change_recive_addr('kong') }}
-              >
-                <img alt='' className="token-logo" src={this.state.token[this.state.cur_recive_addr]} />
-                <span className="token-title">
-                  {this.state.cur_recive_addr}
-                </span>
-                <span className={this.state.show_right_more_token ? "token-tips-re" : "token-tips"}></span>
-
-                {
-                  this.state.show_right_more_token &&
-                  <div className="more-tokens">
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDx') && this.state.is_tokensEnable_USDx &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDx') }}>
-                        <img alt='' className="token-logo" src={this.state.token.USDx} />
-                        <span className="token-title">
-                          USDx
-                      </span>
-                        {
-                          this.state.cur_recive_addr === 'USDx' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDT') && this.state.is_tokensEnable_USDT &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDT') }}>
-                        <img alt='' className="token-logo" src={this.state.token.USDT} />
-                        <span className="token-title">
-                          USDT
-                        <i>(Tether USD)</i>
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'USDT' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'DAI') && this.state.is_tokensEnable_DAI &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('DAI') }}>
-                        <img alt='' className="token-logo" src={this.state.token.DAI} />
-                        <span className="token-title">
-                          DAI
-                      </span>
-                        {
-                          this.state.cur_recive_addr === 'DAI' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HUSD') && this.state.is_tokensEnable_HUSD &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HUSD') }}>
-                        <img alt='' className="token-logo" src={this.state.token.HUSD} />
-                        <span className="token-title">
-                          HUSD
-                      </span>
-                        {
-                          this.state.cur_recive_addr === 'HUSD' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'BUSD') && this.state.is_tokensEnable_BUSD &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('BUSD') }}>
-                        <img alt='' className="token-logo" src={this.state.token.BUSD} />
-                        <span className="token-title">
-                          BUSD
-                      </span>
-                        {
-                          this.state.cur_recive_addr === 'BUSD' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDC') && this.state.is_tokensEnable_USDC &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDC') }}>
-                        <img alt='' className="token-logo" src={this.state.token.USDC} />
-                        <span className="token-title">
-                          USDC
-                          <i>(USD Coin)</i>
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'USDC' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'PAX') && this.state.is_tokensEnable_PAX &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('PAX') }}>
-                        <img alt='' className="token-logo" src={this.state.token.PAX} />
-                        <span className="token-title">
-                          PAX
-                          <i>(Paxos Standard)</i>
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'PAX' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'TUSD') && this.state.is_tokensEnable_TUSD &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('TUSD') }}>
-                        <img alt='' className="token-logo" src={this.state.token.TUSD} />
-                        <span className="token-title">
-                          TUSD
-                        <i>(True USD)</i>
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'TUSD' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'imBTC') && this.state.is_tokensEnable_imBTC &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('imBTC') }}>
-                        <img alt='' className="token-logo" src={this.state.token.imBTC} />
-                        <span className="token-title">
-                          imBTC
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'imBTC' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HBTC') && this.state.is_tokensEnable_HBTC &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HBTC') }}>
-                        <img alt='' className="token-logo" src={this.state.token.HBTC} />
-                        <span className="token-title">
-                          HBTC
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'HBTC' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                    {
-                      (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'WBTC') && this.state.is_tokensEnable_WBTC &&
-                      <div className="more-tokens-token" onClick={() => { this.change_recive_addr('WBTC') }}>
-                        <img alt='' className="token-logo" src={this.state.token.WBTC} />
-                        <span className="token-title">
-                          WBTC
-                        </span>
-                        {
-                          this.state.cur_recive_addr === 'WBTC' &&
-                          <img alt='' className="token-isselected" src={is_selected} />
-                        }
-                      </div>
-                    }
-                  </div>
-                }
-              </button>
-            </div>
-            <div className="other-tokens-right">
-              <input
-                value={this.state.side_B_amount || ''}
-                // disabled='disabled'
-                placeholder={this.placeholder}
-                onChange={(e) => handle_B_change(e.target.value, this)}
-              />
-            </div>
-
-            <div className="other-tokens-rate text-right">
-              {
-                this.state.is_liquidity_limit &&
-                <div className='Liquidity-tips'>
-                  <span className='Liquidity-tit'>
-                    MAX Liquidity:
+                  this.state.cur_send_addr === 'USDx' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_USDx ? format_num_to_K(format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2)) : '···'}
                   </span>
-                  <span className='Liquidity-num' onClick={() => handle_B_max(this)}>
-                    {
-                      format_bn((this.bn(this.state.cur_liquidaty)).toString(), this.state.cur_recive_decimals, 2)
-                      // '12345'
-                    }
+                }
+                {
+                  this.state.cur_send_addr === 'USDT' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'USDC' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_USDC ? format_num_to_K(format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'PAX' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_PAX ? format_num_to_K(format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'TUSD' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_TUSD ? format_num_to_K(format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'DAI' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'WBTC' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_WBTC ? format_num_to_K(format_bn(this.state.my_balance_WBTC, this.state.decimals.WBTC, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'imBTC' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'HBTC' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'HUSD' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'BUSD' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
+                  </span>
+                }
+                <span className="my-balance-title">
+                  <FormattedMessage id='balance' />:
+              </span>
+              </div>
+
+              <div className="other-tokens-left">
+                <button
+                  onClick={() => { this.setState({ show_left_more_token: !this.state.show_left_more_token }) }}
+                  onBlur={() => { this.change_send_addr('kong') }}
+                >
+                  <img alt='' className="token-logo" src={this.state.token[this.state.cur_send_addr]} />
+                  <span className="token-title">
+                    {this.state.cur_send_addr}
+                  </span>
+                  <span className={this.state.show_left_more_token ? "token-tips-re" : "token-tips"}></span>
+
+                  {
+                    this.state.show_left_more_token &&
+                    <div className="more-tokens">
+                      {
+                        this.state.cur_recive_addr !== 'USDx' && this.state.is_tokensEnable_USDx &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDx') }}>
+                          <img alt='' className="token-logo" src={this.state.token.USDx} />
+                          <span className="token-title">
+                            USDx
+                      </span>
+                          {
+                            this.state.cur_send_addr === 'USDx' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'USDT' && this.state.is_tokensEnable_USDT &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDT') }}>
+                          <img alt='' className="token-logo" src={this.state.token.USDT} />
+                          <span className="token-title">
+                            USDT
+                          <i>(Tether USD)</i>
+                          </span>
+                          {
+                            this.state.cur_send_addr === 'USDT' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'DAI' && this.state.is_tokensEnable_DAI &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('DAI') }}>
+                          <img alt='' className="token-logo" src={this.state.token.DAI} />
+                          <span className="token-title">
+                            DAI
+                        </span>
+                          {
+                            this.state.cur_send_addr === 'DAI' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'HUSD' && this.state.is_tokensEnable_HUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('HUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.HUSD} />
+                          <span className="token-title">
+                            HUSD
+                        </span>
+                          {
+                            this.state.cur_send_addr === 'HUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'BUSD' && this.state.is_tokensEnable_BUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('BUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.BUSD} />
+                          <span className="token-title">
+                            BUSD
+                        </span>
+                          {
+                            this.state.cur_send_addr === 'BUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'USDC' && this.state.is_tokensEnable_USDC &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDC') }}>
+                          <img alt='' className="token-logo" src={this.state.token.USDC} />
+                          <span className="token-title">
+                            USDC
+                          <i>(USD Coin)</i>
+                          </span>
+                          {
+                            this.state.cur_send_addr === 'USDC' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'PAX' && this.state.is_tokensEnable_PAX &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('PAX') }}>
+                          <img alt='' className="token-logo" src={this.state.token.PAX} />
+                          <span className="token-title">
+                            PAX
+                          <i>(Paxos Standard)</i>
+                          </span>
+                          {
+                            this.state.cur_send_addr === 'PAX' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'TUSD' && this.state.is_tokensEnable_TUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('TUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.TUSD} />
+                          <span className="token-title">
+                            TUSD
+                          <i>(True USD)</i>
+                          </span>
+                          {
+                            this.state.cur_send_addr === 'TUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'imBTC' && this.state.is_tokensEnable_imBTC &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('imBTC') }}>
+                          <img alt='' className="token-logo" src={this.state.token.imBTC} />
+                          <span className="token-title">
+                            imBTC
+                        </span>
+                          {
+                            this.state.cur_send_addr === 'imBTC' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'HBTC' && this.state.is_tokensEnable_HBTC &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('HBTC') }}>
+                          <img alt='' className="token-logo" src={this.state.token.HBTC} />
+                          <span className="token-title">
+                            HBTC
+                        </span>
+                          {
+                            this.state.cur_send_addr === 'HBTC' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        this.state.cur_recive_addr !== 'WBTC' && this.state.is_tokensEnable_WBTC &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('WBTC') }}>
+                          <img alt='' className="token-logo" src={this.state.token.WBTC} />
+                          <span className="token-title">
+                            WBTC
+                        </span>
+                          {
+                            this.state.cur_send_addr === 'WBTC' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
+                    </div>
+                  }
+                </button>
+              </div>
+
+              <div className="other-tokens-right">
+                <input
+                  value={this.state.side_A_amount || ''}
+                  onChange={(e) => handle_A_change(e.target.value, this)}
+                  placeholder={this.placeholder}
+                />
+                <span
+                  onClick={() => handle_A_max(this)}
+                  className="other-tokens-right-max"
+                >
+                  MAX
+              </span>
+              </div>
+
+              <div className="other-tokens-rate">
+                1 {this.state.cur_send_addr} = {' '}
+                {
+                  this.state.cur_exchange ?
+                    format_bn((this.bn(this.state.cur_exchange).div(this.bn(10 ** 10))).toString(), 8, 8)
+                    : '···'
+                }
+                {' ' + this.state.cur_recive_addr}
+                {' (inclusive of fees)'}
+              </div>
+              <div className="other-tokens-rate-p">
+                {'Fee: 0.00%'}
+              </div>
+            </div>
+
+            <div className="exchange">
+              <img alt='' className='exc' src={exchange} onClick={() => { this.change_send_to_recive() }} />
+              <img alt='' className='exc_mob' src={exchange_mob} onClick={() => { this.change_send_to_recive() }} />
+
+              {
+                this.state.is_Insufficient_Balance &&
+                <div className='show-tips'>
+                  <img alt='' className='show-tips-img' src={show_tips} />
+                  <span className='show-tips-text'>
+                    <FormattedMessage id='Insufficient_Balance' />
                   </span>
                 </div>
               }
+              {
+                this.state.is_liquidity_limit &&
+                <div className='show-tips'>
+                  <img alt='' className='show-tips-img' src={show_tips} />
+                  <span className='show-tips-text'>
+                    <FormattedMessage id='Insufficient_Liquidity' />
+                  </span>
+                </div>
+              }
+              {
+                // this.state.is_no_supported &&
+                // <div className='show-tips'>
+                //   <img alt='' className='show-tips-img' src={show_tips} />
+                //   <span className='show-tips-text'>
+                //     <FormattedMessage id='No_SUPPORTED' />
+                //   </span>
+                // </div>
+              }
             </div>
-          </div>
 
+            {/* right */}
+            <div className="other-tokens float-right">
+              <div className="token-balance-left">
+                <FormattedMessage id='recive' />
+                {
+                  this.state.cur_recive_addr === 'USDx' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_USDx ? format_num_to_K(format_bn(this.state.my_balance_USDx, this.state.decimals.USDx, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'USDT' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_USDT ? format_num_to_K(format_bn(this.state.my_balance_USDT, this.state.decimals.USDT, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'USDC' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_USDC ? format_num_to_K(format_bn(this.state.my_balance_USDC, this.state.decimals.USDC, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'PAX' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_PAX ? format_num_to_K(format_bn(this.state.my_balance_PAX, this.state.decimals.PAX, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'TUSD' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_TUSD ? format_num_to_K(format_bn(this.state.my_balance_TUSD, this.state.decimals.TUSD, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'DAI' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_DAI ? format_num_to_K(format_bn(this.state.my_balance_DAI, this.state.decimals.DAI, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'imBTC' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_imBTC ? format_num_to_K(format_bn(this.state.my_balance_imBTC, this.state.decimals.imBTC, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'HBTC' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_HBTC ? format_num_to_K(format_bn(this.state.my_balance_HBTC, this.state.decimals.HBTC, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'WBTC' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_WBTC ? format_num_to_K(format_bn(this.state.my_balance_WBTC, this.state.decimals.WBTC, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'HUSD' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'BUSD' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
+                  </span>
+                }
+                <span className="my-balance-title">
+                  <FormattedMessage id='balance' />:
+              </span>
+              </div>
+
+              <div className="other-tokens-left">
+                <button
+                  onClick={() => { this.setState({ show_right_more_token: !this.state.show_right_more_token }) }}
+                  onBlur={() => { this.change_recive_addr('kong') }}
+                >
+                  <img alt='' className="token-logo" src={this.state.token[this.state.cur_recive_addr]} />
+                  <span className="token-title">
+                    {this.state.cur_recive_addr}
+                  </span>
+                  <span className={this.state.show_right_more_token ? "token-tips-re" : "token-tips"}></span>
+
+                  {
+                    this.state.show_right_more_token &&
+                    <div className="more-tokens">
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDx') && this.state.is_tokensEnable_USDx &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDx') }}>
+                          <img alt='' className="token-logo" src={this.state.token.USDx} />
+                          <span className="token-title">
+                            USDx
+                      </span>
+                          {
+                            this.state.cur_recive_addr === 'USDx' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDT') && this.state.is_tokensEnable_USDT &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDT') }}>
+                          <img alt='' className="token-logo" src={this.state.token.USDT} />
+                          <span className="token-title">
+                            USDT
+                        <i>(Tether USD)</i>
+                          </span>
+                          {
+                            this.state.cur_recive_addr === 'USDT' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'DAI') && this.state.is_tokensEnable_DAI &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('DAI') }}>
+                          <img alt='' className="token-logo" src={this.state.token.DAI} />
+                          <span className="token-title">
+                            DAI
+                      </span>
+                          {
+                            this.state.cur_recive_addr === 'DAI' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HUSD') && this.state.is_tokensEnable_HUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.HUSD} />
+                          <span className="token-title">
+                            HUSD
+                      </span>
+                          {
+                            this.state.cur_recive_addr === 'HUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'BUSD') && this.state.is_tokensEnable_BUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('BUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.BUSD} />
+                          <span className="token-title">
+                            BUSD
+                      </span>
+                          {
+                            this.state.cur_recive_addr === 'BUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDC') && this.state.is_tokensEnable_USDC &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDC') }}>
+                          <img alt='' className="token-logo" src={this.state.token.USDC} />
+                          <span className="token-title">
+                            USDC
+                          <i>(USD Coin)</i>
+                          </span>
+                          {
+                            this.state.cur_recive_addr === 'USDC' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'PAX') && this.state.is_tokensEnable_PAX &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('PAX') }}>
+                          <img alt='' className="token-logo" src={this.state.token.PAX} />
+                          <span className="token-title">
+                            PAX
+                          <i>(Paxos Standard)</i>
+                          </span>
+                          {
+                            this.state.cur_recive_addr === 'PAX' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'TUSD') && this.state.is_tokensEnable_TUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('TUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.TUSD} />
+                          <span className="token-title">
+                            TUSD
+                        <i>(True USD)</i>
+                          </span>
+                          {
+                            this.state.cur_recive_addr === 'TUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'imBTC') && this.state.is_tokensEnable_imBTC &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('imBTC') }}>
+                          <img alt='' className="token-logo" src={this.state.token.imBTC} />
+                          <span className="token-title">
+                            imBTC
+                        </span>
+                          {
+                            this.state.cur_recive_addr === 'imBTC' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HBTC') && this.state.is_tokensEnable_HBTC &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HBTC') }}>
+                          <img alt='' className="token-logo" src={this.state.token.HBTC} />
+                          <span className="token-title">
+                            HBTC
+                        </span>
+                          {
+                            this.state.cur_recive_addr === 'HBTC' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                      {
+                        (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'WBTC') && this.state.is_tokensEnable_WBTC &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('WBTC') }}>
+                          <img alt='' className="token-logo" src={this.state.token.WBTC} />
+                          <span className="token-title">
+                            WBTC
+                        </span>
+                          {
+                            this.state.cur_recive_addr === 'WBTC' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </button>
+              </div>
+              <div className="other-tokens-right">
+                <input
+                  value={this.state.side_B_amount || ''}
+                  // disabled='disabled'
+                  placeholder={this.placeholder}
+                  onChange={(e) => handle_B_change(e.target.value, this)}
+                />
+              </div>
+
+              <div className="other-tokens-rate text-right">
+                {
+                  this.state.is_liquidity_limit &&
+                  <div className='Liquidity-tips'>
+                    <span className='Liquidity-tit'>
+                      MAX Liquidity:
+                  </span>
+                    <span className='Liquidity-num' onClick={() => handle_B_max(this)}>
+                      {
+                        format_bn((this.bn(this.state.cur_liquidaty)).toString(), this.state.cur_recive_decimals, 2)
+                        // '12345'
+                      }
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+
+          </div>
           <div className='clear'></div>
 
           <div

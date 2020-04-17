@@ -14,6 +14,6 @@ const en_US = {
     Insufficient_Balance: 'Insufficient Balance',
     Insufficient_Liquidity: 'Insufficient Liquidity',
     balance: 'Balance',
-    Not_SUPPORTED: 'No SUPPORTED'
+    Not_SUPPORTED: 'NOT SUPPORTED'
 }
 export default en_US;
