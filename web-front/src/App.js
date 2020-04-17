@@ -636,7 +636,7 @@ export default class App extends React.Component {
               <a href='https://dip001.dforce.network/' target='_blank' rel="noopener noreferrer">
                 <span className='title'>DIP001</span>
               </a>
-              <span className='details'>Collateral lending dashboard</span>
+              <span className='details'>Collateral Lending Dashboard</span>
             </div>
           </div>
 
