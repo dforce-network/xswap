@@ -1,8 +1,9 @@
 import React from 'react';
 import './App.scss';
+import './header.scss';
 import Web3 from 'web3';
 // import { Modal } from 'antd';
-// import 'antd/dist/antd.css';
+import 'antd/dist/antd.css';
 import is_selected from './images/is_selected.svg';
 import exchange from './images/exchange.svg';
 import exchange_mob from './images/exchange_mob.svg';
@@ -41,6 +42,7 @@ import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
 import arrow_d from './images/arrow_d.svg';//
 import img_is_open from './images/img_is_open.svg';
+import { Menu, Dropdown, Drawer, Collapse } from 'antd';
 import {
   get_my_balance,
   handle_A_change,
@@ -588,6 +590,100 @@ export default class App extends React.Component {
   render() {
     return (
       <IntlProvider locale={'en'} messages={this.state.cur_language === '中文' ? zh_CN : en_US} >
+        <div className={'header'}>
+          <a href="/" className={'header__logo'}>
+            <img src={logo_xswap} alt="logo" />
+          </a>
+
+          <div className={'header__menu'}>
+            <Dropdown
+              overlay={
+                <Menu className={'header__overlay'}>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://usdx.dforce.network/" className={'header__overlay_item'}>
+                      <span>{'USDx'}</span>
+                      <label>{'Portal'}</label>
+                    </a>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="/" className={'header__overlay_item'}>
+                      <span>{'DIP001'}</span>
+                      <label>{'Collateral Lending Dashboard'}</label>
+                    </a>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <span className={'header__menu_item'}>
+                <label>{'dForce Stablecoin'}</label>
+                <img src={arrow_d} alt="down" />
+              </span>
+            </Dropdown>
+
+            <Dropdown
+              overlay={
+                <Menu className={'header__overlay'}>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://lendf.me" className={'header__overlay_item'}>
+                      <span>{'LendfMe'}</span>
+                      <label>{'Lend and Borrow'}</label>
+                    </a>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <span className={'header__menu_item'}>
+                <label>{'Yield Market'}</label>
+                <img src={arrow_d} alt="down" />
+              </span>
+            </Dropdown>
+
+            <Dropdown
+              overlay={
+                <Menu className={'header__overlay'}>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="/" className={'header__overlay_item'}>
+                      <span>{'Instant Swap'}</span>
+                      <label>{'Instant Swap of Stable Assets'}</label>
+                    </a>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <span className={'header__menu_item'}>
+                <label>{'Exchange Market'}</label>
+                <img src={arrow_d} alt="down" />
+              </span>
+            </Dropdown>
+
+            {
+              this.state.my_account &&
+              <a
+                className={'header__menu_wallet'} target="_blank"
+                href={
+                  this.state.net_type !== 'rinkeby'
+                    ? `https://etherscan.com/address/${this.state.my_account}`
+                    : `https://rinkeby.etherscan.io/address/${this.state.my_account}`
+                }
+              >
+                <div>
+                  <i style={{ backgroundColor: this.state.net_type !== 'rinkeby' ? '#29B6AF' : '#e2bc73' }}></i>
+                  {this.state.my_account.slice(0, 4) + '...' + this.state.my_account.slice(-4)}
+                </div>
+              </a>
+            }
+            {
+              !this.state.my_account &&
+              <a className={'header__menu_wallet'} onClick={() => { this.connect() }}>
+                <FormattedMessage id='connect' />
+              </a>
+            }
+          </div>
+        </div>
+
+
+
+
         {
           !this.state.is_open &&
           <div className='ant-modal'>
@@ -671,7 +767,10 @@ export default class App extends React.Component {
             <div className='clear'></div>
           </div>
 
-          <Top account={this.state.my_account} fn_connect={() => { this.connect() }} />
+          {/* <Top account={this.state.my_account} fn_connect={() => { this.connect() }} /> */}
+          <div className="slogon">
+            <FormattedMessage id='slogon' />
+          </div>
 
 
           <div className='other-tokens-wrap'>
