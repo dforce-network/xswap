@@ -173,6 +173,7 @@ export default class App extends React.Component {
                     get_my_balance(this);
                     check_TokensEnable(this);
                   } else {
+                    // alert(!(res_isopen_stable && res_isopen_btc));
                     this.setState({
                       i_am_ready: false,
                       is_open: false
@@ -508,6 +509,24 @@ export default class App extends React.Component {
 
       console.log('*** get_my_balance ***');
       get_my_balance(this);
+
+
+      // this.state.XSwap_stable.methods.isOpen().call((err, res_isopen_stable) => {
+      //   this.state.XSwap_btc.methods.isOpen().call((err, res_isopen_btc) => {
+      //     console.log(res_isopen_stable, res_isopen_btc);
+      //     if (res_isopen_stable && res_isopen_btc) {
+      //       this.setState({
+      //         is_open: true
+      //       })
+      //     } else {
+      //       this.setState({
+      //         is_open: false
+      //       })
+      //     }
+      //   })
+      // })
+
+
     }, 1000 * 5);
   }
   before_swap_click = () => {
