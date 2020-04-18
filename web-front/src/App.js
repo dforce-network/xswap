@@ -30,13 +30,13 @@ import en_US from './language/en_US.js';
 import zh_CN from './language/zh_CN';
 import History from './component/history';
 import Top from './component/top';
-import Twitter from './images/Twitter.svg';
-import Medium from './images/Medium.svg';
+import Twitter from './images/twitter.svg';
+import Medium from './images/medium.svg';
 import Reddit from './images/Reddit.svg';
 import Discord from './images/Discord.svg';
 import LinkedIn from './images/LinkedIn.svg';
 import Youtube from './images/Youtube.svg';
-import Telegram from './images/Telegram.svg';
+import Telegram from './images/telegram.svg';
 import erweima from './images/erweima.png';
 import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
@@ -885,7 +885,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.USDx} />
                           <span className="token-title">
                             USDx
-                      </span>
+                          <i>(dForce)</i>
+                          </span>
                           {
                             this.state.cur_send_addr === 'USDx' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -912,7 +913,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.DAI} />
                           <span className="token-title">
                             DAI
-                        </span>
+                          <i>(Dai Stablecoin)</i>
+                          </span>
                           {
                             this.state.cur_send_addr === 'DAI' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -925,7 +927,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.HUSD} />
                           <span className="token-title">
                             HUSD
-                        </span>
+                          <i>(HUSD)</i>
+                          </span>
                           {
                             this.state.cur_send_addr === 'HUSD' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -938,7 +941,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.BUSD} />
                           <span className="token-title">
                             BUSD
-                        </span>
+                          <i>(Binance USD)</i>
+                          </span>
                           {
                             this.state.cur_send_addr === 'BUSD' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -951,7 +955,7 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.USDC} />
                           <span className="token-title">
                             USDC
-                          <i>(USD Coin)</i>
+                          <i>(USD//C)</i>
                           </span>
                           {
                             this.state.cur_send_addr === 'USDC' &&
@@ -979,7 +983,7 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.TUSD} />
                           <span className="token-title">
                             TUSD
-                          <i>(True USD)</i>
+                          <i>(TrueUSD)</i>
                           </span>
                           {
                             this.state.cur_send_addr === 'TUSD' &&
@@ -993,7 +997,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.imBTC} />
                           <span className="token-title">
                             imBTC
-                        </span>
+                          <i>(The Tokenized Bitcoin)</i>
+                          </span>
                           {
                             this.state.cur_send_addr === 'imBTC' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1006,7 +1011,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.HBTC} />
                           <span className="token-title">
                             HBTC
-                        </span>
+                          <i>(Huobi BTC)</i>
+                          </span>
                           {
                             this.state.cur_send_addr === 'HBTC' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1019,7 +1025,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.WBTC} />
                           <span className="token-title">
                             WBTC
-                        </span>
+                          <i>(Wrapped BTC)</i>
+                          </span>
                           {
                             this.state.cur_send_addr === 'WBTC' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1189,7 +1196,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.USDx} />
                           <span className="token-title">
                             USDx
-                      </span>
+                          <i>(dForce)</i>
+                          </span>
                           {
                             this.state.cur_recive_addr === 'USDx' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1202,7 +1210,7 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.USDT} />
                           <span className="token-title">
                             USDT
-                        <i>(Tether USD)</i>
+                          <i>(Tether USD)</i>
                           </span>
                           {
                             this.state.cur_recive_addr === 'USDT' &&
@@ -1216,7 +1224,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.DAI} />
                           <span className="token-title">
                             DAI
-                      </span>
+                          <i>(Dai Stablecoin)</i>
+                          </span>
                           {
                             this.state.cur_recive_addr === 'DAI' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1229,7 +1238,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.HUSD} />
                           <span className="token-title">
                             HUSD
-                      </span>
+                          <i>(HUSD)</i>
+                          </span>
                           {
                             this.state.cur_recive_addr === 'HUSD' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1242,7 +1252,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.BUSD} />
                           <span className="token-title">
                             BUSD
-                      </span>
+                          <i>(Binance USD)</i>
+                          </span>
                           {
                             this.state.cur_recive_addr === 'BUSD' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1255,7 +1266,7 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.USDC} />
                           <span className="token-title">
                             USDC
-                          <i>(USD Coin)</i>
+                          <i>(USD//C)</i>
                           </span>
                           {
                             this.state.cur_recive_addr === 'USDC' &&
@@ -1283,7 +1294,7 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.TUSD} />
                           <span className="token-title">
                             TUSD
-                        <i>(True USD)</i>
+                          <i>(TrueUSD)</i>
                           </span>
                           {
                             this.state.cur_recive_addr === 'TUSD' &&
@@ -1297,7 +1308,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.imBTC} />
                           <span className="token-title">
                             imBTC
-                        </span>
+                          <i>(The Tokenized Bitcoin)</i>
+                          </span>
                           {
                             this.state.cur_recive_addr === 'imBTC' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1310,7 +1322,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.HBTC} />
                           <span className="token-title">
                             HBTC
-                        </span>
+                          <i>(Huobi BTC)</i>
+                          </span>
                           {
                             this.state.cur_recive_addr === 'HBTC' &&
                             <img alt='' className="token-isselected" src={is_selected} />
@@ -1323,7 +1336,8 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.WBTC} />
                           <span className="token-title">
                             WBTC
-                        </span>
+                          <i>(Wrapped BTC)</i>
+                          </span>
                           {
                             this.state.cur_recive_addr === 'WBTC' &&
                             <img alt='' className="token-isselected" src={is_selected} />
