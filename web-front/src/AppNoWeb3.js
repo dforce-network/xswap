@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.scss';
-import Web3 from 'web3';
+import './header.scss';
+import 'antd/dist/antd.css';
 import is_selected from './images/is_selected.svg';
 import exchange from './images/exchange.svg';
 import exchange_mob from './images/exchange_mob.svg';
@@ -37,7 +38,9 @@ import Telegram from './images/Telegram.svg';
 import erweima from './images/erweima.png';
 import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
-import arrow_d from './images/arrow_d.svg';
+import arrow_d from './images/arrow_d.svg';//
+import img_is_open from './images/img_is_open.svg';
+import { Menu, Dropdown, Drawer, Collapse, Modal } from 'antd';
 
 
 export default class App extends React.Component {
@@ -82,18 +85,89 @@ export default class App extends React.Component {
       is_stable_coin_receive: true,
       showonly: false,
       meun1: true,
-      meun2: true
+      meun2: true,
+      meun3: true,
+      is_open: true
     }
-
-    this.new_web3 = window.new_web3 = new Web3(Web3.givenProvider || null);
-    this.bn = this.new_web3.utils.toBN;
     this.placeholder = navigator.language === 'zh-CN' ? '输入数量' : 'Amount';
   }
+
 
 
   render() {
     return (
       <IntlProvider locale={'en'} messages={this.state.cur_language === '中文' ? zh_CN : en_US} >
+        <div className={'header'}>
+          <a href="/" className={'header__logo'}>
+            <img src={logo_xswap} alt="logo" />
+          </a>
+
+          <div className={'header__menu'}>
+            <Dropdown
+              overlay={
+                <Menu className={'header__overlay'}>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://usdx.dforce.network/" className={'header__overlay_item'}>
+                      <span>{'USDx'}</span>
+                      <label>{'Portal'}</label>
+                    </a>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="/" className={'header__overlay_item'}>
+                      <span>{'DIP001'}</span>
+                      <label>{'Collateral Lending Dashboard'}</label>
+                    </a>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <span className={'header__menu_item'}>
+                <label>{'dForce Stablecoin'}</label>
+                <img src={arrow_d} alt="down" />
+              </span>
+            </Dropdown>
+
+            <Dropdown
+              overlay={
+                <Menu className={'header__overlay'}>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://lendf.me" className={'header__overlay_item'}>
+                      <span>{'LendfMe'}</span>
+                      <label>{'Lend and Borrow'}</label>
+                    </a>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <span className={'header__menu_item'}>
+                <label>{'Yield Market'}</label>
+                <img src={arrow_d} alt="down" />
+              </span>
+            </Dropdown>
+
+            <Dropdown
+              overlay={
+                <Menu className={'header__overlay'}>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="/" className={'header__overlay_item'}>
+                      <span>{'Instant Swap'}</span>
+                      <label>{'Instant Swap of Stable Assets'}</label>
+                    </a>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <span className={'header__menu_item'}>
+                <label>{'Exchange Market'}</label>
+                <img src={arrow_d} alt="down" />
+              </span>
+            </Dropdown>
+            <a className={'header__menu_wallet'}>
+              <FormattedMessage id='connect' />
+            </a>
+          </div>
+        </div>
+
         {/* mobile tips */}
         <div className={this.state.showonly ? 'mobile-only' : 'disn'}>
           <div className='wrap-mob'>
@@ -126,7 +200,7 @@ export default class App extends React.Component {
               <a href='https://dip001.dforce.network/' target='_blank' rel="noopener noreferrer">
                 <span className='title'>DIP001</span>
               </a>
-              <span className='details'>Collateral lending dashboard</span>
+              <span className='details'>Collateral Lending Dashboard</span>
             </div>
           </div>
 
@@ -146,98 +220,127 @@ export default class App extends React.Component {
               <span className='details'>Lend and Borrow</span>
             </div>
           </div>
+
+
+          <h1 onClick={() => { this.setState({ meun3: !this.state.meun3 }) }}>
+            Exchange Market
+            <span>
+              <img src={this.state.meun3 ? arrow_u : arrow_d} />
+            </span>
+          </h1>
+          <div className={this.state.meun3 ? 'meun1' : 'only1px'}>
+            <div className='m-item'>
+              <a href='/' target='_blank' rel="noopener noreferrer">
+                <span className='title'>Instant Swap</span>
+              </a>
+              <span className='details'>Instant Swap of Stable Assets</span>
+            </div>
+          </div>
+
         </div>
 
 
-        <div className='wrap-mob'>
-          <div className='only-left'>
-            <img src={logo_xswap} alt='' />
-          </div>
-          <div className='only-right'>
-            <img src={close} alt='' onClick={() => { this.setState({ showonly: true }) }} />
-          </div>
-          <div className='clear'></div>
-        </div>
-        <Top
-          account={this.state.my_account}
-          net_type={this.state.net_type}
-          fn_connect={() => { }}
-        />
         <div className="App">
-          {/* left */}
-          <div className="other-tokens float-left">
-            <div className="token-balance-left">
-              <FormattedMessage id='send' />
-              <span className="my-balance">{'···'}</span>
-              <span className="my-balance-title">
-                <FormattedMessage id='balance' />:
-              </span>
-            </div>
 
-            <div className="other-tokens-left">
-              <button>
-                <img alt='' className="token-logo" src={this.state.token[this.state.cur_send_addr]} />
-                <span className="token-title">
-                  {this.state.cur_send_addr}
+          <div className='wrap-mob'>
+            <div className='only-left'>
+              <img src={logo_xswap} alt='' />
+            </div>
+            <div className='only-right'>
+              <img src={close} alt='' onClick={() => { this.setState({ showonly: true }) }} />
+            </div>
+            <div className='clear'></div>
+          </div>
+          <div className="slogon">
+            <FormattedMessage id='slogon' />
+          </div>
+
+
+          <div className='other-tokens-wrap'>
+            {/* left */}
+            <div className="other-tokens float-left">
+              <div className="token-balance-left">
+                <FormattedMessage id='send' />
+                <span className="my-balance">
+                  {'···'}
                 </span>
-                <span className={this.state.show_left_more_token ? "token-tips-re" : "token-tips"}></span>
-              </button>
-            </div>
-
-            <div className="other-tokens-right">
-              <input value={this.state.side_A_amount || ''} placeholder={this.placeholder} />
-              <span className="other-tokens-right-max">MAX</span>
-            </div>
-
-            <div className="other-tokens-rate">
-              1 {this.state.cur_send_addr} = {' '}
-              {'···'}
-              {' ' + this.state.cur_recive_addr}
-              {'(including fees)'}
-            </div>
-            <div className="other-tokens-rate-p">
-              {'Fee: 0.00%'}
-            </div>
-          </div>
-
-          <div className="exchange">
-            <img alt='' className='exc' src={exchange} />
-            <img alt='' className='exc_mob' src={exchange_mob} />
-          </div>
-
-          {/* right */}
-          <div className="other-tokens float-right">
-            <div className="token-balance-left">
-              <FormattedMessage id='recive' />
-              <span className="my-balance">{'···'}</span>
-              <span className="my-balance-title">
-                <FormattedMessage id='balance' />:
+                <span className="my-balance-title">
+                  <FormattedMessage id='balance' />:
               </span>
+              </div>
+
+              <div className="other-tokens-left">
+                <button>
+                  <img alt='' className="token-logo" src={this.state.token[this.state.cur_send_addr]} />
+                  <span className="token-title">
+                    {this.state.cur_send_addr}
+                  </span>
+                  <span className={this.state.show_left_more_token ? "token-tips-re" : "token-tips"}></span>
+                </button>
+              </div>
+
+              <div className="other-tokens-right">
+                <input
+                  value={this.state.side_A_amount || ''}
+                  placeholder={this.placeholder}
+                />
+                <span
+                  className="other-tokens-right-max"
+                >
+                  MAX
+              </span>
+              </div>
+
+              <div className="other-tokens-rate">
+                1 {this.state.cur_send_addr} = {' '}
+                {'···'}
+                {' ' + this.state.cur_recive_addr}
+                {' (inclusive of fees)'}
+              </div>
+              <div className="other-tokens-rate-p">
+                {'Fee: 0.00%'}
+              </div>
             </div>
 
-            <div className="other-tokens-left">
-              <button>
-                <img alt='' className="token-logo" src={this.state.token[this.state.cur_recive_addr]} />
-                <span className="token-title">
-                  {this.state.cur_recive_addr}
+            <div className="exchange">
+              <img alt='' className='exc' src={exchange} />
+              <img alt='' className='exc_mob' src={exchange_mob} />
+            </div>
+
+            {/* right */}
+            <div className="other-tokens float-right">
+              <div className="token-balance-left">
+                <FormattedMessage id='recive' />
+                <span className="my-balance">
+                  {'···'}
                 </span>
-                <span className={this.state.show_right_more_token ? "token-tips-re" : "token-tips"}></span>
-              </button>
-            </div>
-            <div className="other-tokens-right">
-              <input
-                value={this.state.side_B_amount || ''}
-                // disabled='disabled'
-                placeholder={this.placeholder}
-              />
-            </div>
-          </div>
+                <span className="my-balance-title">
+                  <FormattedMessage id='balance' />:
+              </span>
+              </div>
 
+              <div className="other-tokens-left">
+                <button>
+                  <img alt='' className="token-logo" src={this.state.token[this.state.cur_recive_addr]} />
+                  <span className="token-title">
+                    {this.state.cur_recive_addr}
+                  </span>
+                  <span className={this.state.show_right_more_token ? "token-tips-re" : "token-tips"}></span>
+                </button>
+              </div>
+              <div className="other-tokens-right">
+                <input
+                  value={this.state.side_B_amount || ''}
+                  // disabled='disabled'
+                  placeholder={this.placeholder}
+                />
+              </div>
+            </div>
+
+          </div>
           <div className='clear'></div>
 
-          <div
-            className={this.state.is_wap_enable ? "btn-wrap" : "btn-wrap-disable"}
-          >
+          <div className={"btn-wrap-disable"}>
             <FormattedMessage id='swap' />
           </div>
 
@@ -306,7 +409,7 @@ export default class App extends React.Component {
               <div className='footer-right-fixed'>
                 <div className='fixed1'>
                   {
-                    this.state.cur_language
+                    this.state.cur_language === '中文' ? '中文简体' : 'English'
                   }
                 </div>
                 <span className='fixed-img'>
@@ -314,7 +417,7 @@ export default class App extends React.Component {
                 </span>
                 <div className='fixed2'>
                   <ul>
-                    <li onClick={() => { this.setState({ cur_language: '中文' }) }}>{'中文'}</li>
+                    <li onClick={() => { this.setState({ cur_language: '中文' }) }}>{'中文简体'}</li>
                     <li onClick={() => { this.setState({ cur_language: 'English' }) }}>{'English'}</li>
                   </ul>
                 </div>
