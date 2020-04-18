@@ -661,7 +661,7 @@ export default class App extends React.Component {
               overlay={
                 <Menu className={'header__overlay'}>
                   <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="/" className={'header__overlay_item'}>
+                    <a target="_blank" rel="noopener noreferrer" href="https://trade.dforce.network/" className={'header__overlay_item'}>
                       <span>{'Instant Swap'}</span>
                       <label>{'Instant Swap of Stable Assets'}</label>
                     </a>
@@ -761,7 +761,7 @@ export default class App extends React.Component {
           </h1>
           <div className={this.state.meun3 ? 'meun1' : 'only1px'}>
             <div className='m-item'>
-              <a href='/' target='_blank' rel="noopener noreferrer">
+              <a href='https://trade.dforce.network/' target='_blank' rel="noopener noreferrer">
                 <span className='title'>Instant Swap</span>
               </a>
               <span className='details'>Instant Swap of Stable Assets</span>
@@ -852,6 +852,12 @@ export default class App extends React.Component {
                   this.state.cur_send_addr === 'HUSD' &&
                   <span className="my-balance">
                     {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_send_addr === 'BUSD' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
                   </span>
                 }
                 <span className="my-balance-title">
