@@ -111,7 +111,6 @@ export default class App extends React.Component {
 
     this.new_web3 = window.new_web3 = new Web3(Web3.givenProvider || null);
     this.bn = this.new_web3.utils.toBN;
-    this.placeholder = navigator.language === 'zh-CN' ? '输入数量' : 'Amount';
 
     this.new_web3.eth.net.getNetworkType().then(
       (net_type) => {
@@ -626,7 +625,7 @@ export default class App extends React.Component {
                     </a>
                   </Menu.Item>
                   <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="/" className={'header__overlay_item'}>
+                    <a target="_blank" rel="noopener noreferrer" href="https://dip001.dforce.network/" className={'header__overlay_item'}>
                       <span>{'DIP001'}</span>
                       <label>{'Collateral Lending Dashboard'}</label>
                     </a>
@@ -1031,7 +1030,7 @@ export default class App extends React.Component {
                 <input
                   value={this.state.side_A_amount || ''}
                   onChange={(e) => handle_A_change(e.target.value, this)}
-                  placeholder={this.placeholder}
+                  placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
                 />
                 <span
                   onClick={() => handle_A_max(this)}
@@ -1333,7 +1332,7 @@ export default class App extends React.Component {
                 <input
                   value={this.state.side_B_amount || ''}
                   // disabled='disabled'
-                  placeholder={this.placeholder}
+                  placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
                   onChange={(e) => handle_B_change(e.target.value, this)}
                 />
               </div>

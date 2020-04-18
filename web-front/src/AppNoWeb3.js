@@ -89,7 +89,6 @@ export default class App extends React.Component {
       meun3: true,
       is_open: true
     }
-    this.placeholder = navigator.language === 'zh-CN' ? '输入数量' : 'Amount';
   }
 
 
@@ -282,7 +281,7 @@ export default class App extends React.Component {
               <div className="other-tokens-right">
                 <input
                   value={this.state.side_A_amount || ''}
-                  placeholder={this.placeholder}
+                  placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
                 />
                 <span
                   className="other-tokens-right-max"
@@ -332,7 +331,7 @@ export default class App extends React.Component {
                 <input
                   value={this.state.side_B_amount || ''}
                   // disabled='disabled'
-                  placeholder={this.placeholder}
+                  placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
                 />
               </div>
             </div>
