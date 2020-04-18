@@ -1,16 +1,16 @@
-html,
-body,
-#root {
-    /* height: 100%; */
-}
+// html,
+// body,
+// #root {
+//     /* height: 100%; */
+// }
 
-body {
-    margin: 0;
-    background: #f9f8ff;
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+// body {
+//     margin: 0;
+//     background: #f9f8ff;
+//     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+//     -webkit-font-smoothing: antialiased;
+//     -moz-osx-font-smoothing: grayscale;
+// }
 
 body,
 div,
@@ -62,26 +62,26 @@ body .ant-tabs-nav-wrap .ant-tabs-nav .ant-tabs-tab-active {
     color: #675CFF;
 }
 
-body .loader {
-    box-sizing: border-box;
-    display: flex;
-    flex: 0 1 auto;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-shrink: 0;
-    flex-basis: 25%;
-    max-width: 25%;
-    height: 200px;
-    align-items: center;
-    justify-content: center;
-    perspective: 500px;
-    position: absolute;
-    width: 105px;
-    left: calc(50% - 52px);
-    top: calc(50% - 52px);
-    /* animation: fadeIn 2s; */
-    text-align: center;
-}
+// body .loader {
+//     box-sizing: border-box;
+//     display: flex;
+//     flex: 0 1 auto;
+//     flex-direction: column;
+//     flex-grow: 1;
+//     flex-shrink: 0;
+//     flex-basis: 25%;
+//     max-width: 25%;
+//     height: 200px;
+//     align-items: center;
+//     justify-content: center;
+//     perspective: 500px;
+//     position: absolute;
+//     width: 105px;
+//     left: calc(50% - 52px);
+//     top: calc(50% - 52px);
+//     /* animation: fadeIn 2s; */
+//     text-align: center;
+// }
 
 #root {
     position: relative;

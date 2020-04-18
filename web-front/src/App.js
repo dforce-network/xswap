@@ -42,7 +42,7 @@ import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
 import arrow_d from './images/arrow_d.svg';//
 import img_is_open from './images/img_is_open.svg';
-import { Menu, Dropdown, Drawer, Collapse } from 'antd';
+import { Menu, Dropdown, Drawer, Collapse, Modal } from 'antd';
 import {
   get_my_balance,
   handle_A_change,
@@ -591,21 +591,24 @@ export default class App extends React.Component {
   render() {
     return (
       <IntlProvider locale={'en'} messages={this.state.cur_language === '中文' ? zh_CN : en_US} >
-        {
-          !this.state.is_open &&
-          <div className='ant-modal'>
-            <div className='popup-is-open'>
-              <img src={img_is_open} alt='' />
-              <div className='popup-is-open-text'>
-                Oracle System Maintain, Come back Soon...
+        <Modal
+          keyboard={false}
+          maskClosable={false}
+          visible={!this.state.is_open}
+          centered={true}
+          footer={false}
+          closable={false}
+        >
+          <div className='popup-is-open'>
+            <img src={img_is_open} alt='' />
+            <div className='popup-is-open-text'>
+              Oracle System Maintain, Come back Soon...
             </div>
-              <div className='popup-is-open-text'>
-                Oracle系统维护，敬请期待...
-            </div>
+            <div className='popup-is-open-text'>
+              Oracle系统维护，敬请期待...
             </div>
           </div>
-        }
-
+        </Modal>
 
         <div className={'header'}>
           <a href="/" className={'header__logo'}>
