@@ -446,7 +446,7 @@ contract PriceOracle is Exponential {
     // Approximately 1 hour: 60 seconds/minute * 60 minutes/hour * 1 block/15 seconds.
     uint public constant numBlocksPerPeriod = 240;
 
-    uint public constant maxSwingMantissa = (10 ** 17); // 0.1
+    uint public constant maxSwingMantissa = (5 * 10 ** 15); // 0.005
 
     /**
      * @dev An administrator who can set the pending anchor value for assets.
@@ -503,10 +503,10 @@ contract PriceOracle is Exponential {
      */
     mapping(address => Exp) public _assetPrices;
 
-    constructor(address _poster) public {
+    constructor(address _poster, uint _maxSwing) public {
         anchorAdmin = msg.sender;
         poster = _poster;
-        maxSwing = Exp({mantissa : maxSwingMantissa});
+        _setMaxSwing(_maxSwing);
     }
 
     /**
@@ -628,6 +628,11 @@ contract PriceOracle is Exponential {
      * @dev Emitted for all readers changes.
      */
     event ReaderPosted(address asset, address oldReader, address newReader, int decimalsDifference);
+
+    /**
+     * @dev Emitted for max swing changes.
+     */
+    event SetMaxSwing(uint maxSwing);
 
     /**
      * @dev Emitted for all price changes.
@@ -848,6 +853,27 @@ contract PriceOracle is Exponential {
 
         emit ReaderPosted(asset, oldReadAsset, readAsset, readers[asset].decimalsDifference);
         return uint(OracleError.NO_ERROR);
+    }
+
+    /**
+     * @notice Set `maxSwing` to the specified value.
+     * @dev Admin function to change of max swing.
+     * @param _maxSwing Value to assign to `maxSwing`.
+     * @return uint 0=success, otherwise a failure.
+     */
+    function _setMaxSwing(uint _maxSwing) public returns (uint) {
+        // Check caller = anchorAdmin
+        if (msg.sender != anchorAdmin) {
+            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);
+        }
+
+        uint oldMaxSwing = maxSwing.mantissa;
+        require(_maxSwing != oldMaxSwing, "_setMaxSwing: Old and new values cannot be the same.");
+        require(_maxSwing >= 10 ** 15 && _maxSwing <= 5 * 10 ** 16, "_setMaxSwing: 0.1% <= _maxSwing <= 5%.");
+        maxSwing = Exp({mantissa : _maxSwing});
+        emit SetMaxSwing(_maxSwing);
+
+        return uint(Error.NO_ERROR);
     }
 
     /**
