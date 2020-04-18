@@ -754,7 +754,6 @@ export default class App extends React.Component {
             </div>
           </div>
 
-
           <h1 onClick={() => { this.setState({ meun3: !this.state.meun3 }) }}>
             Exchange Market
             <span>
@@ -854,12 +853,6 @@ export default class App extends React.Component {
                   this.state.cur_send_addr === 'HUSD' &&
                   <span className="my-balance">
                     {this.state.my_balance_HUSD ? format_num_to_K(format_bn(this.state.my_balance_HUSD, this.state.decimals.HUSD, 2)) : '···'}
-                  </span>
-                }
-                {
-                  this.state.cur_send_addr === 'BUSD' &&
-                  <span className="my-balance">
-                    {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
                   </span>
                 }
                 <span className="my-balance-title">
