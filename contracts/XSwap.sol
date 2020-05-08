@@ -171,8 +171,8 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		return true;
 	}
 
-	function enableDToken(address _token, address _dToken) public auth returns (bool) {
-		require(IDToken(_dToken).token() == _token, "dToken wrong address");
+	function enableDToken(address _dToken) public auth returns (bool) {
+		address _token = IDToken(_dToken).token();
 		supportDToken[_token] = _dToken;
 		freeDToken[_token] = address(0);
 
@@ -186,9 +186,9 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		return true;
 	}
 
-	function disableDToken(address _token) public auth returns (bool) {
-		address _dToken = supportDToken[_token];
-		require(_dToken != address(0), "the token doesnt support dToken");
+	function disableDToken(address _dToken) public auth returns (bool) {
+		address _token = IDToken(_dToken).token();
+		require(supportDToken[_token] != address(0), "the token doesnt support dToken");
 
 		(uint _tokenBalance, bool flag) = getRedeemAmount(_dToken);
 		
