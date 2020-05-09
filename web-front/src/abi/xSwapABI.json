@@ -1,5 +1,111 @@
 [
 	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "authority",
+				"type": "address"
+			}
+		],
+		"name": "LogSetAuthority",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "LogSetOwner",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnerUpdate",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "input",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "inputAmount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "inputPrice",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "output",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "outputAmount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "outputPrice",
+				"type": "uint256"
+			}
+		],
+		"name": "Swap",
+		"type": "event"
+	},
+	{
 		"constant": false,
 		"inputs": [],
 		"name": "acceptOwnership",
@@ -12,10 +118,7 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_lendFMe",
-				"type": "address"
-			},
-			{
+				"internalType": "address",
 				"name": "_oracle",
 				"type": "address"
 			}
@@ -27,20 +130,31 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
+		"constant": true,
+		"inputs": [],
+		"name": "authority",
+		"outputs": [
 			{
-				"name": "_token",
+				"internalType": "contract DSAuthority",
+				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "disableLending",
-		"outputs": [
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
 			{
-				"name": "",
-				"type": "bool"
+				"internalType": "address",
+				"name": "_dToken",
+				"type": "address"
 			}
 		],
+		"name": "disableDToken",
+		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -58,6 +172,7 @@
 		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_token",
 				"type": "address"
 			}
@@ -72,10 +187,12 @@
 		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_input",
 				"type": "address"
 			},
 			{
+				"internalType": "address",
 				"name": "_output",
 				"type": "address"
 			}
@@ -90,17 +207,13 @@
 		"constant": false,
 		"inputs": [
 			{
+				"internalType": "bool",
 				"name": "_open",
 				"type": "bool"
 			}
 		],
 		"name": "emergencyStop",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -109,17 +222,13 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_token",
+				"internalType": "address",
+				"name": "_dToken",
 				"type": "address"
 			}
 		],
-		"name": "enableLending",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"name": "enableDToken",
+		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -128,6 +237,7 @@
 		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_token",
 				"type": "address"
 			}
@@ -142,10 +252,12 @@
 		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_input",
 				"type": "address"
 			},
 			{
+				"internalType": "address",
 				"name": "_output",
 				"type": "address"
 			}
@@ -157,393 +269,15 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "authority_",
-				"type": "address"
-			}
-		],
-		"name": "setAuthority",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_input",
-				"type": "address"
-			},
-			{
-				"name": "_output",
-				"type": "address"
-			},
-			{
-				"name": "_fee",
-				"type": "uint256"
-			}
-		],
-		"name": "setFee",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_lendFMe",
-				"type": "address"
-			}
-		],
-		"name": "setLendFMe",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_oracle",
-				"type": "address"
-			}
-		],
-		"name": "setOracle",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_input",
-				"type": "address"
-			},
-			{
-				"name": "_output",
-				"type": "address"
-			},
-			{
-				"name": "_inputAmount",
-				"type": "uint256"
-			},
-			{
-				"name": "_receiver",
-				"type": "address"
-			}
-		],
-		"name": "swap",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_input",
-				"type": "address"
-			},
-			{
-				"name": "_output",
-				"type": "address"
-			},
-			{
-				"name": "_inputAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "swap",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_input",
-				"type": "address"
-			},
-			{
-				"name": "_output",
-				"type": "address"
-			},
-			{
-				"name": "_outputAmount",
-				"type": "uint256"
-			},
-			{
-				"name": "_receiver",
-				"type": "address"
-			}
-		],
-		"name": "swapTo",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_input",
-				"type": "address"
-			},
-			{
-				"name": "_output",
-				"type": "address"
-			},
-			{
-				"name": "_outputAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "swapTo",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transferIn",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_receiver",
-				"type": "address"
-			},
-			{
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transferOut",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_receiver",
-				"type": "address"
-			}
-		],
-		"name": "transferOutALL",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "newOwner_",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"name": "input",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "inputAmount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "output",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "outputAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "Swap",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "authority",
-				"type": "address"
-			}
-		],
-		"name": "LogSetAuthority",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "LogSetOwner",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnerUpdate",
-		"type": "event"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "authority",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_input",
 				"type": "address"
 			},
 			{
+				"internalType": "address",
 				"name": "_output",
 				"type": "address"
 			}
@@ -551,6 +285,7 @@
 		"name": "exchangeRate",
 		"outputs": [
 			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -563,10 +298,12 @@
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			},
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -574,6 +311,7 @@
 		"name": "fee",
 		"outputs": [
 			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -586,14 +324,17 @@
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_input",
 				"type": "address"
 			},
 			{
+				"internalType": "address",
 				"name": "_output",
 				"type": "address"
 			},
 			{
+				"internalType": "uint256",
 				"name": "_inputAmount",
 				"type": "uint256"
 			}
@@ -601,6 +342,7 @@
 		"name": "getAmountByInput",
 		"outputs": [
 			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -613,14 +355,17 @@
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_input",
 				"type": "address"
 			},
 			{
+				"internalType": "address",
 				"name": "_output",
 				"type": "address"
 			},
 			{
+				"internalType": "uint256",
 				"name": "_outputAmount",
 				"type": "uint256"
 			}
@@ -628,6 +373,7 @@
 		"name": "getAmountByOutput",
 		"outputs": [
 			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -640,25 +386,7 @@
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "getChaiAmount",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
+				"internalType": "address",
 				"name": "_token",
 				"type": "address"
 			}
@@ -666,25 +394,7 @@
 		"name": "getLiquidity",
 		"outputs": [
 			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "getUSRAmount",
-		"outputs": [
-			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -699,22 +409,9 @@
 		"name": "isOpen",
 		"outputs": [
 			{
+				"internalType": "bool",
 				"name": "",
 				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "lendFMe",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
 			}
 		],
 		"payable": false,
@@ -727,6 +424,7 @@
 		"name": "newOwner",
 		"outputs": [
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -741,6 +439,7 @@
 		"name": "oracle",
 		"outputs": [
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -755,6 +454,7 @@
 		"name": "owner",
 		"outputs": [
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -767,15 +467,17 @@
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "supportLending",
+		"name": "remainingDToken",
 		"outputs": [
 			{
+				"internalType": "address",
 				"name": "",
-				"type": "bool"
+				"type": "address"
 			}
 		],
 		"payable": false,
@@ -783,9 +485,196 @@
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "contract DSAuthority",
+				"name": "authority_",
+				"type": "address"
+			}
+		],
+		"name": "setAuthority",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_fee",
+				"type": "uint256"
+			}
+		],
+		"name": "setFee",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_oracle",
+				"type": "address"
+			}
+		],
+		"name": "setOracle",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "supportDToken",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_inputAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_receiver",
+				"type": "address"
+			}
+		],
+		"name": "swap",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_inputAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "swap",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_outputAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_receiver",
+				"type": "address"
+			}
+		],
+		"name": "swapTo",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_input",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_output",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_outputAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "swapTo",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -793,6 +682,7 @@
 		"name": "tokensEnable",
 		"outputs": [
 			{
+				"internalType": "bool",
 				"name": "",
 				"type": "bool"
 			}
@@ -805,10 +695,12 @@
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			},
 			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -816,12 +708,93 @@
 		"name": "tradesDisable",
 		"outputs": [
 			{
+				"internalType": "bool",
 				"name": "",
 				"type": "bool"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transferIn",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_receiver",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transferOut",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_receiver",
+				"type": "address"
+			}
+		],
+		"name": "transferOutALL",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner_",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
