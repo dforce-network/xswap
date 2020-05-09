@@ -2,6 +2,7 @@ import React from 'react';
 import './App.scss';
 import './header.scss';
 import Web3 from 'web3';
+import { DebounceInput } from 'react-debounce-input';
 // import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import is_selected from './images/is_selected.svg';
@@ -55,7 +56,8 @@ import {
   handle_A_max,
   format_num_to_K,
   handle_B_max,
-  check_TokensEnable
+  check_TokensEnable,
+  handle_A_change_ttt
 } from './utils.js';
 let tokens_abi = require('./abi/tokensABI.json');
 let xSwap_abi = require('./abi/xSwapABI.json');
@@ -1039,10 +1041,13 @@ export default class App extends React.Component {
               </div>
 
               <div className="other-tokens-right">
-                <input
+                <DebounceInput
+                  type="number"
                   value={this.state.side_A_amount || ''}
+                  debounceTimeout={800}
                   onChange={(e) => handle_A_change(e.target.value, this)}
                   placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
+                  maxLength={18}
                 />
                 <span
                   onClick={() => handle_A_max(this)}
@@ -1348,11 +1353,14 @@ export default class App extends React.Component {
                 </button>
               </div>
               <div className="other-tokens-right">
-                <input
+                <DebounceInput
                   value={this.state.side_B_amount || ''}
                   // disabled='disabled'
                   placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
                   onChange={(e) => handle_B_change(e.target.value, this)}
+                  type="number"
+                  debounceTimeout={800}
+                  maxLength={18}
                 />
               </div>
 
