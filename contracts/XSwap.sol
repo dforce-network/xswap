@@ -47,6 +47,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		owner = msg.sender;
 		isOpen = true;
 		oracle = _oracle;
+		_notEntered = true;
 		actived = true;
 	}
 
