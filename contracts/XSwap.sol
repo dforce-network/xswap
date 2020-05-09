@@ -21,7 +21,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 	mapping(address => mapping(address => bool)) public tradesDisable; // 1 tokenA = ? tokenB
 
 	mapping(address => address) public supportDToken;
-	mapping(address => address) public freeDToken;
+	mapping(address => address) public remainingDToken; // remainingDToken
 
 	event Swap(
 		address from,
@@ -80,7 +80,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 	function enableDToken(address _dToken) external auth {
 		address _token = IDToken(_dToken).token();
 		supportDToken[_token] = _dToken;
-		freeDToken[_token] = address(0);
+		remainingDToken[_token] = address(0);
 
 		if (IERC20(_token).allowance(address(this), _dToken) != uint(-1))
 			require(doApprove(_token, _dToken, uint(-1)), "");
@@ -100,7 +100,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 			IDToken(_dToken).redeem(address(this), _tokenBalance);
 		
 		if (!flag)
-			freeDToken[_token] = _dToken;
+			remainingDToken[_token] = _dToken;
 
 		supportDToken[_token] = address(0);
 	}	
@@ -115,13 +115,13 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 	}
 
 	function transferOut(address _token, address _receiver, uint _amount) external auth {
-		address _dToken = supportDToken[_token] == address(0) ? freeDToken[_token] : supportDToken[_token];
+		address _dToken = supportDToken[_token] == address(0) ? remainingDToken[_token] : supportDToken[_token];
 		if (_dToken != address(0)) {
 
 			(uint _tokenBalance, bool flag) = getRedeemAmount(_dToken);
-			IDToken(_dToken).redeem(address(this), freeDToken[_token] == _dToken ? _tokenBalance : _amount);
+			IDToken(_dToken).redeem(address(this), remainingDToken[_token] == _dToken ? _tokenBalance : _amount);
 			if (flag)
-				freeDToken[_token] = address(0);
+				remainingDToken[_token] = address(0);
 		}
 
 		uint _balance = IERC20(_token).balanceOf(address(this));
@@ -130,14 +130,14 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 	}
 
 	function transferOutALL(address _token, address _receiver) external auth {
-		address _dToken = supportDToken[_token] == address(0) ? freeDToken[_token] : supportDToken[_token];
+		address _dToken = supportDToken[_token] == address(0) ? remainingDToken[_token] : supportDToken[_token];
 		if (_dToken != address(0)) {
 
 			(uint _tokenBalance, bool flag) = getRedeemAmount(_dToken);
 			require(flag, "transferOutALL:");
 			if (_tokenBalance > 0)
 				IDToken(_dToken).redeem(address(this), _tokenBalance);
-			freeDToken[_token] = address(0);
+			remainingDToken[_token] = address(0);
 		}
 		uint _balance = IERC20(_token).balanceOf(address(this));
 		if (_balance > 0)
@@ -169,14 +169,14 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		
 		if (supportDToken[_output] != address(0))
 			IDToken(supportDToken[_output]).redeem(address(this), _amountToUser);
-		else if (freeDToken[_output] != address(0)) {
+		else if (remainingDToken[_output] != address(0)) {
 
-			(uint _tokenBalance, bool flag) = getRedeemAmount(freeDToken[_output]);
+			(uint _tokenBalance, bool flag) = getRedeemAmount(remainingDToken[_output]);
 			if (_tokenBalance > 0)
-				IDToken(freeDToken[_output]).redeem(address(this), _tokenBalance);
+				IDToken(remainingDToken[_output]).redeem(address(this), _tokenBalance);
 
 			if (flag)
-				freeDToken[_output] = address(0);
+				remainingDToken[_output] = address(0);
 		}
 
 		require(doTransferOut(_output, _receiver, _amountToUser));
@@ -208,14 +208,14 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
 		if (supportDToken[_output] != address(0))
 			IDToken(supportDToken[_output]).redeem(address(this), _outputAmount);
-		else if (freeDToken[_output] != address(0)) {
+		else if (remainingDToken[_output] != address(0)) {
 
-			(uint _tokenBalance, bool flag) = getRedeemAmount(freeDToken[_output]);
+			(uint _tokenBalance, bool flag) = getRedeemAmount(remainingDToken[_output]);
 			if (_tokenBalance > 0)
-				IDToken(freeDToken[_output]).redeem(address(this), _tokenBalance);
+				IDToken(remainingDToken[_output]).redeem(address(this), _tokenBalance);
 
 			if (flag)
-				freeDToken[_output] = address(0);
+				remainingDToken[_output] = address(0);
 		}
 
 		require(doTransferOut(_output, _receiver, _outputAmount));
@@ -265,7 +265,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
 	function getLiquidity(address _token) external view returns (uint) {
 
-		address _dToken = supportDToken[_token] == address(0) ? freeDToken[_token] : supportDToken[_token];
+		address _dToken = supportDToken[_token] == address(0) ? remainingDToken[_token] : supportDToken[_token];
 		uint _tokenBalance;
 		if (_dToken != address(0))
 			(_tokenBalance, ) = getRedeemAmount(_dToken);
