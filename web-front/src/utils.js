@@ -691,7 +691,7 @@ export const handle_A_change = (value, that) => {
       compare(that, t_balance, that.state.side_A_amount_real.toString(), res_i_can_get, that.state.cur_liquidaty);
     })
 
-  }, 800);
+  }, 0);
 
 }
 

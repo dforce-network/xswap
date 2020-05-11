@@ -993,18 +993,18 @@ export default class App extends React.Component {
                         </div>
                       }
                       {
-                        this.state.cur_recive_addr !== 'imBTC' && this.state.is_tokensEnable_imBTC &&
-                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('imBTC') }}>
-                          <img alt='' className="token-logo" src={this.state.token.imBTC} />
-                          <span className="token-title">
-                            imBTC
-                          <i>(The Tokenized Bitcoin)</i>
-                          </span>
-                          {
-                            this.state.cur_send_addr === 'imBTC' &&
-                            <img alt='' className="token-isselected" src={is_selected} />
-                          }
-                        </div>
+                        // this.state.cur_recive_addr !== 'imBTC' && this.state.is_tokensEnable_imBTC &&
+                        // <div className="more-tokens-token" onClick={() => { this.change_send_addr('imBTC') }}>
+                        //   <img alt='' className="token-logo" src={this.state.token.imBTC} />
+                        //   <span className="token-title">
+                        //     imBTC
+                        //   <i>(The Tokenized Bitcoin)</i>
+                        //   </span>
+                        //   {
+                        //     this.state.cur_send_addr === 'imBTC' &&
+                        //     <img alt='' className="token-isselected" src={is_selected} />
+                        //   }
+                        // </div>
                       }
                       {
                         this.state.cur_recive_addr !== 'HBTC' && this.state.is_tokensEnable_HBTC &&
@@ -1308,18 +1308,18 @@ export default class App extends React.Component {
                         </div>
                       }
                       {
-                        (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'imBTC') && this.state.is_tokensEnable_imBTC &&
-                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('imBTC') }}>
-                          <img alt='' className="token-logo" src={this.state.token.imBTC} />
-                          <span className="token-title">
-                            imBTC
-                          <i>(The Tokenized Bitcoin)</i>
-                          </span>
-                          {
-                            this.state.cur_recive_addr === 'imBTC' &&
-                            <img alt='' className="token-isselected" src={is_selected} />
-                          }
-                        </div>
+                        // (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'imBTC') && this.state.is_tokensEnable_imBTC &&
+                        // <div className="more-tokens-token" onClick={() => { this.change_recive_addr('imBTC') }}>
+                        //   <img alt='' className="token-logo" src={this.state.token.imBTC} />
+                        //   <span className="token-title">
+                        //     imBTC
+                        //   <i>(The Tokenized Bitcoin)</i>
+                        //   </span>
+                        //   {
+                        //     this.state.cur_recive_addr === 'imBTC' &&
+                        //     <img alt='' className="token-isselected" src={is_selected} />
+                        //   }
+                        // </div>
                       }
                       {
                         (!this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HBTC') && this.state.is_tokensEnable_HBTC &&
