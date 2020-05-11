@@ -14,14 +14,15 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 	bool private actived;
 
 	address public oracle;
-	mapping(address => mapping(address => uint)) public fee;   // fee from tokenA to tokenB
+	mapping(address => mapping(address => uint)) public fee;  // Fee for exchange from tokenA to tokenB
 
-	bool public isOpen;
-	mapping(address => bool) public tokensEnable; // 1 tokenA = ? tokenB
-	mapping(address => mapping(address => bool)) public tradesDisable; // 1 tokenA = ? tokenB
+	bool public isOpen;  // The state of contract
+	mapping(address => bool) public tokensEnable;  // Support this token or not
+	// Trade pair supports or not
+	mapping(address => mapping(address => bool)) public tradesDisable;
 
 	mapping(address => address) public supportDToken;
-	mapping(address => address) public remainingDToken; // remainingDToken
+	mapping(address => address) public remainingDToken;
 
 	event Swap(
 		address from,
@@ -37,8 +38,10 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 	constructor() public {
 	}
 
+	// --- Init ---
+    // This function is used with contract proxy, do not modify this function.
 	function active(address _oracle) external {
-		require(actived == false, "already actived.");
+		require(actived == false, "active: Already actived!");
 		owner = msg.sender;
 		isOpen = true;
 		oracle = _oracle;
@@ -46,67 +49,120 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		actived = true;
 	}
 
+	// ****************************
+	// *** Authorized functions ***
+	// ****************************
+
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Sets a new oracle contract address.
+     * @param _oracle New oracle contract.
+     */
 	function setOracle(address _oracle) external auth {
 		oracle = _oracle;
 	}
 
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Sets trading fee for specified trade pair.
+     * @param _input One asset in the trade pair.
+     * @param _output The other asset in the trade pair.
+     * @param _fee Trading fee when swaps these two tokens.
+     */
 	function setFee(address _input, address _output, uint _fee) external auth {
 		fee[_input][_output] = _fee;
 		fee[_output][_input] = _fee;
 	}
 
-	function emergencyStop(bool _open) external auth {
-		isOpen = _open;
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Changes the contract state.
+     * @param _changeStateTo True means unpause contract, and false means pause conntract.
+     */
+	function emergencyStop(bool _changeStateTo) external auth {
+		isOpen = _changeStateTo;
 	}
 
+    /**
+	 * @notice Only authorized users can call this function.
+     * @dev Suspends a given asset.
+     * @param _token Asset to suspend.
+     */
 	function disableToken(address _token) external auth {
 		tokensEnable[_token] = false;
 	}
 
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Supports a given asset.
+     * @param _token Asset to support.
+     */
 	function enableToken(address _token) external auth {
 		tokensEnable[_token] = true;
 	}
-	
+
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Suspends a given trade pair.
+     * @param _input One asset in the trade pair.
+     * @param _output The other asset in the trade pair.
+     */
 	function disableTrade(address _input, address _output) external auth {
 		tradesDisable[_input][_output] = true;
 		tradesDisable[_output][_input] = true;
 	}
 
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Supports a given trade pair.
+     * @param _input One asset in the trade pair.
+     * @param _output The other asset in the trade pair.
+     */
 	function enableTrade(address _input, address _output) external auth {
 		tradesDisable[_input][_output] = false;
 		tradesDisable[_output][_input] = false;
 	}
 
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Suspends a given dToken.
+     * @param _dToken dToken to suspend.
+     */
+	function disableDToken(address _dToken) external auth {
+		address _token = IDToken(_dToken).token();
+		require(supportDToken[_token] == _dToken, "disableDToken: Does not support!");
+
+		(uint _tokenBalance, bool flag) = getRedeemAmount(_dToken);
+
+		if (_tokenBalance > 0)
+			IDToken(_dToken).redeem(address(this), _tokenBalance);
+
+		if (!flag)
+			remainingDToken[_token] = _dToken;
+
+		supportDToken[_token] = address(0);
+	}
+
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Supports a given dToken.
+     * @param _dToken dToken to support.
+     */
 	function enableDToken(address _dToken) external auth {
 		address _token = IDToken(_dToken).token();
 		supportDToken[_token] = _dToken;
 		remainingDToken[_token] = address(0);
 
 		if (IERC20(_token).allowance(address(this), _dToken) != uint(-1))
-			require(doApprove(_token, _dToken, uint(-1)), "");
+			require(doApprove(_token, _dToken, uint(-1)), "enableDToken: Approve failed!");
 
 		uint _balance = IERC20(_token).balanceOf(address(this));
 		if (_balance > 0)
 			IDToken(_dToken).mint(address(this), _balance);
 	}
 
-	function disableDToken(address _dToken) external auth {
-		address _token = IDToken(_dToken).token();
-		require(supportDToken[_token] == _dToken, "the token doesnt support dToken");
-
-		(uint _tokenBalance, bool flag) = getRedeemAmount(_dToken);
-		
-		if (_tokenBalance > 0)
-			IDToken(_dToken).redeem(address(this), _tokenBalance);
-		
-		if (!flag)
-			remainingDToken[_token] = _dToken;
-
-		supportDToken[_token] = address(0);
-	}	
-
 	function transferIn(address _token, uint _amount) external auth {
-		require(doTransferFrom(_token, msg.sender, address(this), _amount));
+		require(doTransferFrom(_token, msg.sender, address(this), _amount), "transferIn: TransferFrom failed!");
 		uint _balance = IERC20(_token).balanceOf(address(this));
 
 		address _dToken = supportDToken[_token];
@@ -126,7 +182,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
 		uint _balance = IERC20(_token).balanceOf(address(this));
 		if (_balance >= _amount)
-			require(doTransferOut(_token, _receiver, _amount));
+			require(doTransferOut(_token, _receiver, _amount), "transferOut: Transfer out failed!");
 	}
 
 	function transferOutALL(address _token, address _receiver) external auth {
@@ -134,16 +190,24 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		if (_dToken != address(0)) {
 
 			(uint _tokenBalance, bool flag) = getRedeemAmount(_dToken);
-			require(flag, "transferOutALL:");
+			require(flag, "transferOutALL: Lack of liquidity!");
 			if (_tokenBalance > 0)
 				IDToken(_dToken).redeem(address(this), _tokenBalance);
 			remainingDToken[_token] = address(0);
 		}
 		uint _balance = IERC20(_token).balanceOf(address(this));
 		if (_balance > 0)
-			require(doTransferOut(_token, _receiver, _balance));
+			require(doTransferOut(_token, _receiver, _balance), "transferOutALL: Transfer out all failed!");
 	}
 
+	// **************************
+	// *** Internal functions ***
+	// **************************
+
+	/**
+     * @dev Calculates valid amount can redeem from dToken.
+     * @param _dToken dToken which will be redeemed.
+     */
 	function getRedeemAmount(address _dToken) internal view returns (uint, bool) {
 		uint _tokenBalance = IDToken(_dToken).getTokenRealBalance(address(this));
 		uint _balance = IDToken(_dToken).getLiquidity();
@@ -153,20 +217,29 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		return (_tokenBalance, true);
 	}
 
-	// swap _inputAmount of _input token to get _output token
+	// ************************
+	// *** Public functions ***
+	// ************************
+
+	/**
+     * @dev Swaps `_inputAmount`asset to get another asset`_output`.
+     * @param _input Asset that user wants to consume.
+     * @param _output Asset that user wants to get.
+     * @param _inputAmount Amount of asset consumed.
+     */
 	function swap(address _input, address _output, uint _inputAmount) external {
 		swap(_input, _output, _inputAmount, msg.sender);
 	}
 
 	function swap(address _input, address _output, uint _inputAmount, address _receiver) public nonReentrant {
-		require(isOpen, "not open");
+		require(isOpen, "swap: Contract paused!");
 
 		uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
-		require(_amountToUser > 0, "");
-		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
+		require(_amountToUser > 0, "swap: Invalid amount!");
+		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swap: TransferFrom failed!");
 		if (supportDToken[_input] != address(0))
 			IDToken(supportDToken[_input]).mint(address(this), _inputAmount);
-		
+
 		if (supportDToken[_output] != address(0))
 			IDToken(supportDToken[_output]).redeem(address(this), _amountToUser);
 		else if (remainingDToken[_output] != address(0)) {
@@ -179,7 +252,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 				remainingDToken[_output] = address(0);
 		}
 
-		require(doTransferOut(_output, _receiver, _amountToUser));
+		require(doTransferOut(_output, _receiver, _amountToUser), "swap: Transfer out failed!");
 		emit Swap(
 			msg.sender,
 			_receiver,
@@ -192,16 +265,21 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		);
 	}
 
-	// swap _inputAmount of _input token to get _output token
+	/**
+     * @dev Swaps  `_outputAmount`asset to get another asset`_input`.
+     * @param _input Asset that user wants to get.
+     * @param _output Asset that user wants to consume.
+     * @param _outputAmount Amount of asset consumed.
+     */
 	function swapTo(address _input, address _output, uint _outputAmount) external {
 		swapTo(_input, _output, _outputAmount, msg.sender);
 	}
 
 	function swapTo(address _input, address _output, uint _outputAmount, address _receiver) public nonReentrant {
-		require(isOpen, "not open");
+		require(isOpen, "swapTo: Contract paused!");
 
 		uint _inputAmount = getAmountByOutput(_input, _output, _outputAmount);
-		require(_inputAmount > 0, "");
+		require(_inputAmount > 0, "swapTo: Invalid amount!");
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
 		if (supportDToken[_input] != address(0))
 			IDToken(supportDToken[_input]).mint(address(this), _inputAmount);
@@ -218,7 +296,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 				remainingDToken[_output] = address(0);
 		}
 
-		require(doTransferOut(_output, _receiver, _outputAmount));
+		require(doTransferOut(_output, _receiver, _outputAmount), "swapTo: Transfer out failed!");
 		emit Swap(
 			msg.sender,
 			_receiver,
@@ -231,6 +309,12 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		);
 	}
 
+	/**
+     * @dev Calculates the amount of `output` based on the amount`_inputAmount` of `input`.
+     * @param _input Asset that user wants to consume.
+     * @param _output Asset that user wants to get.
+     * @param _inputAmount Amount of asset consumed.
+     */
 	function getAmountByInput(address _input, address _output, uint _inputAmount) public view returns (uint) {
 
 		if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output])
@@ -246,6 +330,12 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 			.mul(OFFSET.sub(fee[_input][_output])) / OFFSET;
 	}
 
+	/**
+     * @dev Calculates the amount of `_input` based on the amount`_outputAmount` of `_output`.
+     * @param _input Asset that user wants to get.
+     * @param _output Asset that user wants to consume.
+     * @param _outputAmount Amount of asset consumed.
+     */
 	function getAmountByOutput(address _input, address _output, uint _outputAmount) public view returns (uint) {
 
 		if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output] || _outputAmount == 0)
@@ -263,6 +353,10 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 			.add(1);
 	}
 
+	/**
+     * @dev Gets the valid amount of `_token` to redeem.
+     * @param _token Asset which will be redeemed.
+     */
 	function getLiquidity(address _token) external view returns (uint) {
 
 		address _dToken = supportDToken[_token] == address(0) ? remainingDToken[_token] : supportDToken[_token];
@@ -272,10 +366,15 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
 		if (supportDToken[_token] != address(0))
 			return _tokenBalance;
- 
+
 		return _tokenBalance.add(IERC20(_token).balanceOf(address(this)));
 	}
 
+	/**
+     * @dev Gets the exchange rate between the two assets.
+     * @param _input Asset that will be consumed.
+     * @param _output Asset that will be got.
+     */
 	function exchangeRate(address _input, address _output) external view returns (uint) {
 		uint _amount = getAmountByInput(_input, _output, 10 ** IERC20(_input).decimals());
 		if (_amount == 0)
