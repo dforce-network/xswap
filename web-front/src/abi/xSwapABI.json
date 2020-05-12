@@ -208,7 +208,7 @@
 		"inputs": [
 			{
 				"internalType": "bool",
-				"name": "_open",
+				"name": "_changeStateTo",
 				"type": "bool"
 			}
 		],
@@ -421,6 +421,21 @@
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "maxSwing",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "newOwner",
 		"outputs": [
 			{
@@ -519,6 +534,21 @@
 			}
 		],
 		"name": "setFee",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_maxSwing",
+				"type": "uint256"
+			}
+		],
+		"name": "setMaxSwing",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",

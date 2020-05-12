@@ -245,20 +245,35 @@ export default class App extends React.Component {
         is_stable_coin_receive: false
       });
       t_bool = false;
-      if (token === 'imBTC') {
+      // if (token === 'imBTC') {
+      //   this.setState({
+      //     cur_recive_addr: 'HBTC',
+      //     cur_recive_decimals: 18,
+      //     cur_recive_contract: this.state.HBTC
+      //   });
+      //   t_cur_recive_addr = 'HBTC';
+      // } else if (token === 'HBTC' || token === 'WBTC') {
+      //   this.setState({
+      //     cur_recive_addr: 'imBTC',
+      //     cur_recive_decimals: 8,
+      //     cur_recive_contract: this.state.imBTC
+      //   })
+      //   t_cur_recive_addr = 'imBTC';
+      // }
+      if (token === 'HBTC') {
+        this.setState({
+          cur_recive_addr: 'WBTC',
+          cur_recive_decimals: 8,
+          cur_recive_contract: this.state.WBTC
+        });
+        t_cur_recive_addr = 'WBTC';
+      } else if (token === 'WBTC') {
         this.setState({
           cur_recive_addr: 'HBTC',
           cur_recive_decimals: 18,
           cur_recive_contract: this.state.HBTC
         });
         t_cur_recive_addr = 'HBTC';
-      } else if (token === 'HBTC' || token === 'WBTC') {
-        this.setState({
-          cur_recive_addr: 'imBTC',
-          cur_recive_decimals: 8,
-          cur_recive_contract: this.state.imBTC
-        })
-        t_cur_recive_addr = 'imBTC';
       }
     } else {
       if (!this.state.is_stable_coin_send) {
