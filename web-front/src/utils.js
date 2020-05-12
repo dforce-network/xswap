@@ -73,7 +73,7 @@ export const swap_click = (that, input_addr, output_addr) => {
                     that.state.my_account,
                     that.state.net_type,
                     that.state.cur_send_addr,
-                    format_bn(that.state.side_A_amount_real, that.state.cur_send_decimals, 2),
+                    format_bn(that.state.side_A_amount_real, that.state.cur_send_decimals, 4),
                     that.state.cur_recive_addr,
                     that.state.side_B_amount,
                     res_hash,
@@ -174,10 +174,16 @@ export const swapTo_click = (that, input_addr, output_addr) => {
                   console.log(res_hash);
                   let timestamp = new Date().getTime();
                   i_got_hash(
-                    that, that.state.my_account, that.state.net_type,
-                    that.state.cur_send_addr, that.state.side_A_amount,
-                    that.state.cur_recive_addr, format_bn(that.state.side_B_amount_real, that.state.cur_send_decimals, 2),
-                    res_hash, timestamp, 'pendding'
+                    that,
+                    that.state.my_account,
+                    that.state.net_type,
+                    that.state.cur_send_addr,
+                    that.state.side_A_amount,
+                    that.state.cur_recive_addr,
+                    format_bn(that.state.side_B_amount_real, that.state.cur_recive_decimals, 4),
+                    res_hash,
+                    timestamp,
+                    'pendding'
                   );
                   that.setState({
                     is_wap_enable: true,
@@ -545,7 +551,17 @@ export const handle_A_max = (that) => {
   }
 
   console.log(t_balance);
+  // if (that.state.cur_liquidaty === '0') {
+  //   that.setState({
+  //     side_B_amount: '0',
+  //     is_wap_enable: false,
+  //     side_A_amount: format_bn(t_balance, that.state.cur_send_decimals, 4),
+  //     is_Insufficient_Balance: false
+  //   });
+  //   return false;
+  // }
 
+  // return false;
   t_obj_xswap.methods.getAmountByInput(
     address_map[that.state.net_type][that.state.cur_send_addr],
     address_map[that.state.net_type][that.state.cur_recive_addr],
@@ -651,8 +667,57 @@ export const handle_A_change = (value, that) => {
     return false;
   }
 
+  // console.log((that.bn(amount_bn).mul(that.bn(that.state.cur_exchange))).toString());
+  var temp_num = (that.bn(amount_bn).mul(that.bn(that.state.cur_exchange))).toString();
+  that.setState({
+    side_B_amount: format_bn(temp_num, that.state.cur_send_decimals + 18, 4)
+  });
+
+  var t_balance;
+  if (that.state.cur_send_addr === 'USDT') {
+    t_balance = that.state.my_balance_USDT;
+  } else if (that.state.cur_send_addr === 'USDx') {
+    t_balance = that.state.my_balance_USDx;
+  } else if (that.state.cur_send_addr === 'USDC') {
+    t_balance = that.state.my_balance_USDC;
+  } else if (that.state.cur_send_addr === 'TUSD') {
+    t_balance = that.state.my_balance_TUSD;
+  } else if (that.state.cur_send_addr === 'PAX') {
+    t_balance = that.state.my_balance_PAX;
+  } else if (that.state.cur_send_addr === 'DAI') {
+    t_balance = that.state.my_balance_DAI;
+  } else if (that.state.cur_send_addr === 'HBTC') {
+    t_balance = that.state.my_balance_HBTC;
+  } else if (that.state.cur_send_addr === 'imBTC') {
+    t_balance = that.state.my_balance_imBTC;
+  } else if (that.state.cur_send_addr === 'WBTC') {
+    t_balance = that.state.my_balance_WBTC;
+  } else if (that.state.cur_send_addr === 'HUSD') {
+    t_balance = that.state.my_balance_HUSD;
+  } else if (that.state.cur_send_addr === 'BUSD') {
+    t_balance = that.state.my_balance_BUSD;
+  }
+  if (that.state.cur_send_decimals - that.state.cur_recive_decimals >= 0) {
+    compare(
+      that,
+      t_balance,
+      amount_bn.toString(),
+      that.bn(temp_num).div(that.bn(10 ** (18))).div(that.bn(10 ** (that.state.cur_send_decimals - that.state.cur_recive_decimals))),
+      that.state.cur_liquidaty
+    );
+  } else {
+    compare(
+      that,
+      t_balance,
+      amount_bn.toString(),
+      that.bn(temp_num).div(that.bn(10 ** 18)).mul(that.bn(10 ** (that.state.cur_recive_decimals - that.state.cur_send_decimals))),
+      that.state.cur_liquidaty
+    );
+  }
 
 
+
+  return false;
   setTimeout(() => {
     if (that.state.side_A_amount === '') {
       that.setState({
@@ -698,7 +763,7 @@ export const handle_A_change = (value, that) => {
       compare(that, t_balance, that.state.side_A_amount_real.toString(), res_i_can_get, that.state.cur_liquidaty);
     })
 
-  }, 300);
+  }, 0);
 
   setTimeout(() => {
     if (that.state.side_A_amount === '') {
@@ -773,7 +838,58 @@ export const handle_B_change = (value, that) => {
     return false;
   }
 
+  // console.log((that.bn(amount_bn).mul(that.bn(10 ** 18)).div(that.bn(that.state.cur_exchange))).toString());
+  var trnum = (that.bn(amount_bn).mul(that.bn(10 ** 18)).div(that.bn(that.state.cur_exchange))).toString();
+  console.log(format_bn(trnum, 18, 4));
+  that.setState({
+    side_A_amount: format_bn(trnum, that.state.cur_recive_decimals, 4)
+  });
 
+  var t_balance;
+  if (that.state.cur_send_addr === 'USDT') {
+    t_balance = that.state.my_balance_USDT;
+  } else if (that.state.cur_send_addr === 'USDx') {
+    t_balance = that.state.my_balance_USDx;
+  } else if (that.state.cur_send_addr === 'USDC') {
+    t_balance = that.state.my_balance_USDC;
+  } else if (that.state.cur_send_addr === 'TUSD') {
+    t_balance = that.state.my_balance_TUSD;
+  } else if (that.state.cur_send_addr === 'PAX') {
+    t_balance = that.state.my_balance_PAX;
+  } else if (that.state.cur_send_addr === 'DAI') {
+    t_balance = that.state.my_balance_DAI;
+  } else if (that.state.cur_send_addr === 'HBTC') {
+    t_balance = that.state.my_balance_HBTC;
+  } else if (that.state.cur_send_addr === 'imBTC') {
+    t_balance = that.state.my_balance_imBTC;
+  } else if (that.state.cur_send_addr === 'WBTC') {
+    t_balance = that.state.my_balance_WBTC;
+  } else if (that.state.cur_send_addr === 'HUSD') {
+    t_balance = that.state.my_balance_HUSD;
+  } else if (that.state.cur_send_addr === 'BUSD') {
+    t_balance = that.state.my_balance_BUSD;
+  }
+  if (that.state.cur_recive_decimals - that.state.cur_send_decimals >= 0) {
+    compare_receive(
+      that,
+      that.bn(trnum).div(that.bn(10 ** (that.state.cur_recive_decimals - that.state.cur_send_decimals))),
+      t_balance,
+      amount_bn.toString(),
+      that.state.cur_liquidaty
+    );
+  } else {
+    compare_receive(
+      that,
+      that.bn(trnum).mul(that.bn(10 ** (that.state.cur_send_decimals - that.state.cur_recive_decimals))),
+      t_balance,
+      amount_bn.toString(),
+      that.state.cur_liquidaty
+    );
+  }
+
+
+
+  return false;
   setTimeout(() => {
     if (that.state.side_B_amount === '') {
       return false;
