@@ -587,9 +587,13 @@ export const handle_A_max = (that) => {
 
 export const handle_A_change = (value, that) => {
   if (value.length > 18) {
+    // console.log(value.length);
+    // that.setState({
+    //   side_A_amount: value.slice(0, 5)
+    // })
     return;
   }
-  // console.log(value.length);
+
   if (value === '') {
     // console.log('nullllllllll');
     that.setState({
@@ -651,6 +655,9 @@ export const handle_A_change = (value, that) => {
 
   setTimeout(() => {
     if (that.state.side_A_amount === '') {
+      that.setState({
+        side_B_amount: ''
+      });
       return false;
     }
     t_obj_xswap.methods.getAmountByInput(
@@ -691,7 +698,16 @@ export const handle_A_change = (value, that) => {
       compare(that, t_balance, that.state.side_A_amount_real.toString(), res_i_can_get, that.state.cur_liquidaty);
     })
 
-  }, 0);
+  }, 300);
+
+  setTimeout(() => {
+    if (that.state.side_A_amount === '') {
+      that.setState({
+        side_B_amount: ''
+      });
+      return false;
+    }
+  }, 800)
 
 }
 

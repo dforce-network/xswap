@@ -1060,10 +1060,10 @@ export default class App extends React.Component {
                 <input
                   type="number"
                   value={this.state.side_A_amount || ''}
-                  // debounceTimeout={800}
+                  // debounceTimeout={100}
                   onChange={(e) => handle_A_change(e.target.value, this)}
                   placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
-                // maxLength={18}
+                // maxlength={18}
                 />
                 <span
                   onClick={() => handle_A_max(this)}
