@@ -12,6 +12,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
 	uint constant internal OFFSET = 10 ** 18;
 	bool private actived;
+	uint public maxSwing;
 
 	address public oracle;
 	mapping(address => mapping(address => uint)) public fee;  // Fee for exchange from tokenA to tokenB
@@ -45,6 +46,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		owner = msg.sender;
 		isOpen = true;
 		oracle = _oracle;
+		maxSwing = 15 * 10 ** 17;
 		notEntered = true;
 		actived = true;
 	}
@@ -60,6 +62,16 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
 	function setOracle(address _oracle) external auth {
 		oracle = _oracle;
+	}
+
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Set a new maxSwing value.
+     * @param _maxSwing New maxSwing value.
+     */
+	function setMaxSwing(uint _maxSwing) external auth {
+		require(_maxSwing >= OFFSET && _maxSwing <= OFFSET.mul(2), "setMaxSwing: New maxSwing non-compliant");
+		maxSwing = _maxSwing;
 	}
 
 	/**
@@ -217,6 +229,14 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		return (_tokenBalance, true);
 	}
 
+	function getExchangeRate(address _input, uint _inputAmount, address _output, uint _outputAmount) internal view returns (uint) {
+		uint _decimals = IERC20(_input).decimals();
+		_inputAmount = _decimals < 18 ? _inputAmount.mul(10 ** (18 - _decimals)) : _inputAmount / (10 ** (_decimals - 18));
+		_decimals = IERC20(_output).decimals();
+		_outputAmount = _decimals < 18 ? _outputAmount.mul(10 ** (18 - _decimals)) : _outputAmount / (10 ** (_decimals - 18));
+		return _inputAmount.mul(OFFSET).div(_outputAmount);
+	}
+
 	// ************************
 	// *** Public functions ***
 	// ************************
@@ -236,6 +256,10 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
 		uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
 		require(_amountToUser > 0, "swap: Invalid amount!");
+
+		uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _amountToUser);
+		require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swap:");
+
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swap: TransferFrom failed!");
 		if (supportDToken[_input] != address(0))
 			IDToken(supportDToken[_input]).mint(address(this), _inputAmount);
@@ -280,6 +304,10 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
 		uint _inputAmount = getAmountByOutput(_input, _output, _outputAmount);
 		require(_inputAmount > 0, "swapTo: Invalid amount!");
+
+		uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _outputAmount);
+		require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapTo:");
+
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
 		if (supportDToken[_input] != address(0))
 			IDToken(supportDToken[_input]).mint(address(this), _inputAmount);
@@ -342,7 +370,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 			return 0;
 
 		IPriceOracle _oracle = IPriceOracle(oracle);
-		if (_oracle.assetPrices(_input) == 0)
+		if (_oracle.assetPrices(_input) == 0 || _oracle.assetPrices(_output) == 0)
 			return 0;
 
 		return _outputAmount
