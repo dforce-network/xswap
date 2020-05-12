@@ -284,20 +284,20 @@ export const get_exchange__get_fee = (that, input_addr, output_addr, t_bool) => 
   var t_Contract = t_bool ? that.state.XSwap_stable : that.state.XSwap_btc;
 
   t_Contract.methods.tradesDisable(input_addr, output_addr).call().then(res_disableTrade => {
-    console.log('res tradesDisable: ', res_disableTrade);
+    // console.log('res tradesDisable: ', res_disableTrade);
     if (!res_disableTrade) {
       that.setState({
         is_no_supported: false
       });
 
       t_Contract.methods.exchangeRate(input_addr, output_addr).call().then(res_exchange_price => {
-        console.log('cur_exchange: ', res_exchange_price);
+        // console.log('cur_exchange: ', res_exchange_price);
         that.setState({
           cur_exchange: res_exchange_price
         });
       })
       t_Contract.methods.getLiquidity(output_addr).call().then(res_getLiquidity => {
-        console.log('cur liquidaty: ', res_getLiquidity);
+        // console.log('cur liquidaty: ', res_getLiquidity);
         that.setState({
           cur_liquidaty: res_getLiquidity
         });
@@ -343,14 +343,14 @@ export const get_data_first = (that, address_XSwap, input_addr, output_addr) => 
       });
 
       that.state.XSwap_stable.methods.exchangeRate(input_addr, output_addr).call().then(res_exchange_price => {
-        console.log('cur_exchange: ', res_exchange_price);
+        // console.log('cur_exchange: ', res_exchange_price);
         that.setState({
           cur_exchange: res_exchange_price
         })
       })
 
       that.state.XSwap_stable.methods.getLiquidity(output_addr).call().then(res_getLiquidity => {
-        console.log('cur liquidaty: ', res_getLiquidity);
+        // console.log('cur liquidaty: ', res_getLiquidity);
         that.setState({
           cur_liquidaty: res_getLiquidity
         });

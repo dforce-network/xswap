@@ -528,24 +528,13 @@ export default class App extends React.Component {
 
       console.log('*** get_my_balance ***');
       get_my_balance(this);
-
-
-      // this.state.XSwap_stable.methods.isOpen().call((err, res_isopen_stable) => {
-      //   this.state.XSwap_btc.methods.isOpen().call((err, res_isopen_btc) => {
-      //     console.log(res_isopen_stable, res_isopen_btc);
-      //     if (res_isopen_stable && res_isopen_btc) {
-      //       this.setState({
-      //         is_open: true
-      //       })
-      //     } else {
-      //       this.setState({
-      //         is_open: false
-      //       })
-      //     }
-      //   })
-      // })
-
-
+      get_exchange__get_fee(
+        this,
+        address_map[this.state.net_type][this.state.cur_send_addr],
+        address_map[this.state.net_type][this.state.cur_recive_addr],
+        (this.state.cur_send_addr === 'imBTC' || this.state.cur_send_addr === 'HBTC' || this.state.cur_send_addr === 'WBTC') ?
+          false : true
+      );
     }, 1000 * 5);
   }
   before_swap_click = () => {
