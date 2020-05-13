@@ -526,7 +526,7 @@ export default class App extends React.Component {
         return false;
       }
 
-      console.log('*** get_my_balance ***');
+      // console.log('*** get_my_balance ***');
       get_my_balance(this);
       get_exchange__get_fee(
         this,
