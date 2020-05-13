@@ -1,0 +1,442 @@
+body {
+  background-color: #F8F9FF;
+}
+
+.top {
+  width: 1120px;
+  height: 50px;
+  margin: 0 auto;
+  // background: peachpuff;
+  padding-top: 26px;
+  display: flex;
+  justify-content: center;
+  // align-items: center; // 垂直对齐
+  margin-bottom: 30px;
+
+  .top-left {
+    padding-left: 7px;
+    flex: 1;
+    // background: red;
+
+    img {
+      height: 40px;
+      width: 134px;
+    }
+  }
+
+  .top-center {
+    flex: 1;
+    // background: green;
+    text-align: center;
+
+    img {
+      height: 32px;
+    }
+  }
+
+  .top-right {
+    flex: 1;
+    // background: red;
+    text-align: right;
+
+    .top-right-btn {
+      // margin-top: 2px;
+      width: 96px;
+      height: 35px;
+      text-align: center;
+      line-height: 35px;
+      background: rgba(67, 73, 118, 1);
+      border-radius: 3px;
+      color: #FFFFFF;
+      cursor: pointer;
+      float: right;
+    }
+
+    .top-right-account {
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(53, 51, 62, 1);
+      // padding-top: 10px;
+
+      .net {
+        // background: red;
+        position: relative;
+
+
+
+        .wrong-wrap {
+          position: relative;
+
+          img {
+            width: 8px;
+            margin-right: 5px;
+          }
+        }
+      }
+
+      .account {
+        // padding-top: 5px;
+        background: rgba(67, 73, 118, 1);
+        color: #fff;
+        float: right;
+        height: 30px;
+        line-height: 30px;
+        // padding-left: 5px;
+        // padding-right: 10px;
+        border-radius: 3px;
+        width: 118px;
+        font-size: 14px;
+        margin-top: 5px;
+        // background-color: red;
+        margin-right: -7px;
+        text-align: left;
+        padding-left: 13px;
+
+        .account-address {
+          text-align: left;
+        }
+
+        &:hover {
+          // color: #6852FE;
+          cursor: pointer;
+        }
+
+        .spot {
+          display: inline-block;
+          // position: absolute;
+          // top: 8px;
+          // right: 60px;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #666;
+          // float: left;
+          margin-right: 0px;
+          margin-bottom: 2px;
+          margin-right: 2px;
+
+          &.main {
+            background: rgba(39, 170, 160, 1);
+          }
+
+          &.rinkeby {
+            background: rgba(232, 187, 102, 1);
+          }
+        }
+
+        .net-name {
+          float: right;
+        }
+
+        .net-name-wrong {
+          color: #F69726;
+        }
+      }
+    }
+
+    .Wrong {
+      width: 140px;
+      height: 35px;
+      text-align: center;
+      line-height: 35px;
+      background: rgba(67, 73, 118, 1);
+      border-radius: 3px;
+      color: #FFFFFF;
+      float: right;
+
+      .wrong-wrap {
+        margin-right: 5px;
+
+        img {
+          width: 10px;
+        }
+      }
+    }
+
+    .Platform {
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(67, 73, 118, 1);
+      cursor: pointer;
+
+      .Platform-img {
+        img {
+          width: 10px;
+        }
+      }
+    }
+
+  }
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  color: rgba(37, 33, 82, 1);
+  height: 54px;
+  line-height: 54px;
+  padding-left: 10px;
+  border-bottom: 1px solid #E3E5F3;
+}
+
+.balance {
+  width: 1120px;
+  margin: 0 auto;
+  background-color: red;
+  // height: 304px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 35px 0px rgba(94, 85, 126, 0.1);
+  border-radius: 6px;
+  margin-top: 70px;
+
+  .balance-table {
+    display: flex;
+
+    .table-left {
+      width: 100px;
+      // background-color: red;
+
+      .item {
+        height: 38px;
+        line-height: 38px;
+        padding-left: 10px;
+        font-size: 16px;
+        font-weight: 400;
+        color: rgba(37, 33, 82, 1);
+      }
+    }
+
+    .table-right {
+      flex: 1;
+      // background-color: gray;
+      overflow: auto;
+
+      .table-right-box {
+        // width: 1200px;
+        // background-color: red;
+        display: flex;
+
+        .box-item {
+          // background-color: red;
+          margin-right: 1px;
+          padding-left: 25px;
+          padding-right: 25px;
+
+          .box-item-token {
+            height: 38px;
+            line-height: 38px;
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(37, 33, 82, 1);
+          }
+
+          .box-item-price {
+            height: 38px;
+            line-height: 38px;
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(37, 33, 82, 1);
+          }
+
+          .box-item-checked {
+            height: 38px;
+            line-height: 38px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.exchanges {
+  width: 1120px;
+  margin: 0 auto;
+  background-color: red;
+  // height: 304px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 35px 0px rgba(94, 85, 126, 0.1);
+  border-radius: 6px;
+  margin-top: 20px;
+  padding-bottom: 20px;
+
+  .exchanges-box {
+    padding-left: 10px;
+    display: flex;
+    margin-top: 20px;
+
+    .exchanges-send {
+      width: 150px;
+      margin-right: 10px;
+    }
+
+    .exchanges-receive {
+      width: 150px;
+      margin-right: 10px;
+    }
+
+    .exchanges-fee {
+      width: 110px;
+      margin-left: 10px;
+      padding-top: 5px;
+      // background-color: red;
+    }
+
+    .exchanges-setfee {
+      width: 60px;
+      text-align: center;
+      padding-top: 5px;
+      // background-color: red;
+      cursor: pointer;
+      color: #675CFF;
+    }
+
+    .exchanges-open {
+      width: 60px;
+      text-align: center;
+      padding-top: 5px;
+      // background-color: red;
+      cursor: pointer;
+      color: #18CA78;
+      margin-left: 15px;
+    }
+
+    .exchanges-close {
+      width: 60px;
+      text-align: center;
+      padding-top: 5px;
+      // background-color: red;
+      cursor: pointer;
+      color: #FA3E39;
+      margin-left: 15px;
+    }
+  }
+}
+
+.transfer {
+  width: 1120px;
+  margin: 0 auto;
+  background-color: red;
+  // height: 304px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 35px 0px rgba(94, 85, 126, 0.1);
+  border-radius: 6px;
+  margin-top: 20px;
+  padding-bottom: 20px;
+
+  .transfer-box {
+    padding-top: 20px;
+    display: flex;
+    // background-color: red;
+    margin-top: 25px;
+
+    .item-1 {
+      margin-left: 10px;
+      width: 150px;
+      margin-right: 10px;
+    }
+
+    .item-2 {
+      width: 300px;
+      position: relative;
+
+      .max {
+        position: absolute;
+        right: 10px;
+        bottom: 5px;
+        color: #1890ff;
+      }
+
+      .text {
+        position: absolute;
+        width: 100%;
+        // background-color: gray;
+        left: 0;
+        bottom: 33px;
+        text-align: right;
+      }
+    }
+
+    .item-3 {
+      width: 140px;
+      margin-left: 10px;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.emergency {
+  width: 1120px;
+  margin: 0 auto;
+  background-color: red;
+  // height: 304px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 35px 0px rgba(94, 85, 126, 0.1);
+  border-radius: 6px;
+  margin-top: 20px;
+  padding-bottom: 1px;
+  margin-bottom: 50px;
+
+  .title-p {
+    padding-left: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(37, 33, 82, 1);
+    line-height: 50px;
+  }
+
+  .operate-btn {
+    padding-left: 10px;
+    margin-bottom: 20px;
+
+    button {
+      width: 140px;
+      margin-right: 20px;
+    }
+  }
+}
+
+input {
+  cursor: pointer;
+}
+
+.popup-tips {
+
+  // background-color: red;
+  .popup-tips-input {
+    // background-color: red;
+    padding-top: 20px;
+    font-size: 18px;
+    width: auto;
+    margin: 0 auto;
+
+    input {
+      width: 90%;
+      margin-right: 5px;
+    }
+  }
+
+  .popup-tips-title {
+    text-align: center;
+    padding-top: 20px;
+    font-size: 18px;
+    font-weight: 400;
+    color: rgba(37, 33, 82, 1);
+    line-height: 24px;
+  }
+
+  .popup-tips-btn {
+    width: 90px;
+    font-size: 18px;
+    font-weight: 500;
+    color: rgba(103, 92, 255, 1);
+    // background-color: red;
+    margin: 0 auto;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+}

@@ -1,0 +1,235 @@
+// add handler
+.popup-add-handler {
+  width: 100%;
+  margin: 0 auto;
+  // background-color: red;
+
+  .popup-add-handler-wrap {
+    display: flex;
+
+    .popup-add-handler-left {
+      width: 70px;
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(37, 33, 82, 1);
+    }
+
+    .popup-add-handler-left-change {
+      width: 95px;
+    }
+
+    .popup-add-handler-right {
+      flex: 1;
+    }
+  }
+
+  .handler-wrap {
+    width: 80px;
+
+    input {
+      width: 50px;
+    }
+  }
+
+  .ratio-arr-item {
+    .ratio-arr-item-title {
+      display: block;
+      margin-top: 16px;
+      margin-bottom: 6px;
+    }
+
+    .ratio-arr-item-input {
+      width: 80px;
+
+      input {
+        width: 50px;
+      }
+    }
+  }
+
+  .popup-add-handler-confirm {
+    // background-color: red;
+    margin-top: 15px;
+
+    .confirm-btn {
+      width: 70px;
+      margin: 0 auto;
+      display: block;
+      // background-color: green;
+      text-align: center;
+      padding: 5px 0;
+      color: #A4A7BE;
+      font-size: 16px;
+      font-weight: 400;
+
+      &.active {
+        color: #675CFF;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+
+// Target Reserve Ratio
+.popup-TR-retio {
+  // background-color: red;
+
+  .popup-TR-item {
+    margin: 0 auto;
+    display: flex;
+    height: 40px;
+    // background-color: goldenrod;
+    width: 290px;
+    margin-bottom: 4px;
+
+
+    .popup-TR-1 {
+      font-size: 16px;
+      line-height: 32px;
+      font-weight: 400;
+      color: rgba(37, 33, 82, 1);
+      width: 95px;
+      margin-right: 5px;
+    }
+
+    .popup-TR-2 {
+      width: 100px;
+      font-size: 16px;
+      line-height: 32px;
+      font-weight: 400;
+      color: rgba(37, 33, 82, 1);
+
+      input {
+        width: 54px;
+        margin-right: 5px;
+      }
+    }
+
+    .popup-TR-3 {
+      .confirm-btn {
+        display: block;
+        // background-color: red;
+        font-size: 16px;
+        line-height: 32px;
+        font-weight: 400;
+        color: rgba(37, 33, 82, 1);
+        padding: 0 6px;
+        color: #A4A7BE;
+
+        &.active {
+          color: #675CFF;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+
+// Handler Ratio
+.popup-handler-ratio {
+  .popup-handler-item {
+    width: 440px;
+    // background: red;
+    margin: 0 auto;
+
+    .popup-handler-item-top {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(37, 33, 82, 1);
+
+      .item-top-title {}
+
+      .item-top-address {}
+    }
+
+    .popup-handler-item-bottom {
+      // background-color: red;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(37, 33, 82, 1);
+      margin-top: 5px;
+      margin-bottom: 20px;
+
+      input {
+        width: 54px;
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .popup-handler-confirm {
+    // background-color: red;
+
+    .confirm-btn {
+      width: 70px;
+      margin: 0 auto;
+      display: block;
+      // background-color: green;
+      text-align: center;
+      padding: 5px 0;
+      color: #A4A7BE;
+      font-size: 16px;
+      font-weight: 400;
+
+      &.active {
+        color: #675CFF;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+
+// popup-tips
+.popup-tips {
+  .popup-tips-wrap {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(37, 33, 82, 1);
+    line-height: 24px;
+    margin-bottom: 15px;
+  }
+
+  .popup-tips-confirm {
+    // background-color: red;
+    margin-top: 15px;
+
+    .confirm-btn {
+      width: 70px;
+      margin: 0 auto;
+      display: block;
+      // background-color: green;
+      text-align: center;
+      padding: 5px 0;
+      // color: #A4A7BE;
+      font-size: 16px;
+      font-weight: 400;
+      color: #675CFF;
+      cursor: pointer;
+    }
+  }
+
+  .del-arr {
+
+    .ratio-arr-item {
+      border-bottom: 1px solid #e8e8e8;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+
+      .ratio-arr-item-input {
+        width: 80px;
+
+        input {
+          width: 50px;
+        }
+      }
+    }
+
+    .active {
+      color: red;
+    }
+  }
+}
