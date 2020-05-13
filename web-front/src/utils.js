@@ -262,12 +262,12 @@ export const check_TokensEnable = (that) => {
   })
 
 
-  that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['imBTC']).call().then(res_TokensEnable => {
-    // console.log(res_TokensEnable);
-    that.setState({
-      is_tokensEnable_imBTC: res_TokensEnable
-    })
-  })
+  // that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['imBTC']).call().then(res_TokensEnable => {
+  //   // console.log(res_TokensEnable);
+  //   that.setState({
+  //     is_tokensEnable_imBTC: res_TokensEnable
+  //   })
+  // })
   that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['HBTC']).call().then(res_TokensEnable => {
     // console.log(res_TokensEnable);
     that.setState({
@@ -486,13 +486,13 @@ export const get_my_balance = (that) => {
   });
 
 
-  that.state.imBTC.methods.balanceOf(that.state.my_account).call((err, res_balance) => {
-    if (res_balance) {
-      that.setState({
-        my_balance_imBTC: res_balance
-      })
-    }
-  });
+  // that.state.imBTC.methods.balanceOf(that.state.my_account).call((err, res_balance) => {
+  //   if (res_balance) {
+  //     that.setState({
+  //       my_balance_imBTC: res_balance
+  //     })
+  //   }
+  // });
   that.state.HBTC.methods.balanceOf(that.state.my_account).call((err, res_balance) => {
     if (res_balance) {
       that.setState({

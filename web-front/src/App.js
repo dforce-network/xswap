@@ -120,7 +120,7 @@ export default class App extends React.Component {
         let HBTC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['HBTC']);
         let HUSD = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['HUSD']);
         let BUSD = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['BUSD']);
-        let imBTC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['imBTC']);
+        // let imBTC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['imBTC']);
         let WBTC = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['WBTC']);
         let XSwap_stable = new this.new_web3.eth.Contract(xSwap_abi, address_map[net_type]['XSwap_stable']);
         let XSwap_btc = new this.new_web3.eth.Contract(xSwap_abi, address_map[net_type]['XSwap_btc']);
@@ -136,7 +136,7 @@ export default class App extends React.Component {
           XSwap_stable: XSwap_stable,
           XSwap_btc: XSwap_btc,
           USDx: USDx,
-          imBTC: imBTC,
+          // imBTC: imBTC,
           USDT: USDT,
           HBTC: HBTC,
           USDC: USDC,

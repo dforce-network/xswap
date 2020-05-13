@@ -50,12 +50,12 @@ export const get_token_balance = (that) => {
         });
     })
 
-    that.state.XSwap_btc.methods.getLiquidity(address_map[that.state.net_type]['imBTC']).call().then(res_getLiquidity => {
-        // console.log('cur liquidaty: ', res_getLiquidity);
-        that.setState({
-            cur_liquidaty_imBTC: res_getLiquidity
-        });
-    })
+    // that.state.XSwap_btc.methods.getLiquidity(address_map[that.state.net_type]['imBTC']).call().then(res_getLiquidity => {
+    //     // console.log('cur liquidaty: ', res_getLiquidity);
+    //     that.setState({
+    //         cur_liquidaty_imBTC: res_getLiquidity
+    //     });
+    // })
     that.state.XSwap_btc.methods.getLiquidity(address_map[that.state.net_type]['HBTC']).call().then(res_getLiquidity => {
         // console.log('cur liquidaty: ', res_getLiquidity);
         that.setState({
@@ -119,12 +119,12 @@ export const get_token_lending = (that) => {
         });
     })
 
-    that.state.XSwap_btc.methods.supportDToken(address_map[that.state.net_type]['imBTC']).call().then(res_lending => {
-        // console.log('cur liquidaty: ', res_lending);
-        that.setState({
-            cur_lending_imBTC: res_lending
-        });
-    })
+    // that.state.XSwap_btc.methods.supportDToken(address_map[that.state.net_type]['imBTC']).call().then(res_lending => {
+    //     // console.log('cur liquidaty: ', res_lending);
+    //     that.setState({
+    //         cur_lending_imBTC: res_lending
+    //     });
+    // })
     that.state.XSwap_btc.methods.supportDToken(address_map[that.state.net_type]['HBTC']).call().then(res_lending => {
         // console.log('cur liquidaty: ', res_lending);
         that.setState({
@@ -188,12 +188,12 @@ export const get_token_enable = (that) => {
         });
     })
 
-    that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['imBTC']).call().then(res_enable => {
-        // console.log('cur liquidaty: ', res_enable);
-        that.setState({
-            cur_enable_imBTC: res_enable
-        });
-    })
+    // that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['imBTC']).call().then(res_enable => {
+    //     // console.log('cur liquidaty: ', res_enable);
+    //     that.setState({
+    //         cur_enable_imBTC: res_enable
+    //     });
+    // })
     that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['HBTC']).call().then(res_enable => {
         // console.log('cur liquidaty: ', res_enable);
         that.setState({
@@ -286,13 +286,13 @@ export const get_my_balance = (that) => {
         }
     });
 
-    that.state.imBTC.methods.balanceOf(that.state.my_account).call((err, res_balance) => {
-        if (res_balance) {
-            that.setState({
-                my_balance_imBTC: res_balance
-            })
-        }
-    });
+    // that.state.imBTC.methods.balanceOf(that.state.my_account).call((err, res_balance) => {
+    //     if (res_balance) {
+    //         that.setState({
+    //             my_balance_imBTC: res_balance
+    //         })
+    //     }
+    // });
 
     that.state.WBTC.methods.balanceOf(that.state.my_account).call((err, res_balance) => {
         if (res_balance) {
