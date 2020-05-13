@@ -126,7 +126,7 @@ export default class App extends React.Component {
               </span>
             </Dropdown>
 
-            <Dropdown
+            {/* <Dropdown
               overlay={
                 <Menu className={'header__overlay'}>
                   <Menu.Item>
@@ -142,7 +142,7 @@ export default class App extends React.Component {
                 <label>{'Yield Market'}</label>
                 <img src={arrow_d} alt="down" />
               </span>
-            </Dropdown>
+            </Dropdown> */}
 
             <Dropdown
               overlay={
@@ -204,8 +204,7 @@ export default class App extends React.Component {
           </div>
 
 
-          <h1 onClick={() => { this.setState({ meun2: !this.state.meun2 }) }}>
-            {/* <FormattedMessage id='Developers' /> */}
+          {/* <h1 onClick={() => { this.setState({ meun2: !this.state.meun2 }) }}>
             Yield Market
             <span>
               <img src={this.state.meun2 ? arrow_u : arrow_d} />
@@ -218,7 +217,7 @@ export default class App extends React.Component {
               </a>
               <span className='details'>Lend and Borrow</span>
             </div>
-          </div>
+          </div> */}
 
 
           <h1 onClick={() => { this.setState({ meun3: !this.state.meun3 }) }}>
@@ -428,7 +427,7 @@ export default class App extends React.Component {
                 <FormattedMessage id='Contract_US' />
               </div>
               <div className="foot-item-content">
-                contacts@dforce.network
+                support@dforce.network
               </div>
               <div className="foot-item-content">
                 bd@dforce.network
