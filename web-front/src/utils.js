@@ -602,6 +602,7 @@ export const handle_A_max = (that) => {
 
 
 export const handle_A_change = (value, that) => {
+  // console.log(value);
   if (value.length > 18) {
     // console.log(value.length);
     // that.setState({
@@ -648,6 +649,7 @@ export const handle_A_change = (value, that) => {
       return false;
     }
     temp_value = temp_value.substr(0, temp_value.indexOf('.')) + temp_value.substr(value.indexOf('.') + 1);// '123456'
+    // console.log(temp_value);
     amount_bn = that.bn(temp_value).mul(that.bn(10 ** (that.state.cur_send_decimals - sub_num)));// bn_'123456'
   } else {
     amount_bn = that.bn(value).mul(that.bn(10 ** that.state.cur_send_decimals));
@@ -974,7 +976,7 @@ const compare = (that, my_balance, input_balance, i_can_get, liquidity_amount) =
       is_Insufficient_Balance: false
     });
   } else {
-    console.log('u can swap');
+    // console.log('u can swap');
     that.setState({
       is_wap_enable: true,
       is_liquidity_limit: false
@@ -986,7 +988,7 @@ const compare = (that, my_balance, input_balance, i_can_get, liquidity_amount) =
           is_Insufficient_Balance: true
         });
       } else {
-        console.log('u can swap');
+        // console.log('u can swap');
         that.setState({
           is_wap_enable: true,
           is_Insufficient_Balance: false
