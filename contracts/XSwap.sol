@@ -173,6 +173,12 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 			IDToken(_dToken).mint(address(this), _balance);
 	}
 
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Transfer `_amount` asset`_token` to the contract.
+     * @param _token Asset will be transfered into the contract.
+     * @param _amount Amount will be transfered into the contract.
+     */
 	function transferIn(address _token, uint _amount) external auth {
 		require(doTransferFrom(_token, msg.sender, address(this), _amount), "transferIn: TransferFrom failed!");
 		uint _balance = IERC20(_token).balanceOf(address(this));
@@ -182,6 +188,13 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 			IDToken(_dToken).mint(address(this), _balance);
 	}
 
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Transfer out `_amount` asset`_token` from the contract.
+     * @param _token Asset will be transfered out from the contract.
+     * @param _receiver Account who will receive asset.
+     * @param _amount Specificed amount will be transfered out from the contract.
+     */
 	function transferOut(address _token, address _receiver, uint _amount) external auth {
 		address _dToken = supportDToken[_token] == address(0) ? remainingDToken[_token] : supportDToken[_token];
 		if (_dToken != address(0)) {
@@ -197,6 +210,12 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 			require(doTransferOut(_token, _receiver, _amount), "transferOut: Transfer out failed!");
 	}
 
+	/**
+	 * @notice Only authorized users can call this function.
+     * @dev Transfer out all asset`_token` from the contract.
+     * @param _token Asset will be transfered out from the contract.
+     * @param _receiver Account who will receive asset.
+     */
 	function transferOutALL(address _token, address _receiver) external auth {
 		address _dToken = supportDToken[_token] == address(0) ? remainingDToken[_token] : supportDToken[_token];
 		if (_dToken != address(0)) {
@@ -229,6 +248,13 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		return (_tokenBalance, true);
 	}
 
+	/**
+     * @dev Calculates the exchange rate between two assets.
+     * @param _input One asset in the trade pair.
+     * @param _inputAmount Amount of input asset`input`.
+     * @param _output The other asset in the trade pair.
+     * @param _outputAmount Amount of output asset`_output`.
+     */
 	function getExchangeRate(address _input, uint _inputAmount, address _output, uint _outputAmount) internal view returns (uint) {
 		uint _decimals = IERC20(_input).decimals();
 		_inputAmount = _decimals < 18 ? _inputAmount.mul(10 ** (18 - _decimals)) : _inputAmount / (10 ** (_decimals - 18));
@@ -258,7 +284,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		require(_amountToUser > 0, "swap: Invalid amount!");
 
 		uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _amountToUser);
-		require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swap:");
+		require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swap: Abnormal exchange rate!");
 
 		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swap: TransferFrom failed!");
 		if (supportDToken[_input] != address(0))
@@ -306,9 +332,9 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 		require(_inputAmount > 0, "swapTo: Invalid amount!");
 
 		uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _outputAmount);
-		require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapTo:");
+		require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapTo: Abnormal exchange rate!");
 
-		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount));
+		require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swapTo: TransferFrom failed!");
 		if (supportDToken[_input] != address(0))
 			IDToken(supportDToken[_input]).mint(address(this), _inputAmount);
 
