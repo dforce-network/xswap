@@ -667,7 +667,7 @@ export default class App extends React.Component {
               overlay={
                 <Menu className={'header__overlay'}>
                   <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="https://trade.dforce.network/" className={'header__overlay_item'}>
+                    <a rel="noopener noreferrer" href="https://trade.dforce.network/" className={'header__overlay_item'}>
                       <span>{'Instant Swap'}</span>
                       <label>
                         <FormattedMessage id='Instant_Swap_of_Stable_Assets' />
@@ -769,7 +769,7 @@ export default class App extends React.Component {
           </h1>
           <div className={this.state.meun3 ? 'meun1' : 'only1px'}>
             <div className='m-item'>
-              <a href='https://trade.dforce.network/' target='_blank' rel="noopener noreferrer">
+              <a href='https://trade.dforce.network/' rel="noopener noreferrer">
                 <span className='title'>Instant Swap</span>
               </a>
               <span className='details'>
