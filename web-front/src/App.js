@@ -794,7 +794,7 @@ export default class App extends React.Component {
           </div>
 
           {/* <Top account={this.state.my_account} fn_connect={() => { this.connect() }} /> */}
-          <div className="slogon">
+          <div className="slogon" style={{ letterSpacing: this.state.cur_language === '中文' ? '5px' : '0px' }}>
             <FormattedMessage id='slogon' />
           </div>
 
