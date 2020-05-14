@@ -374,7 +374,8 @@ export const format_bn = (numStr, decimals, decimalPlace = decimals) => {
   numStr = numStr.toLocaleString().replace(/,/g, '');
   // decimals = decimals.toString();
 
-  var str = (10 ** decimals).toLocaleString().replace(/,/g, '').slice(1);
+  // var str = (10 ** decimals).toLocaleString().replace(/,/g, '').slice(1);
+  var str = Number(`1e+${decimals}`).toLocaleString().replace(/,/g, '').slice(1);
 
   var res = (numStr.length > decimals ?
     numStr.slice(0, numStr.length - decimals) + '.' + numStr.slice(numStr.length - decimals) :
@@ -671,9 +672,15 @@ export const handle_A_change = (value, that) => {
 
   // console.log((that.bn(amount_bn).mul(that.bn(that.state.cur_exchange))).toString());
   var temp_num = (that.bn(amount_bn).mul(that.bn(that.state.cur_exchange))).toString();
+  // console.log(temp_num);
   that.setState({
     side_B_amount: format_bn(temp_num, that.state.cur_send_decimals + 18, 4)
+  }, () => {
+    // console.log(that.state.side_B_amount);
   });
+  // console.log(format_bn(temp_num, that.state.cur_send_decimals + 18, 4));
+  // console.log(temp_num);
+  // console.log(format_bn(temp_num, that.state.cur_send_decimals + 18, 4));
 
   var t_balance;
   if (that.state.cur_send_addr === 'USDT') {
