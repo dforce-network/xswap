@@ -6,7 +6,7 @@ const en_US = {
     history: 'Recent Transactions',
     swap: 'SWAP',
     connect: 'Connect',
-    slogon: 'Instant Swap of Stable Assets',
+    slogon: 'Stable Assets Swap',
     no_history: 'No History',
     Contract_US: 'Contact',
     Community: 'Community',
@@ -18,6 +18,6 @@ const en_US = {
     Exchange_Market: 'Exchange Market',
     dForce_Stablecoin: 'dForce Stablecoin',
     Portal: 'Portal',
-    Instant_Swap_of_Stable_Assets: 'Instant Swap of Stable Assets'
+    Instant_Swap_of_Stable_Assets: 'Stable Assets Swap'
 }
 export default en_US;

@@ -252,7 +252,7 @@ export default class App extends React.Component {
             </div>
             <div className='clear'></div>
           </div>
-          <div className="slogon">
+          <div className="slogon" style={{ letterSpacing: this.state.cur_language === '中文' ? '10px' : '0px' }}>
             <FormattedMessage id='slogon' />
           </div>
 
@@ -366,7 +366,16 @@ export default class App extends React.Component {
                 </a>
               </div>
               <div className="foot-item-content">
-                <a href='https://github.com/dforce-network/xswap.git' target='_blank' rel="noopener noreferrer">
+                <a
+                  href={
+                    this.state.cur_language === '中文' ?
+                      'https://docn.dforce.network/dforce-trade'
+                      :
+                      'https://docs.dforce.network/dforce-trading-protocol/dforce-trade'
+                  }
+                  target='_blank'
+                  rel="noopener noreferrer"
+                >
                   FAQ
                 </a>
               </div>
