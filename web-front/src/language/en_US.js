@@ -14,6 +14,10 @@ const en_US = {
     Insufficient_Balance: 'Insufficient Balance',
     Insufficient_Liquidity: 'Insufficient Liquidity',
     balance: 'Balance',
-    Not_SUPPORTED: 'NOT SUPPORTED'
+    Not_SUPPORTED: 'NOT SUPPORTED',
+    Exchange_Market: 'Exchange Market',
+    dForce_Stablecoin: 'dForce Stablecoin',
+    Portal: 'Portal',
+    Instant_Swap_of_Stable_Assets: 'Instant Swap of Stable Assets'
 }
 export default en_US;

@@ -627,20 +627,20 @@ export default class App extends React.Component {
                   <Menu.Item>
                     <a target="_blank" rel="noopener noreferrer" href="https://usdx.dforce.network/" className={'header__overlay_item'}>
                       <span>{'USDx'}</span>
-                      <label>{'Portal'}</label>
+                      <label><FormattedMessage id='Portal' /></label>
                     </a>
                   </Menu.Item>
-                  <Menu.Item>
+                  {/* <Menu.Item>
                     <a target="_blank" rel="noopener noreferrer" href="https://dip001.dforce.network/" className={'header__overlay_item'}>
                       <span>{'DIP001'}</span>
                       <label>{'Collateral Lending Dashboard'}</label>
                     </a>
-                  </Menu.Item>
+                  </Menu.Item> */}
                 </Menu>
               }
             >
               <span className={'header__menu_item'}>
-                <label>{'dForce Stablecoin'}</label>
+                <label><FormattedMessage id='dForce_Stablecoin' /></label>
                 <img src={arrow_d} alt="down" />
               </span>
             </Dropdown>
@@ -669,14 +669,18 @@ export default class App extends React.Component {
                   <Menu.Item>
                     <a target="_blank" rel="noopener noreferrer" href="https://trade.dforce.network/" className={'header__overlay_item'}>
                       <span>{'Instant Swap'}</span>
-                      <label>{'Instant Swap of Stable Assets'}</label>
+                      <label>
+                        <FormattedMessage id='Instant_Swap_of_Stable_Assets' />
+                      </label>
                     </a>
                   </Menu.Item>
                 </Menu>
               }
             >
               <span className={'header__menu_item'}>
-                <label>{'Exchange Market'}</label>
+                <label>
+                  <FormattedMessage id='Exchange_Market' />
+                </label>
                 <img src={arrow_d} alt="down" />
               </span>
             </Dropdown>
@@ -720,8 +724,7 @@ export default class App extends React.Component {
           <div className='only-kong'></div>
 
           <h1 onClick={() => { this.setState({ meun1: !this.state.meun1 }) }}>
-            {/* <FormattedMessage id='Protocols' /> */}
-            dForce Stablecoin
+            <FormattedMessage id='dForce_Stablecoin' />
             <span>
               <img src={this.state.meun1 ? arrow_u : arrow_d} />
             </span>
@@ -731,15 +734,15 @@ export default class App extends React.Component {
               <a href='https://usdx.dforce.network/' target='_blank' rel="noopener noreferrer">
                 <span className='title'>USDx</span>
               </a>
-              <span className='details'>Portal</span>
+              <span className='details'><FormattedMessage id='Portal' /></span>
             </div>
 
-            <div className='m-item'>
+            {/* <div className='m-item'>
               <a href='https://dip001.dforce.network/' target='_blank' rel="noopener noreferrer">
                 <span className='title'>DIP001</span>
               </a>
               <span className='details'>Collateral Lending Dashboard</span>
-            </div>
+            </div> */}
           </div>
 
 
@@ -759,7 +762,7 @@ export default class App extends React.Component {
           </div> */}
 
           <h1 onClick={() => { this.setState({ meun3: !this.state.meun3 }) }}>
-            Exchange Market
+            <FormattedMessage id='Exchange_Market' />
             <span>
               <img src={this.state.meun3 ? arrow_u : arrow_d} />
             </span>
@@ -769,7 +772,9 @@ export default class App extends React.Component {
               <a href='https://trade.dforce.network/' target='_blank' rel="noopener noreferrer">
                 <span className='title'>Instant Swap</span>
               </a>
-              <span className='details'>Instant Swap of Stable Assets</span>
+              <span className='details'>
+                <FormattedMessage id='Instant_Swap_of_Stable_Assets' />
+              </span>
             </div>
           </div>
 
@@ -1070,7 +1075,7 @@ export default class App extends React.Component {
                     : '···'
                 }
                 {' ' + this.state.cur_recive_addr}
-                {' (inclusive of fees)'}
+                {/* {' (inclusive of fees)'} */}
               </div>
               <div className="other-tokens-rate-p">
                 {'Fee: 0.00%'}
