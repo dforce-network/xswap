@@ -794,7 +794,7 @@ export default class App extends React.Component {
           </div>
 
           {/* <Top account={this.state.my_account} fn_connect={() => { this.connect() }} /> */}
-          <div className="slogon" style={{ letterSpacing: this.state.cur_language === '中文' ? '10px' : '0px' }}>
+          <div className="slogon" style={{ letterSpacing: this.state.cur_language === '中文' ? '5px' : '0px' }}>
             <FormattedMessage id='slogon' />
           </div>
 
@@ -890,20 +890,6 @@ export default class App extends React.Component {
                     this.state.show_left_more_token &&
                     <div className="more-tokens">
                       {
-                        this.state.cur_recive_addr !== 'USDx' && this.state.is_tokensEnable_USDx &&
-                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDx') }}>
-                          <img alt='' className="token-logo" src={this.state.token.USDx} />
-                          <span className="token-title">
-                            USDx
-                          <i>(dForce)</i>
-                          </span>
-                          {
-                            this.state.cur_send_addr === 'USDx' &&
-                            <img alt='' className="token-isselected" src={is_selected} />
-                          }
-                        </div>
-                      }
-                      {
                         this.state.cur_recive_addr !== 'USDT' && this.state.is_tokensEnable_USDT &&
                         <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDT') }}>
                           <img alt='' className="token-logo" src={this.state.token.USDT} />
@@ -917,48 +903,22 @@ export default class App extends React.Component {
                           }
                         </div>
                       }
+
                       {
-                        this.state.cur_recive_addr !== 'DAI' && this.state.is_tokensEnable_DAI &&
-                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('DAI') }}>
-                          <img alt='' className="token-logo" src={this.state.token.DAI} />
+                        this.state.cur_recive_addr !== 'USDx' && this.state.is_tokensEnable_USDx &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDx') }}>
+                          <img alt='' className="token-logo" src={this.state.token.USDx} />
                           <span className="token-title">
-                            DAI
-                          <i>(Dai Stablecoin)</i>
+                            USDx
+                          <i>(dForce)</i>
                           </span>
                           {
-                            this.state.cur_send_addr === 'DAI' &&
+                            this.state.cur_send_addr === 'USDx' &&
                             <img alt='' className="token-isselected" src={is_selected} />
                           }
                         </div>
                       }
-                      {
-                        this.state.cur_recive_addr !== 'HUSD' && this.state.is_tokensEnable_HUSD &&
-                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('HUSD') }}>
-                          <img alt='' className="token-logo" src={this.state.token.HUSD} />
-                          <span className="token-title">
-                            HUSD
-                          <i>(HUSD)</i>
-                          </span>
-                          {
-                            this.state.cur_send_addr === 'HUSD' &&
-                            <img alt='' className="token-isselected" src={is_selected} />
-                          }
-                        </div>
-                      }
-                      {
-                        this.state.cur_recive_addr !== 'BUSD' && this.state.is_tokensEnable_BUSD &&
-                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('BUSD') }}>
-                          <img alt='' className="token-logo" src={this.state.token.BUSD} />
-                          <span className="token-title">
-                            BUSD
-                          <i>(Binance USD)</i>
-                          </span>
-                          {
-                            this.state.cur_send_addr === 'BUSD' &&
-                            <img alt='' className="token-isselected" src={is_selected} />
-                          }
-                        </div>
-                      }
+
                       {
                         this.state.cur_recive_addr !== 'USDC' && this.state.is_tokensEnable_USDC &&
                         <div className="more-tokens-token" onClick={() => { this.change_send_addr('USDC') }}>
@@ -973,6 +933,22 @@ export default class App extends React.Component {
                           }
                         </div>
                       }
+
+                      {
+                        this.state.cur_recive_addr !== 'DAI' && this.state.is_tokensEnable_DAI &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('DAI') }}>
+                          <img alt='' className="token-logo" src={this.state.token.DAI} />
+                          <span className="token-title">
+                            DAI
+                          <i>(Dai Stablecoin)</i>
+                          </span>
+                          {
+                            this.state.cur_send_addr === 'DAI' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
                       {
                         this.state.cur_recive_addr !== 'PAX' && this.state.is_tokensEnable_PAX &&
                         <div className="more-tokens-token" onClick={() => { this.change_send_addr('PAX') }}>
@@ -987,6 +963,37 @@ export default class App extends React.Component {
                           }
                         </div>
                       }
+
+                      {
+                        this.state.cur_recive_addr !== 'HUSD' && this.state.is_tokensEnable_HUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('HUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.HUSD} />
+                          <span className="token-title">
+                            HUSD
+                          <i>(HUSD)</i>
+                          </span>
+                          {
+                            this.state.cur_send_addr === 'HUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
+                      {
+                        this.state.cur_recive_addr !== 'BUSD' && this.state.is_tokensEnable_BUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('BUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.BUSD} />
+                          <span className="token-title">
+                            BUSD
+                          <i>(Binance USD)</i>
+                          </span>
+                          {
+                            this.state.cur_send_addr === 'BUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
                       {
                         this.state.cur_recive_addr !== 'TUSD' && this.state.is_tokensEnable_TUSD &&
                         <div className="more-tokens-token" onClick={() => { this.change_send_addr('TUSD') }}>
@@ -1204,20 +1211,7 @@ export default class App extends React.Component {
                   {
                     this.state.show_right_more_token &&
                     <div className="more-tokens">
-                      {
-                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDx') && this.state.is_tokensEnable_USDx &&
-                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDx') }}>
-                          <img alt='' className="token-logo" src={this.state.token.USDx} />
-                          <span className="token-title">
-                            USDx
-                          <i>(dForce)</i>
-                          </span>
-                          {
-                            this.state.cur_recive_addr === 'USDx' &&
-                            <img alt='' className="token-isselected" src={is_selected} />
-                          }
-                        </div>
-                      }
+
                       {
                         (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDT') && this.state.is_tokensEnable_USDT &&
                         <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDT') }}>
@@ -1232,48 +1226,22 @@ export default class App extends React.Component {
                           }
                         </div>
                       }
+
                       {
-                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'DAI') && this.state.is_tokensEnable_DAI &&
-                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('DAI') }}>
-                          <img alt='' className="token-logo" src={this.state.token.DAI} />
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDx') && this.state.is_tokensEnable_USDx &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDx') }}>
+                          <img alt='' className="token-logo" src={this.state.token.USDx} />
                           <span className="token-title">
-                            DAI
-                          <i>(Dai Stablecoin)</i>
+                            USDx
+                          <i>(dForce)</i>
                           </span>
                           {
-                            this.state.cur_recive_addr === 'DAI' &&
+                            this.state.cur_recive_addr === 'USDx' &&
                             <img alt='' className="token-isselected" src={is_selected} />
                           }
                         </div>
                       }
-                      {
-                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HUSD') && this.state.is_tokensEnable_HUSD &&
-                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HUSD') }}>
-                          <img alt='' className="token-logo" src={this.state.token.HUSD} />
-                          <span className="token-title">
-                            HUSD
-                          <i>(HUSD)</i>
-                          </span>
-                          {
-                            this.state.cur_recive_addr === 'HUSD' &&
-                            <img alt='' className="token-isselected" src={is_selected} />
-                          }
-                        </div>
-                      }
-                      {
-                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'BUSD') && this.state.is_tokensEnable_BUSD &&
-                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('BUSD') }}>
-                          <img alt='' className="token-logo" src={this.state.token.BUSD} />
-                          <span className="token-title">
-                            BUSD
-                          <i>(Binance USD)</i>
-                          </span>
-                          {
-                            this.state.cur_recive_addr === 'BUSD' &&
-                            <img alt='' className="token-isselected" src={is_selected} />
-                          }
-                        </div>
-                      }
+
                       {
                         (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'USDC') && this.state.is_tokensEnable_USDC &&
                         <div className="more-tokens-token" onClick={() => { this.change_recive_addr('USDC') }}>
@@ -1288,6 +1256,22 @@ export default class App extends React.Component {
                           }
                         </div>
                       }
+
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'DAI') && this.state.is_tokensEnable_DAI &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('DAI') }}>
+                          <img alt='' className="token-logo" src={this.state.token.DAI} />
+                          <span className="token-title">
+                            DAI
+                          <i>(Dai Stablecoin)</i>
+                          </span>
+                          {
+                            this.state.cur_recive_addr === 'DAI' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
                       {
                         (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'PAX') && this.state.is_tokensEnable_PAX &&
                         <div className="more-tokens-token" onClick={() => { this.change_recive_addr('PAX') }}>
@@ -1302,6 +1286,37 @@ export default class App extends React.Component {
                           }
                         </div>
                       }
+
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'HUSD') && this.state.is_tokensEnable_HUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('HUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.HUSD} />
+                          <span className="token-title">
+                            HUSD
+                          <i>(HUSD)</i>
+                          </span>
+                          {
+                            this.state.cur_recive_addr === 'HUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'BUSD') && this.state.is_tokensEnable_BUSD &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('BUSD') }}>
+                          <img alt='' className="token-logo" src={this.state.token.BUSD} />
+                          <span className="token-title">
+                            BUSD
+                          <i>(Binance USD)</i>
+                          </span>
+                          {
+                            this.state.cur_recive_addr === 'BUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
                       {
                         (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'TUSD') && this.state.is_tokensEnable_TUSD &&
                         <div className="more-tokens-token" onClick={() => { this.change_recive_addr('TUSD') }}>

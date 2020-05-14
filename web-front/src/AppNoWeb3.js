@@ -252,7 +252,7 @@ export default class App extends React.Component {
             </div>
             <div className='clear'></div>
           </div>
-          <div className="slogon" style={{ letterSpacing: this.state.cur_language === '中文' ? '10px' : '0px' }}>
+          <div className="slogon" style={{ letterSpacing: this.state.cur_language === '中文' ? '5px' : '0px' }}>
             <FormattedMessage id='slogon' />
           </div>
 
