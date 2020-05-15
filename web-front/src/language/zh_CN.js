@@ -15,9 +15,9 @@ const zh_CN = {
     Insufficient_Liquidity: '流动性不足',
     balance: '余额',
     Not_SUPPORTED: '不支持兑换',
-    Exchange_Market: '交易类协议',
+    Exchange_Market: '流动性协议',
     dForce_Stablecoin: '资产类协议',
-    Portal: '指数稳定币',
+    Portal: '链上合成型稳定币',
     Instant_Swap_of_Stable_Assets: '稳定资产闪兑'
 }
 export default zh_CN;
