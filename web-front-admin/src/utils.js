@@ -431,7 +431,7 @@ export const Emergency_start = (that, Contract) => {
     Contract.methods.emergencyStop(true).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (reject) {
                 console.log(reject);
@@ -454,7 +454,7 @@ export const Emergency_stop = (that, Contract) => {
     Contract.methods.emergencyStop(false).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (reject) {
                 console.log(reject);
@@ -704,7 +704,7 @@ export const click_Transfer_in = (that) => {
             ).send(
                 {
                     from: that.state.my_account,
-                    gas: 880000
+                    gas: 200000
                 }, (reject, res_hash) => {
                     if (res_hash) {
                         that.setState({
@@ -725,7 +725,7 @@ export const click_Transfer_in = (that) => {
             t_tokenIn_contract.methods.approve(t_xswapAddr, -1).send(
                 {
                     from: that.state.my_account,
-                    gas: 880000
+                    gas: 200000
                 }, (reject, res_hash) => {
                     if (reject) {
                         that.setState({
@@ -740,7 +740,7 @@ export const click_Transfer_in = (that) => {
                         ).send(
                             {
                                 from: that.state.my_account,
-                                gas: 880000
+                                gas: 200000
                             }, (reject, res_hash) => {
                                 if (res_hash) {
                                     that.setState({
@@ -789,7 +789,7 @@ export const click_Transfer_out = (that) => {
     ).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 that.setState({
@@ -812,7 +812,7 @@ export const click_Transfer_out_all = (that, t_Contract) => {
     ).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 that.setState({
@@ -835,7 +835,7 @@ export const control_lending_disableLending = (that, t_Contract, token) => {
     t_Contract.methods.disableDToken(address_map[that.state.net_type][token]).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 console.log(res_hash);
@@ -850,7 +850,7 @@ export const control_lending_enableLending = (that, t_Contract, token) => {
     t_Contract.methods.enableDToken(address_map[that.state.net_type][token]).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 console.log(res_hash);
@@ -865,7 +865,7 @@ export const control_enable_enableToken = (that, t_Contract, token) => {
     t_Contract.methods.enableToken(address_map[that.state.net_type][token]).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 console.log(res_hash);
@@ -880,7 +880,7 @@ export const control_enable_disableToken = (that, t_Contract, token) => {
     t_Contract.methods.disableToken(address_map[that.state.net_type][token]).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 console.log(res_hash);
@@ -903,7 +903,7 @@ export const setfee_click = (that, t_Contract, cur_input_token, cur_output_token
     ).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 console.log(res_hash);
@@ -924,7 +924,7 @@ export const enableTrade_click = (that, t_Contract, cur_input_token, cur_output_
     ).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 console.log(res_hash);
@@ -945,7 +945,7 @@ export const disableTrade_click = (that, t_Contract, cur_input_token, cur_output
     ).send(
         {
             from: that.state.my_account,
-            gas: 880000
+            gas: 200000
         }, (reject, res_hash) => {
             if (res_hash) {
                 console.log(res_hash);

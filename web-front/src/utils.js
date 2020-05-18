@@ -23,7 +23,7 @@ export const swap_click = (that, input_addr, output_addr) => {
       t_obj_xswap.methods.swap(input_addr, output_addr, that.state.side_A_amount_real.toString())
         .send({
           from: that.state.my_account,
-          gas: 880000
+          gas: 200000
         }, (reject, res_hash) => {
           if (res_hash) {
             console.log(res_hash);
@@ -63,7 +63,7 @@ export const swap_click = (that, input_addr, output_addr) => {
             t_obj_xswap.methods.swap(input_addr, output_addr, that.state.side_A_amount_real.toString())
               .send({
                 from: that.state.my_account,
-                gas: 880000
+                gas: 200000
               }, (reject, res_hash) => {
                 if (res_hash) {
                   console.log(res_hash);
@@ -126,7 +126,7 @@ export const swapTo_click = (that, input_addr, output_addr) => {
       t_obj_xswap.methods.swapTo(input_addr, output_addr, that.state.side_B_amount_real.toString())
         .send({
           from: that.state.my_account,
-          gas: 880000
+          gas: 200000
         }, (reject, res_hash) => {
           if (res_hash) {
             console.log(res_hash);
@@ -168,7 +168,7 @@ export const swapTo_click = (that, input_addr, output_addr) => {
             t_obj_xswap.methods.swapTo(input_addr, output_addr, that.state.side_B_amount_real.toString())
               .send({
                 from: that.state.my_account,
-                gas: 880000
+                gas: 200000
               }, (reject, res_hash) => {
                 if (res_hash) {
                   console.log(res_hash);
