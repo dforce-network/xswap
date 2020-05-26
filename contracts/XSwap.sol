@@ -88,7 +88,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
         fee[_output][_input] = _fee;
     }
 
-    function setFeeBatch(address[] memory _input, address[] memory _output, uint[] memory _fee) external auth {
+    function setFeeBatch(address[] calldata _input, address[] calldata _output, uint[] calldata _fee) external auth {
         require(_input.length == _output.length && _input.length == _fee.length, "setFeeBatch: ");
         for (uint i = 0; i < _input.length; i++) {
             require(_input[i] != _output[i], "setFeeBatch: ");
