@@ -111,6 +111,10 @@ export default class App extends React.Component {
       is_open: true
     }
 
+    if (!Web3.givenProvider) {
+      return console.log('no givenProvider');
+    }
+
     this.new_web3 = window.new_web3 = new Web3(Web3.givenProvider || null);
     this.bn = this.new_web3.utils.toBN;
 
@@ -479,6 +483,8 @@ export default class App extends React.Component {
   change_send_to_recive = () => {
     // console.log('side_A_amount:', this.state.side_A_amount);
     // console.log('side_B_amount:', this.state.side_B_amount);
+    if (!this.state.i_am_ready) { return console.log('no web3') }
+
     this.setState({
       side_A_amount: '',
       is_wap_enable: false,
@@ -561,6 +567,9 @@ export default class App extends React.Component {
 
   connect = () => {
     console.log('click connected');
+    if (!Web3.givenProvider) {
+      return console.log('no givenProvider');
+    }
     this.new_web3.givenProvider.enable().then(res_accounts => {
       this.setState({
         my_account: res_accounts[0]
@@ -626,16 +635,12 @@ export default class App extends React.Component {
                 <Menu className={'header__overlay'}>
                   <Menu.Item>
                     <a target="_blank" rel="noopener noreferrer" href="https://usdx.dforce.network/" className={'header__overlay_item'}>
-                      <span>{'USDx'}</span>
-                      <label><FormattedMessage id='Portal' /></label>
+                      <span>USDx</span>
+                      <label>
+                        <FormattedMessage id='Portal' />
+                      </label>
                     </a>
                   </Menu.Item>
-                  {/* <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="https://dip001.dforce.network/" className={'header__overlay_item'}>
-                      <span>{'DIP001'}</span>
-                      <label>{'Collateral Lending Dashboard'}</label>
-                    </a>
-                  </Menu.Item> */}
                 </Menu>
               }
             >
@@ -645,30 +650,13 @@ export default class App extends React.Component {
               </span>
             </Dropdown>
 
-            {/* <Dropdown
-              overlay={
-                <Menu className={'header__overlay'}>
-                  <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="https://lendf.me" className={'header__overlay_item'}>
-                      <span>{'LendfMe'}</span>
-                      <label>{'Lend and Borrow'}</label>
-                    </a>
-                  </Menu.Item>
-                </Menu>
-              }
-            >
-              <span className={'header__menu_item'}>
-                <label>{'Yield Market'}</label>
-                <img src={arrow_d} alt="down" />
-              </span>
-            </Dropdown> */}
 
             <Dropdown
               overlay={
                 <Menu className={'header__overlay'}>
                   <Menu.Item>
                     <a rel="noopener noreferrer" href="https://trade.dforce.network/" className={'header__overlay_item'}>
-                      <span>{'dForce Trading'}</span>
+                      <span>dForce Trade</span>
                       <label>
                         <FormattedMessage id='Instant_Swap_of_Stable_Assets' />
                       </label>
@@ -684,6 +672,7 @@ export default class App extends React.Component {
                 <img src={arrow_d} alt="down" />
               </span>
             </Dropdown>
+
 
             {
               this.state.my_account &&
@@ -734,15 +723,10 @@ export default class App extends React.Component {
               <a href='https://usdx.dforce.network/' target='_blank' rel="noopener noreferrer">
                 <span className='title'>USDx</span>
               </a>
-              <span className='details'><FormattedMessage id='Portal' /></span>
+              <span className='details'>
+                <FormattedMessage id='Portal' />
+              </span>
             </div>
-
-            {/* <div className='m-item'>
-              <a href='https://dip001.dforce.network/' target='_blank' rel="noopener noreferrer">
-                <span className='title'>DIP001</span>
-              </a>
-              <span className='details'>Collateral Lending Dashboard</span>
-            </div> */}
           </div>
 
 
@@ -770,7 +754,7 @@ export default class App extends React.Component {
           <div className={this.state.meun3 ? 'meun1' : 'only1px'}>
             <div className='m-item'>
               <a href='https://trade.dforce.network/' rel="noopener noreferrer">
-                <span className='title'>dForce Trading</span>
+                <span className='title'>dForce Trade</span>
               </a>
               <span className='details'>
                 <FormattedMessage id='Instant_Swap_of_Stable_Assets' />

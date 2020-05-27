@@ -15,9 +15,9 @@ const en_US = {
     Insufficient_Liquidity: 'Insufficient Liquidity',
     balance: 'Balance',
     Not_SUPPORTED: 'NOT SUPPORTED',
-    Exchange_Market: 'DEX',
+    Exchange_Market: 'Trade',
     dForce_Stablecoin: 'Assets',
-    Portal: 'a synthetic and indexed stablecoin',
-    Instant_Swap_of_Stable_Assets: 'stable assets swap'
+    Portal: 'An indexed stablecoin',
+    Instant_Swap_of_Stable_Assets: 'Stable assets swap'
 }
 export default en_US;

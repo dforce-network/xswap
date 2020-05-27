@@ -512,6 +512,7 @@ export const get_my_balance = (that) => {
 
 
 export const handle_A_max = (that) => {
+  if (!that.state.i_am_ready) { return console.log('no web3') }
   if (that.state.cur_liquidaty === '0') {
     that.setState({
       side_B_amount: '0',
@@ -603,6 +604,7 @@ export const handle_A_max = (that) => {
 
 
 export const handle_A_change = (value, that) => {
+  if (!that.state.i_am_ready) { return console.log('no web3') }
   // console.log(value);
   if (value.length > 18) {
     // console.log(value.length);
@@ -787,6 +789,7 @@ export const handle_A_change = (value, that) => {
 
 
 export const handle_B_change = (value, that) => {
+  if (!that.state.i_am_ready) { return console.log('no web3') }
   if (value.length > 18) {
     return;
   }
