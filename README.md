@@ -1,61 +1,119 @@
 
-# XSwap
+# xSwap
 
-### Rinkby
+## To check on the maximum amount available for swap in one transaction:
 
-```
-usdx token
-0xaf21bb8ae7b7a5eec37964e478583cd486fd12e2
+- **1). Call contract function `getLiquidity(tokenAddress)`:**
+    Get the real-time balance of a particular asset
 
-USDT:
-0xA1e525F7d24D7cCB78A070BBd12C0BF21Fb4a848
-USDC:
-0x71abccd90dbb09c37686e4d5026c2d9597d469cb
-PAX:
-0xd414e78d5db39e90c704070943e067ffc0eb3d86
-TUSD:
-0xfeb2112e370091f25a2f96fb600484700a0ed603
+- **2). Call contract function `getAmountByOutput(inputAsset, outputAsset, outputAmount)`:**
+    Get the real-time balance of the `inputAsset` by providing `outputAmount ` of the `outputAsset`
 
-DSGuard
-0x93b0a865146eaddd2f0eee66b6392a5104c0fdf1
+**eg:** To check on the maximum amount available of each asset for swap in respond to the trading request of “USDC-USDT”.
+First, get the real-time balance of `USDT` by calling the function `getLiquidity(USDT_Address)`, for instance, let’s assume there are `10000` USDT sitting in the balance. Secondly, call the function `getAmountByOutput(USDC_Address, USDT_Address, 10000)` to get the real-time balance of USDC which is available for instant swap.
 
-XSwap
-~~0x42158a9817933a6b43b7692cb6f100275e7e7b7b~~
-0x5fc6345c302d0127a777eaf924f63c028b087f56
-```
+## Mainnet Contract Address(2020-05-26)
 
-### Abi
+<table>
+	<tr>
+   		<th>Contract Name</th>
+    	<th>Contract Address</th>
+	</tr>
+	<tr>
+		<td> xSwap Proxy </td>
+		<td> 0x03eF3f37856bD08eb47E2dE7ABc4Ddd2c19B60F2 </td>
+	</tr>
+	<tr>
+		<td> BUSD </td>
+		<td> 0x4Fabb145d64652a948d72533023f6E7A623C7C53  </td>
+	</tr>
+	<tr>
+		<td> DAI </td>
+		<td> 0x6B175474E89094C44Da98b954EedeAC495271d0F </td>
+	</tr>
+	<tr>
+		<td> HUSD </td>
+		<td> 0xdF574c24545E5FfEcb9a659c229253D4111d87e1 </td>
+	</tr>
+	<tr>
+		<td> PAX </td>
+		<td> 0x8E870D67F660D95d5be530380D0eC0bd388289E1 </td>
+	</tr>
+	<tr>
+		<td> TUSD </td>
+		<td> 0x0000000000085d4780B73119b644AE5ecd22b376 </td>
+	</tr>
+	<tr>
+		<td> USDC </td>
+		<td> 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 </td>
+	</tr>
+	<tr>
+		<td> USDT </td>
+		<td> 0xdAC17F958D2ee523a2206206994597C13D831ec7 </td>
+	</tr>
+	<tr>
+		<td> USDx </td>
+		<td> 0xeb269732ab75A6fD61Ea60b06fE994cD32a83549 </td>
+	</tr>
+	<tr>
+		<td> DSGuard </td>
+		<td> 0x9121D140fff2660f72f1fbeD92e7f66A11014d6C </td>
+	</tr>
+</table>
 
-```
-[ { "constant": true, "inputs": [], "name": "usdx", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "isOpen", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "acceptOwnership", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "authority_", "type": "address" } ], "name": "setAuthority", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "owner", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "disableOwnership", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "buyRate", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "price", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "sellRate", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "authority", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "newOwner", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "newOwner_", "type": "address" } ], "name": "transferOwnership", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "name": "_usdx", "type": "address" } ], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": true, "name": "authority", "type": "address" } ], "name": "LogSetAuthority", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "name": "owner", "type": "address" } ], "name": "LogSetOwner", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "name": "owner", "type": "address" }, { "indexed": true, "name": "newOwner", "type": "address" } ], "name": "OwnerUpdate", "type": "event" }, { "constant": false, "inputs": [ { "name": "_tokenAmount", "type": "uint256" }, { "name": "_tokenAddr", "type": "address" }, { "name": "_receiver", "type": "address" } ], "name": "sellToken", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_tokenAmount", "type": "uint256" }, { "name": "_tokenAddr", "type": "address" } ], "name": "sellToken", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_usdxAmount", "type": "uint256" }, { "name": "_tokenAddr", "type": "address" }, { "name": "_receiver", "type": "address" } ], "name": "buyToken", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_tokenAmount", "type": "uint256" }, { "name": "_tokenAddr", "type": "address" } ], "name": "buyToken", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_tokenAddr", "type": "address" }, { "name": "_price", "type": "uint256" }, { "name": "_sellRate", "type": "uint256" }, { "name": "_buyRate", "type": "uint256" } ], "name": "updatePair", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_tokenAddr", "type": "address" }, { "name": "_price", "type": "uint256" } ], "name": "updatePrice", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_tokenAddr", "type": "address" }, { "name": "_sellRate", "type": "uint256" } ], "name": "updateSellRate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_tokenAddr", "type": "address" }, { "name": "_buyRate", "type": "uint256" } ], "name": "updateBuyRate", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_open", "type": "bool" } ], "name": "emergencyStop", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "_tokenAddr", "type": "address" }, { "name": "_receiver", "type": "address" }, { "name": "_amount", "type": "uint256" } ], "name": "transferOut", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" } ]
-```
+## Rinkeby Contract Address(2020-05-10)
 
-### run test
+<table>
+	<tr>
+   		<th>Contract Name</th>
+    	<th>Contract Address</th>
+	</tr>
+	<tr>
+		<td> xSwap Proxy </td>
+		<td> 0x076CCd4c0025B0E89a1D6b6B33B781A0795Dc3c5 </td>
+	</tr>
+	<tr>
+		<td> BUSD </td>
+		<td> 0xBB4EeFbE28440D27D18e4269962bE2506366c476  </td>
+	</tr>
+	<tr>
+		<td> DAI </td>
+		<td> 0xA3A59273494BB5B8F0a8FAcf21B3f666A47d6140 </td>
+	</tr>
+	<tr>
+		<td> HUSD </td>
+		<td> 0x0D518472330FF1D943881BBBDda03b221A7F9F74 </td>
+	</tr>
+	<tr>
+		<td> PAX </td>
+		<td> 0x722E6238335d89393A42e2cA316A5fb1b8B2EB55 </td>
+	</tr>
+	<tr>
+		<td> TUSD </td>
+		<td> 0xe72a3181f69Eb21A19bd4Ce19Eb68FDb333d74c6 </td>
+	</tr>
+	<tr>
+		<td> USDC </td>
+		<td> 0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b </td>
+	</tr>
+	<tr>
+		<td> USDT </td>
+		<td> 0xaa74B62f737bbA1D2E520F9ec38Fc23b6E6817df </td>
+	</tr>
+	<tr>
+		<td> USDx </td>
+		<td> 0xD96cC7f80C1cb595eBcdC072531e1799B3a2436E </td>
+	</tr>
+	<tr>
+		<td> DSGuard </td>
+		<td> 0x694D5D8DeDFeaff6498e5A8763e0748C85cfeFC7 </td>
+	</tr>
+</table>
+
+
+### Run test
 
 ```
 npm install
 truffle test
 ```
-
-### DSGuard set admin
-
-#### permit in DSGuard.sol
-```
-function permit(address src, address dst, bytes32 sig)
-```
-
-#### function signature
-```
-"e538984f": "updateBuyRate(address,uint256)",
-"9544ec58": "updatePair(address,uint256,uint256,uint256)",
-"457972de": "updatePrice(address,uint256)",
-"f3ceea99": "updateSellRate(address,uint256)"
-```
-
-#### functions
-````
-permit(${admin.address}, xswap.address, 0xe538984f)
-permit(${admin.address}, xswap.address, 0x9544ec58)
-permit(${admin.address}, xswap.address, 0x457972de)
-permit(${admin.address}, xswap.address, 0xf3ceea99)
-````

@@ -25,6 +25,8 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     mapping(address => address) public supportDToken;
     mapping(address => address) public remainingDToken;
 
+    bool public paused;
+
     event Swap(
         address from,
         address to,
@@ -84,6 +86,31 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     function setFee(address _input, address _output, uint _fee) external auth {
         fee[_input][_output] = _fee;
         fee[_output][_input] = _fee;
+    }
+
+    function setFeeBatch(address[] calldata _input, address[] calldata _output, uint[] calldata _fee) external auth {
+        require(_input.length == _output.length && _input.length == _fee.length, "setFeeBatch: ");
+        for (uint i = 0; i < _input.length; i++) {
+            require(_input[i] != _output[i], "setFeeBatch: ");
+            fee[_input[i]][_output[i]] = _fee[i];
+            fee[_output[i]][_input[i]] = _fee[i];
+        }
+    }
+
+    /**
+     * @dev Called by the authorized users to pause, triggers stopped state.
+     */
+    function pause() public auth {
+        require(!paused, "pause: paused");
+        paused = true;
+    }
+
+    /**
+     * @dev Called by the authorized users to unpause, returns to normal state.
+     */
+    function unpause() public auth {
+        require(paused, "unpause: not paused");
+        paused = false;
     }
 
     /**
@@ -278,7 +305,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     }
 
     function swap(address _input, address _output, uint _inputAmount, address _receiver) public nonReentrant {
-        require(isOpen, "swap: Contract paused!");
+        require(isOpen && !paused, "swap: Contract paused!");
 
         uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
         require(_amountToUser > 0, "swap: Invalid amount!");
@@ -326,7 +353,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     }
 
     function swapTo(address _input, address _output, uint _outputAmount, address _receiver) public nonReentrant {
-        require(isOpen, "swapTo: Contract paused!");
+        require(isOpen && !paused, "swapTo: Contract paused!");
 
         uint _inputAmount = getAmountByOutput(_input, _output, _outputAmount);
         require(_inputAmount > 0, "swapTo: Invalid amount!");
