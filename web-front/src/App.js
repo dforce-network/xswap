@@ -674,6 +674,29 @@ export default class App extends React.Component {
             </Dropdown>
 
 
+            <Dropdown
+              overlay={
+                <Menu className={'header__overlay'}>
+                  <Menu.Item>
+                    <a rel="noopener noreferrer" href="https://airdrop.dforce.network/" className={'header__overlay_item'}>
+                      <span>Airdrop</span>
+                      <label>
+                        <FormattedMessage id='DF_token_distribute_system' />
+                      </label>
+                    </a>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <span className={'header__menu_item'}>
+                <label>
+                  <FormattedMessage id='Governance' />
+                </label>
+                <img src={arrow_d} alt="down" />
+              </span>
+            </Dropdown>
+
+
             {
               this.state.my_account &&
               <a
@@ -730,21 +753,6 @@ export default class App extends React.Component {
           </div>
 
 
-          {/* <h1 onClick={() => { this.setState({ meun2: !this.state.meun2 }) }}>
-            Yield Market
-            <span>
-              <img src={this.state.meun2 ? arrow_u : arrow_d} />
-            </span>
-          </h1>
-          <div className={this.state.meun2 ? 'meun1' : 'only1px'}>
-            <div className='m-item'>
-              <a href='https://www.lendf.me/' target='_blank' rel="noopener noreferrer">
-                <span className='title'>LendfMe</span>
-              </a>
-              <span className='details'>Lend and Borrow</span>
-            </div>
-          </div> */}
-
           <h1 onClick={() => { this.setState({ meun3: !this.state.meun3 }) }}>
             <FormattedMessage id='Exchange_Market' />
             <span>
@@ -758,6 +766,24 @@ export default class App extends React.Component {
               </a>
               <span className='details'>
                 <FormattedMessage id='Instant_Swap_of_Stable_Assets' />
+              </span>
+            </div>
+          </div>
+
+
+          <h1 onClick={() => { this.setState({ meun2: !this.state.meun2 }) }}>
+            <FormattedMessage id='Governance' />
+            <span>
+              <img src={this.state.meun2 ? arrow_u : arrow_d} />
+            </span>
+          </h1>
+          <div className={this.state.meun2 ? 'meun1' : 'only1px'}>
+            <div className='m-item'>
+              <a href='https://airdrop.dforce.network/' rel="noopener noreferrer">
+                <span className='title'>Airdrop</span>
+              </a>
+              <span className='details'>
+                <FormattedMessage id='DF_token_distribute_system' />
               </span>
             </div>
           </div>
