@@ -72,7 +72,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      * @param _maxSwing New maxSwing value.
      */
     function setMaxSwing(uint _maxSwing) external auth {
-        require(_maxSwing >= OFFSET && _maxSwing <= OFFSET.mul(2), "setMaxSwing: New maxSwing non-compliant");
+        // require(_maxSwing >= OFFSET && _maxSwing <= OFFSET.mul(2), "setMaxSwing: New maxSwing non-compliant");
         maxSwing = _maxSwing;
     }
 
@@ -301,14 +301,23 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      * @param _inputAmount Amount of asset consumed.
      */
     function swap(address _input, address _output, uint _inputAmount) external {
-        swap(_input, _output, _inputAmount, msg.sender);
+        swapWithSlippage(_input, _output, _inputAmount, 0, msg.sender);
     }
 
-    function swap(address _input, address _output, uint _inputAmount, address _receiver) public nonReentrant {
+    function swap(address _input, address _output, uint _inputAmount, uint _outputAmount) external {
+        swapWithSlippage(_input, _output, _inputAmount, _outputAmount, msg.sender);
+    }
+
+    function swapWithSlippageAndTime(address _input, address _output, uint _inputAmount, uint _outputAmount, uint _timestamp, address _receiver) external {
+        require(_timestamp == 0 || _timestamp >= now, "swap: Invalid amount!");
+        swapWithSlippage(_input, _output, _inputAmount, _outputAmount, _receiver);
+    }
+
+    function swapWithSlippage(address _input, address _output, uint _inputAmount, uint _outputAmount, address _receiver) public nonReentrant {
         require(isOpen && !paused, "swap: Contract paused!");
 
         uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
-        require(_amountToUser > 0, "swap: Invalid amount!");
+        require(_amountToUser > 0 && _amountToUser >= _outputAmount, "swap: Invalid amount!");
 
         uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _amountToUser);
         require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swap: Abnormal exchange rate!");
@@ -349,21 +358,30 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      * @param _outputAmount Amount of asset consumed.
      */
     function swapTo(address _input, address _output, uint _outputAmount) external {
-        swapTo(_input, _output, _outputAmount, msg.sender);
+        swapToWithSlippage(_input, _output, 0, _outputAmount, msg.sender);
     }
 
-    function swapTo(address _input, address _output, uint _outputAmount, address _receiver) public nonReentrant {
+    function swapTo(address _input, address _output, uint _inputAmount, uint _outputAmount) external {
+        swapToWithSlippage(_input, _output, _inputAmount, _outputAmount, msg.sender);
+    }
+
+    function swapToWithSlippageAndTime(address _input, address _output, uint _inputAmount, uint _outputAmount, uint _timestamp, address _receiver) external {
+        require(_timestamp == 0 || _timestamp >= now, "swap: Invalid amount!");
+        swapToWithSlippage(_input, _output, _inputAmount, _outputAmount, _receiver);
+    }
+
+    function swapToWithSlippage(address _input, address _output, uint _inputAmount, uint _outputAmount, address _receiver) public nonReentrant {
         require(isOpen && !paused, "swapTo: Contract paused!");
 
-        uint _inputAmount = getAmountByOutput(_input, _output, _outputAmount);
-        require(_inputAmount > 0, "swapTo: Invalid amount!");
+        uint _amountToUser = getAmountByOutput(_input, _output, _outputAmount);
+        require(_amountToUser > 0 && (_inputAmount == 0 || _amountToUser <= _inputAmount), "swapTo: Invalid amount!");
 
-        uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _outputAmount);
+        uint _exchangeRate = getExchangeRate(_input, _amountToUser, _output, _outputAmount);
         require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapTo: Abnormal exchange rate!");
 
-        require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swapTo: TransferFrom failed!");
+        require(doTransferFrom(_input, msg.sender, address(this), _amountToUser), "swapTo: TransferFrom failed!");
         if (supportDToken[_input] != address(0))
-            IDToken(supportDToken[_input]).mint(address(this), _inputAmount);
+            IDToken(supportDToken[_input]).mint(address(this), _amountToUser);
 
         if (supportDToken[_output] != address(0))
             IDToken(supportDToken[_output]).redeem(address(this), _outputAmount);
@@ -382,7 +400,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
             msg.sender,
             _receiver,
             _input,
-            _inputAmount,
+            _amountToUser,
             IPriceOracle(oracle).assetPrices(_input),
             _output,
             _outputAmount,
