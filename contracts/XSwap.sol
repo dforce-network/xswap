@@ -72,7 +72,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      * @param _maxSwing New maxSwing value.
      */
     function setMaxSwing(uint _maxSwing) external auth {
-        // require(_maxSwing >= OFFSET && _maxSwing <= OFFSET.mul(2), "setMaxSwing: New maxSwing non-compliant");
+        require(_maxSwing >= OFFSET && _maxSwing <= OFFSET.mul(2), "setMaxSwing: New maxSwing non-compliant");
         maxSwing = _maxSwing;
     }
 
@@ -456,7 +456,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      * @dev Gets the valid amount of `_token` to redeem.
      * @param _token Asset which will be redeemed.
      */
-    function getLiquidity(address _token) external view returns (uint) {
+    function getLiquidity(address _token) public view returns (uint) {
 
         address _dToken = supportDToken[_token] == address(0) ? remainingDToken[_token] : supportDToken[_token];
         uint _tokenBalance;
@@ -485,4 +485,16 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
         return _amount / (10 ** (_decimals - 18));
     }
+
+    /**
+     * @dev Calculates the amount of `output` based on the amount`_inputAmount` of `input`.
+     * @param _input Asset that user wants to consume.
+     * @param _output Asset that user wants to get.
+     * @param _inputAmount Amount of asset consumed.
+     */
+	function getBestOutputByInput(address _input, address _output, uint _inputAmount) external view returns (uint) {
+		uint _outputAmount = getAmountByInput(_input, _output, _inputAmount);
+		uint _liquidity = getLiquidity(_output);
+		return _outputAmount > _liquidity ? _liquidity : _outputAmount;
+	}
 }
