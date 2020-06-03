@@ -88,12 +88,19 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
         fee[_output][_input] = _fee;
     }
 
-    function setFeeBatch(address[] calldata _input, address[] calldata _output, uint[] calldata _fee) external auth {
-        require(_input.length == _output.length && _input.length == _fee.length, "setFeeBatch: ");
-        for (uint i = 0; i < _input.length; i++) {
-            require(_input[i] != _output[i], "setFeeBatch: ");
-            fee[_input[i]][_output[i]] = _fee[i];
-            fee[_output[i]][_input[i]] = _fee[i];
+    /**
+     * @notice Only authorized users can call this function.
+     * @dev Sets transaction fees for a range of trading pairs.
+     * @param _inputs Assets in the trade pair.
+     * @param _outputs Other assets in the trade pair.
+     * @param _fees Trading fees when swaps tokens.
+     */
+    function setFeeBatch(address[] calldata _inputs, address[] calldata _outputs, uint[] calldata _fees) external auth {
+        require(_inputs.length == _outputs.length && _inputs.length == _fees.length, "setFeeBatch: Array length does not match!");
+        for (uint i = 0; i < _inputs.length; i++) {
+            require(_inputs[i] != _outputs[i], "setFeeBatch: Do not set fee for the same token!");
+            fee[_inputs[i]][_outputs[i]] = _fees[i];
+            fee[_outputs[i]][_inputs[i]] = _fees[i];
         }
     }
 
@@ -169,7 +176,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function disableDToken(address _dToken) external auth {
         address _token = IDToken(_dToken).token();
-        require(supportDToken[_token] == _dToken, "disableDToken: Does not support!");
+        require(supportDToken[_token] == _dToken, "disableDToken: Do not support!");
 
         (uint _tokenBalance, bool flag) = getRedeemAmount(_dToken);
 
@@ -295,34 +302,42 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     // ************************
 
     /**
-     * @dev Swaps `_inputAmount`asset to get another asset`_output`.
-     * @param _input Asset that user wants to consume.
+     * @notice No consideration of slippage.
+     * @dev Exchanges specified `_inputAmount`asset for another asset`_output`.
+     * @param _input Asset that user wants to exchange.
      * @param _output Asset that user wants to get.
-     * @param _inputAmount Amount of asset consumed.
+     * @param _inputAmount Amount of asset to exchange.
      */
     function swap(address _input, address _output, uint _inputAmount) external {
         swapWithSlippage(_input, _output, _inputAmount, 0, msg.sender);
     }
 
+    /**
+     * @dev Exchanges specified `_inputAmount`asset for another asset`_output`.
+     * @param _input Asset that user wants to exchange.
+     * @param _output Asset that user wants to get.
+     * @param _inputAmount Amount of asset to exchange.
+     * @param _outputAmount Minimum acceptable amount to get.
+     */
     function swap(address _input, address _output, uint _inputAmount, uint _outputAmount) external {
         swapWithSlippage(_input, _output, _inputAmount, _outputAmount, msg.sender);
     }
 
     function swapWithSlippageAndTime(address _input, address _output, uint _inputAmount, uint _outputAmount, uint _timestamp, address _receiver) external {
-        require(_timestamp == 0 || _timestamp >= now, "swap: Invalid amount!");
+        require(_timestamp == 0 || _timestamp >= now, "swapWithSlippageAndTime: Invalid time!");
         swapWithSlippage(_input, _output, _inputAmount, _outputAmount, _receiver);
     }
 
     function swapWithSlippage(address _input, address _output, uint _inputAmount, uint _outputAmount, address _receiver) public nonReentrant {
-        require(isOpen && !paused, "swap: Contract paused!");
+        require(isOpen && !paused, "swapWithSlippage: Contract paused!");
 
         uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
-        require(_amountToUser > 0 && _amountToUser >= _outputAmount, "swap: Invalid amount!");
+        require(_amountToUser > 0 && _amountToUser >= _outputAmount, "swapWithSlippage: The price slippage is too large!");
 
         uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _amountToUser);
-        require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swap: Abnormal exchange rate!");
+        require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapWithSlippage: Abnormal exchange rate!");
 
-        require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swap: TransferFrom failed!");
+        require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swapWithSlippage: TransferFrom failed!");
         if (supportDToken[_input] != address(0))
             IDToken(supportDToken[_input]).mint(address(this), _inputAmount);
 
@@ -338,7 +353,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
                 remainingDToken[_output] = address(0);
         }
 
-        require(doTransferOut(_output, _receiver, _amountToUser), "swap: Transfer out failed!");
+        require(doTransferOut(_output, _receiver, _amountToUser), "swapWithSlippage: Transfer out failed!");
         emit Swap(
             msg.sender,
             _receiver,
@@ -352,34 +367,42 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     }
 
     /**
-     * @dev Swaps  `_outputAmount`asset to get another asset`_input`.
-     * @param _input Asset that user wants to get.
-     * @param _output Asset that user wants to consume.
-     * @param _outputAmount Amount of asset consumed.
+     * @notice No consideration of slippage.
+     * @dev Exchanges asset`_input` to get specified `_outputAmount`asset.
+     * @param _input Asset that user wants to swap.
+     * @param _output Asset that user wants to get.
+     * @param _outputAmount Amount of asset to get.
      */
     function swapTo(address _input, address _output, uint _outputAmount) external {
         swapToWithSlippage(_input, _output, 0, _outputAmount, msg.sender);
     }
 
+    /**
+     * @dev Exchanges asset`_input` to get specified `_outputAmount`asset.
+     * @param _input Asset that user wants to swap.
+     * @param _output Asset that user wants to get.
+     * @param _inputAmount Maximum acceptable amount to pay.
+     * @param _outputAmount Amount of asset to get.
+     */
     function swapTo(address _input, address _output, uint _inputAmount, uint _outputAmount) external {
         swapToWithSlippage(_input, _output, _inputAmount, _outputAmount, msg.sender);
     }
 
     function swapToWithSlippageAndTime(address _input, address _output, uint _inputAmount, uint _outputAmount, uint _timestamp, address _receiver) external {
-        require(_timestamp == 0 || _timestamp >= now, "swap: Invalid amount!");
+        require(_timestamp == 0 || _timestamp >= now, "swapToWithSlippageAndTime: Invalid amount!");
         swapToWithSlippage(_input, _output, _inputAmount, _outputAmount, _receiver);
     }
 
     function swapToWithSlippage(address _input, address _output, uint _inputAmount, uint _outputAmount, address _receiver) public nonReentrant {
-        require(isOpen && !paused, "swapTo: Contract paused!");
+        require(isOpen && !paused, "swapToWithSlippage: Contract paused!");
 
         uint _amountToUser = getAmountByOutput(_input, _output, _outputAmount);
-        require(_amountToUser > 0 && (_inputAmount == 0 || _amountToUser <= _inputAmount), "swapTo: Invalid amount!");
+        require(_amountToUser > 0 && (_inputAmount == 0 || _amountToUser <= _inputAmount), "swapToWithSlippage: The price slippage is too large!");
 
         uint _exchangeRate = getExchangeRate(_input, _amountToUser, _output, _outputAmount);
-        require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapTo: Abnormal exchange rate!");
+        require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapToWithSlippage: Abnormal exchange rate!");
 
-        require(doTransferFrom(_input, msg.sender, address(this), _amountToUser), "swapTo: TransferFrom failed!");
+        require(doTransferFrom(_input, msg.sender, address(this), _amountToUser), "swapToWithSlippage: TransferFrom failed!");
         if (supportDToken[_input] != address(0))
             IDToken(supportDToken[_input]).mint(address(this), _amountToUser);
 
@@ -395,7 +418,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
                 remainingDToken[_output] = address(0);
         }
 
-        require(doTransferOut(_output, _receiver, _outputAmount), "swapTo: Transfer out failed!");
+        require(doTransferOut(_output, _receiver, _outputAmount), "swapToWithSlippage: Transfer out failed!");
         emit Swap(
             msg.sender,
             _receiver,
@@ -410,9 +433,9 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
     /**
      * @dev Calculates the amount of `output` based on the amount`_inputAmount` of `input`.
-     * @param _input Asset that user wants to consume.
+     * @param _input Asset that user wants to swap.
      * @param _output Asset that user wants to get.
-     * @param _inputAmount Amount of asset consumed.
+     * @param _inputAmount Amount of asset to swap.
      */
     function getAmountByInput(address _input, address _output, uint _inputAmount) public view returns (uint) {
 
@@ -432,8 +455,8 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     /**
      * @dev Calculates the amount of `_input` based on the amount`_outputAmount` of `_output`.
      * @param _input Asset that user wants to get.
-     * @param _output Asset that user wants to consume.
-     * @param _outputAmount Amount of asset consumed.
+     * @param _output Asset that user wants to swap.
+     * @param _outputAmount Amount of asset to swap.
      */
     function getAmountByOutput(address _input, address _output, uint _outputAmount) public view returns (uint) {
 
@@ -471,8 +494,8 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
     /**
      * @dev Gets the exchange rate between the two assets.
-     * @param _input Asset that will be consumed.
-     * @param _output Asset that will be got.
+     * @param _input Asset to swap.
+     * @param _output Asset to get.
      */
     function exchangeRate(address _input, address _output) external view returns (uint) {
         uint _amount = getAmountByInput(_input, _output, 10 ** IERC20(_input).decimals());
@@ -487,10 +510,10 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     }
 
     /**
-     * @dev Calculates the amount of `output` based on the amount`_inputAmount` of `input`.
-     * @param _input Asset that user wants to consume.
+     * @dev Calculates the best amount of `output` based on the amount`_inputAmount` of `input`.
+     * @param _input Asset that user wants to swap.
      * @param _output Asset that user wants to get.
-     * @param _inputAmount Amount of asset consumed.
+     * @param _inputAmount Amount of asset to swap.
      */
 	function getBestOutputByInput(address _input, address _output, uint _inputAmount) external view returns (uint) {
 		uint _outputAmount = getAmountByInput(_input, _output, _inputAmount);
