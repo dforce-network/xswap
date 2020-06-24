@@ -31,16 +31,18 @@ import en_US from './language/en_US.js';
 import zh_CN from './language/zh_CN';
 import History from './component/history';
 import Top from './component/top';
+
 import Twitter from './images/twitter.svg';
+import Telegram from './images/telegram.svg';
 import Medium from './images/medium.svg';
 import Reddit from './images/Reddit.svg';
 import Discord from './images/Discord.svg';
 import LinkedIn from './images/LinkedIn.svg';
 import Youtube from './images/Youtube.svg';
-import Telegram from './images/telegram.svg';
 import erweima from './images/erweima.png';
 import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
+
 import arrow_d from './images/arrow_d.svg';//
 import img_is_open from './images/img_is_open.svg';
 import { Menu, Dropdown, Drawer, Collapse, Modal } from 'antd';
@@ -1069,9 +1071,10 @@ export default class App extends React.Component {
               <div className="other-tokens-right">
                 {/* <DebounceInput */}
                 <input
-                  type="number"
+                  // type="number"
                   value={this.state.side_A_amount || ''}
                   // debounceTimeout={100}
+                  pattern="[0-9]*"
                   onChange={(e) => handle_A_change(e.target.value, this)}
                   placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
                 // maxlength={18}
@@ -1394,7 +1397,8 @@ export default class App extends React.Component {
                   // disabled='disabled'
                   placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
                   onChange={(e) => handle_B_change(e.target.value, this)}
-                  type="number"
+                  // type="number"
+                  pattern="[0-9]*"
                 // debounceTimeout={800}
                 // maxLength={18}
                 />

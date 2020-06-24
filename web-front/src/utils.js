@@ -604,8 +604,29 @@ export const handle_A_max = (that) => {
 
 
 export const handle_A_change = (value, that) => {
+  // value = value.replace(/[\W]/g, '');
+  // alert(value);
   if (!that.state.i_am_ready) { return console.log('no web3') }
+
+  var reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
+  var rega_Z = /[a-z]/g;
+
+  // alert(rega_Z.test(value));
+  if (reg.test(value)) {
+    return false;
+  }
+  if (rega_Z.test(value)) {
+    return false;
+  }
+
   // console.log(value);
+  // that.setState({
+  //   side_A_amount: value,
+  // }, () => {
+  //   // alert(that.state.side_A_amount)
+  // })
+
+  // return false;
   if (value.length > 18) {
     // console.log(value.length);
     // that.setState({
@@ -789,6 +810,18 @@ export const handle_A_change = (value, that) => {
 
 
 export const handle_B_change = (value, that) => {
+
+  var reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
+  var rega_Z = /[a-z]/g;
+
+  // alert(rega_Z.test(value));
+  if (reg.test(value)) {
+    return false;
+  }
+  if (rega_Z.test(value)) {
+    return false;
+  }
+
   if (!that.state.i_am_ready) { return console.log('no web3') }
   if (value.length > 18) {
     return;
