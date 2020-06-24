@@ -1069,15 +1069,10 @@ export default class App extends React.Component {
               </div>
 
               <div className="other-tokens-right">
-                {/* <DebounceInput */}
                 <input
-                  // type="number"
                   value={this.state.side_A_amount || ''}
-                  // debounceTimeout={100}
-                  pattern="[0-9]*"
                   onChange={(e) => handle_A_change(e.target.value, this)}
                   placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
-                // maxlength={18}
                 />
                 <span
                   onClick={() => handle_A_max(this)}
@@ -1391,16 +1386,10 @@ export default class App extends React.Component {
                 </button>
               </div>
               <div className="other-tokens-right">
-                {/* <DebounceInput */}
                 <input
                   value={this.state.side_B_amount || ''}
-                  // disabled='disabled'
                   placeholder={this.state.cur_language === '中文' ? '输入数量' : 'Amount'}
                   onChange={(e) => handle_B_change(e.target.value, this)}
-                  // type="number"
-                  pattern="[0-9]*"
-                // debounceTimeout={800}
-                // maxLength={18}
                 />
               </div>
 
