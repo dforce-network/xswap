@@ -472,6 +472,11 @@ contract PriceOracle is Exponential {
     Exp public maxSwing;
 
     /**
+     * @dev The maximum allowed percentage difference for all assets between a new price and the anchor's price
+     */
+    mapping(address => Exp) public maxSwings;
+
+    /**
      * @dev Mapping of asset addresses to exchange rate information.
      *      Dynamic changes in asset prices based on exchange rates.
      * map: assetAddress -> ExchangeRateInfo
@@ -633,6 +638,11 @@ contract PriceOracle is Exponential {
      * @dev Emitted for max swing changes.
      */
     event SetMaxSwing(uint maxSwing);
+
+    /**
+     * @dev Emitted for max swing changes.
+     */
+    event SetMaxSwingForAsset(address asset, uint maxSwing);
 
     /**
      * @dev Emitted for all price changes.
@@ -877,6 +887,35 @@ contract PriceOracle is Exponential {
     }
 
     /**
+     * @notice Set `maxSwing` for asset to the specified value.
+     * @dev Admin function to change of max swing.
+     * @param _asset Asset for which to set the `maxSwing`.
+     * @param _maxSwing Value to assign to `maxSwing`.
+     * @return uint 0=success, otherwise a failure.
+     */
+    function _setMaxSwingForAsset(address _asset, uint _maxSwing) public returns (uint) {
+        // Check caller = anchorAdmin
+        if (msg.sender != anchorAdmin) {
+            return failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PAUSED_OWNER_CHECK);
+        }
+
+        uint oldMaxSwing = maxSwings[_asset].mantissa;
+        require(_maxSwing != oldMaxSwing, "_setMaxSwingForAsset: Old and new values cannot be the same.");
+        require(_maxSwing >= 10 ** 15 && _maxSwing <= 10 ** 17, "_setMaxSwingForAsset: 0.1% <= _maxSwing <= 10%.");
+        maxSwings[_asset] = Exp({mantissa : _maxSwing});
+        emit SetMaxSwingForAsset(_asset, _maxSwing);
+
+        return uint(Error.NO_ERROR);
+    }
+
+    function _setMaxSwingForAssetBatch(address[] calldata _assets, uint[] calldata _maxSwings) external {
+
+        require(_assets.length == _maxSwings.length, "_setMaxSwingForAssetBatch: assets & maxSwings must match the current length.");
+        for (uint i = 0; i < _assets.length; i++)
+            _setMaxSwingForAsset(_assets[i], _maxSwings[i]);
+    }
+
+    /**
      * @notice This is a basic function to read price, although this is a public function,
      *         It is not recommended, the recommended function is `assetPrices(asset)`.
      *         If `asset` does not has a reader to reader price, then read price from original
@@ -986,6 +1025,7 @@ contract PriceOracle is Exponential {
     struct SetPriceLocalVars {
         Exp price;
         Exp swing;
+        Exp maxSwing;
         Exp anchorPrice;
         uint anchorPeriod;
         uint currentPeriod;
@@ -1042,6 +1082,7 @@ contract PriceOracle is Exponential {
             return failOracle(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_IS_READER_ASSET);
         }
 
+        localVars.maxSwing = maxSwings[asset].mantissa == 0 ? maxSwing : maxSwings[asset];
         if (localVars.pendingAnchorMantissa != 0) {
             // let's explicitly set to 0 rather than relying on default of declaration
             localVars.anchorPeriod = 0;
@@ -1054,7 +1095,8 @@ contract PriceOracle is Exponential {
             }
 
             // Fail when swing > maxSwing
-            if (greaterThanExp(localVars.swing, maxSwing)) {
+            // if (greaterThanExp(localVars.swing, maxSwing)) {
+            if (greaterThanExp(localVars.swing, localVars.maxSwing)) {
                 return failOracleWithDetails(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_MAX_SWING_CHECK, localVars.swing.mantissa);
             }
         } else {
@@ -1062,7 +1104,8 @@ contract PriceOracle is Exponential {
             localVars.anchorPrice = Exp({mantissa : anchors[asset].priceMantissa});
 
             if (localVars.anchorPeriod != 0) {
-                (err, localVars.priceCapped, localVars.price) = capToMax(localVars.anchorPrice, localVars.price);
+                // (err, localVars.priceCapped, localVars.price) = capToMax(localVars.anchorPrice, localVars.price);
+                (err, localVars.priceCapped, localVars.price) = capToMax(localVars.anchorPrice, localVars.price, localVars.maxSwing);
                 if (err != Error.NO_ERROR) {
                     return failOracleWithDetails(asset, OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICE_CAP_TO_MAX, uint(err));
                 }
@@ -1141,7 +1184,7 @@ contract PriceOracle is Exponential {
     }
 
     // Base on the current anchor price, get the final valid price.
-    function capToMax(Exp memory anchorPrice, Exp memory price) view internal returns (Error, bool, Exp memory) {
+    function capToMax(Exp memory anchorPrice, Exp memory price, Exp memory _maxSwing) pure internal returns (Error, bool, Exp memory) {
         Exp memory one = Exp({mantissa : mantissaOne});
         Exp memory onePlusMaxSwing;
         Exp memory oneMinusMaxSwing;
@@ -1150,35 +1193,35 @@ contract PriceOracle is Exponential {
         // re-used for intermediate errors
         Error err;
 
-        (err, onePlusMaxSwing) = addExp(one, maxSwing);
+        (err, onePlusMaxSwing) = addExp(one, _maxSwing);
         if (err != Error.NO_ERROR) {
             return (err, false, Exp({mantissa : 0}));
         }
 
-        // max = anchorPrice * (1 + maxSwing)
+        // max = anchorPrice * (1 + _maxSwing)
         (err, max) = mulExp(anchorPrice, onePlusMaxSwing);
         if (err != Error.NO_ERROR) {
             return (err, false, Exp({mantissa : 0}));
         }
 
-        // If price > anchorPrice * (1 + maxSwing)
-        // Set price = anchorPrice * (1 + maxSwing)
+        // If price > anchorPrice * (1 + _maxSwing)
+        // Set price = anchorPrice * (1 + _maxSwing)
         if (greaterThanExp(price, max)) {
             return (Error.NO_ERROR, true, max);
         }
 
-        (err, oneMinusMaxSwing) = subExp(one, maxSwing);
+        (err, oneMinusMaxSwing) = subExp(one, _maxSwing);
         if (err != Error.NO_ERROR) {
             return (err, false, Exp({mantissa : 0}));
         }
 
-        // min = anchorPrice * (1 - maxSwing)
+        // min = anchorPrice * (1 - _maxSwing)
         (err, min) = mulExp(anchorPrice, oneMinusMaxSwing);
         // We can't overflow here or we would have already overflowed above when calculating `max`
         assert(err == Error.NO_ERROR);
 
-        // If  price < anchorPrice * (1 - maxSwing)
-        // Set price = anchorPrice * (1 - maxSwing)
+        // If  price < anchorPrice * (1 - _maxSwing)
+        // Set price = anchorPrice * (1 - _maxSwing)
         if (lessThanExp(price, min)) {
             return (Error.NO_ERROR, true, min);
         }

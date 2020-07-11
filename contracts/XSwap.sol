@@ -38,6 +38,21 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
         uint outputPrice
     );
 
+    event SetOracle(address oracle);
+    event SetMaxSwing(uint maxSwing);
+    event SetFee(address input, address output, uint fee);
+    event Paused(address admin);
+    event Unpaused(address admin);
+    event EmergencyStop(bool isOpen);
+    event DisableToken(address token);
+    event EnableToken(address token);
+    event DisableTrade(address input, address output);
+    event EnableTrade(address input, address output);
+    event DisableDToken(address DToken, address token, uint DTokenBalance);
+    event EnableDToken(address DToken, address token, uint DTokenBalance);
+    event TransferIn(address token, uint amount, uint balance);
+    event TransferOut(address token, address receiver, uint amount, uint balance);
+
     constructor() public {
     }
 
@@ -64,6 +79,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function setOracle(address _oracle) external auth {
         oracle = _oracle;
+        emit SetOracle(_oracle);
     }
 
     /**
@@ -74,6 +90,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     function setMaxSwing(uint _maxSwing) external auth {
         require(_maxSwing >= OFFSET && _maxSwing <= OFFSET.mul(2), "setMaxSwing: New maxSwing non-compliant");
         maxSwing = _maxSwing;
+        emit SetMaxSwing(_maxSwing);
     }
 
     /**
@@ -83,17 +100,17 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      * @param _output The other asset in the trade pair.
      * @param _fee Trading fee when swaps these two tokens.
      */
-    function setFee(address _input, address _output, uint _fee) external auth {
+    function setFee(address _input, address _output, uint _fee) public auth {
         fee[_input][_output] = _fee;
         fee[_output][_input] = _fee;
+        emit SetFee(_input, _output, _fee);
     }
 
     function setFeeBatch(address[] calldata _input, address[] calldata _output, uint[] calldata _fee) external auth {
         require(_input.length == _output.length && _input.length == _fee.length, "setFeeBatch: ");
         for (uint i = 0; i < _input.length; i++) {
             require(_input[i] != _output[i], "setFeeBatch: ");
-            fee[_input[i]][_output[i]] = _fee[i];
-            fee[_output[i]][_input[i]] = _fee[i];
+            setFee(_input[i], _output[i], _fee[i]);
         }
     }
 
@@ -103,6 +120,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     function pause() public auth {
         require(!paused, "pause: paused");
         paused = true;
+        emit Paused(msg.sender);
     }
 
     /**
@@ -111,6 +129,8 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     function unpause() public auth {
         require(paused, "unpause: not paused");
         paused = false;
+        emit Unpaused(msg.sender);
+        
     }
 
     /**
@@ -120,6 +140,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function emergencyStop(bool _changeStateTo) external auth {
         isOpen = _changeStateTo;
+        emit EmergencyStop(_changeStateTo);
     }
 
     /**
@@ -129,6 +150,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function disableToken(address _token) external auth {
         tokensEnable[_token] = false;
+        emit DisableToken(_token);
     }
 
     /**
@@ -138,6 +160,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function enableToken(address _token) external auth {
         tokensEnable[_token] = true;
+        emit EnableToken(_token);
     }
 
     /**
@@ -149,6 +172,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     function disableTrade(address _input, address _output) external auth {
         tradesDisable[_input][_output] = true;
         tradesDisable[_output][_input] = true;
+        emit DisableTrade(_input, _output);
     }
 
     /**
@@ -160,6 +184,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     function enableTrade(address _input, address _output) external auth {
         tradesDisable[_input][_output] = false;
         tradesDisable[_output][_input] = false;
+        emit EnableTrade(_input, _output);
     }
 
     /**
@@ -180,6 +205,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
             remainingDToken[_token] = _dToken;
 
         supportDToken[_token] = address(0);
+        emit DisableDToken(_dToken, _token, IERC20(_dToken).balanceOf(address(this)));
     }
 
     /**
@@ -198,6 +224,8 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
         uint _balance = IERC20(_token).balanceOf(address(this));
         if (_balance > 0)
             IDToken(_dToken).mint(address(this), _balance);
+
+        emit EnableDToken(_dToken, _token, IERC20(_dToken).balanceOf(address(this)));
     }
 
     /**
@@ -213,6 +241,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
         address _dToken = supportDToken[_token];
         if (_dToken != address(0) && _balance > 0)
             IDToken(_dToken).mint(address(this), _balance);
+        emit TransferIn(_token, _amount, _balance);
     }
 
     /**
@@ -235,6 +264,8 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
         uint _balance = IERC20(_token).balanceOf(address(this));
         if (_balance >= _amount)
             require(doTransferOut(_token, _receiver, _amount), "transferOut: Transfer out failed!");
+
+        emit TransferOut(_token, _receiver, _amount, IERC20(_token).balanceOf(address(this)));
     }
 
     /**
@@ -256,6 +287,8 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
         uint _balance = IERC20(_token).balanceOf(address(this));
         if (_balance > 0)
             require(doTransferOut(_token, _receiver, _balance), "transferOutALL: Transfer out all failed!");
+
+        emit TransferOut(_token, _receiver, _balance, IERC20(_token).balanceOf(address(this)));
     }
 
     // **************************
@@ -305,13 +338,13 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     }
 
     function swap(address _input, address _output, uint _inputAmount, address _receiver) public nonReentrant {
-        require(isOpen && !paused, "swap: Contract paused!");
+        // require(isOpen && !paused, "swap: Contract paused!");
 
         uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
         require(_amountToUser > 0, "swap: Invalid amount!");
 
-        uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _amountToUser);
-        require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swap: Abnormal exchange rate!");
+        // uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _amountToUser);
+        // require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swap: Abnormal exchange rate!");
 
         require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swap: TransferFrom failed!");
         if (supportDToken[_input] != address(0))
@@ -353,13 +386,13 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     }
 
     function swapTo(address _input, address _output, uint _outputAmount, address _receiver) public nonReentrant {
-        require(isOpen && !paused, "swapTo: Contract paused!");
+        // require(isOpen && !paused, "swapTo: Contract paused!");
 
         uint _inputAmount = getAmountByOutput(_input, _output, _outputAmount);
         require(_inputAmount > 0, "swapTo: Invalid amount!");
 
-        uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _outputAmount);
-        require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapTo: Abnormal exchange rate!");
+        // uint _exchangeRate = getExchangeRate(_input, _inputAmount, _output, _outputAmount);
+        // require(_exchangeRate < maxSwing && _exchangeRate > 10 ** 36 / maxSwing, "swapTo: Abnormal exchange rate!");
 
         require(doTransferFrom(_input, msg.sender, address(this), _inputAmount), "swapTo: TransferFrom failed!");
         if (supportDToken[_input] != address(0))
@@ -398,7 +431,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function getAmountByInput(address _input, address _output, uint _inputAmount) public view returns (uint) {
 
-        if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output])
+        if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output] || !isOpen || paused)
             return 0;
 
         IPriceOracle _oracle = IPriceOracle(oracle);
@@ -419,7 +452,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function getAmountByOutput(address _input, address _output, uint _outputAmount) public view returns (uint) {
 
-        if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output] || _outputAmount == 0)
+        if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output] || _outputAmount == 0  || !isOpen || paused)
             return 0;
 
         IPriceOracle _oracle = IPriceOracle(oracle);
