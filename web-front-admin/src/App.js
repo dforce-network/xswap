@@ -57,7 +57,8 @@ export default class App extends React.Component {
         USDT: 6,
         imBTC: 8,
         HBTC: 18,
-        WBTC: 8
+        WBTC: 8,
+        GOLDx: 18
       },
       mask_Emergency: false,
       mask_setfee: false,
@@ -93,6 +94,7 @@ export default class App extends React.Component {
       let PAX = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['PAX']);
       let TUSD = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['TUSD']);
       let DAI = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['DAI']);
+      let GOLDx = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['GOLDx']);
       this.setState({
         HUSD: HUSD,
         HBTC: HBTC,
@@ -105,6 +107,7 @@ export default class App extends React.Component {
         PAX: PAX,
         TUSD: TUSD,
         DAI: DAI,
+        GOLDx: GOLDx,
         net_type: net_type,
         XSwap_stable: XSwap_stable,
         XSwap_btc: XSwap_btc,
@@ -509,6 +512,22 @@ export default class App extends React.Component {
                 </div>
 
                 <div className='box-item'>
+                  <div className='box-item-token'>GOLDx</div>
+                  <div className='box-item-price'>
+                    {this.state.cur_liquidaty_GOLDx ? format_str_to_K(format_balance(this.state.cur_liquidaty_GOLDx, this.state.decimals.GOLDx, 2)) : '...'}
+                  </div>
+                  <div className='box-item-price'>
+                    {this.state.price_GOLDx ? '$' + format_balance(this.state.price_GOLDx, this.state.decimals.GOLDx, 6) : '...'}
+                  </div>
+                  {/* <div className='box-item-checked'>
+                    <input type="checkbox" checked={this.state.cur_lending_USDx ? 'checked' : ''} readOnly onClick={() => { this.control_lending('USDx', this.state.cur_lending_USDx) }} />
+                  </div> */}
+                  <div className='box-item-checked'>
+                    <input type="checkbox" checked={this.state.cur_enable_GOLDx ? 'checked' : ''} readOnly onClick={() => { this.control_enable('GOLDx', this.state.cur_enable_GOLDx) }} />
+                  </div>
+                </div>
+
+                <div className='box-item'>
                   <div className='box-item-token'>USDT</div>
                   <div className='box-item-price'>
                     {this.state.cur_liquidaty_USDT ? format_str_to_K(format_balance(this.state.cur_liquidaty_USDT, this.state.decimals.USDT, 2)) : '...'}
@@ -673,6 +692,7 @@ export default class App extends React.Component {
             <div className='exchanges-send'>
               <Select defaultValue="USDT" style={{ width: '100%' }} onChange={(e) => { this.handleChange_send(e) }}>
                 <Select.Option value="USDx">USDx</Select.Option>
+                <Select.Option value="GOLDx">GOLDx</Select.Option>
                 <Select.Option value="USDT">USDT</Select.Option>
                 <Select.Option value="DAI">DAI</Select.Option>
                 <Select.Option value="HUSD">HUSD</Select.Option>
@@ -686,6 +706,7 @@ export default class App extends React.Component {
             <div className='exchanges-receive'>
               <Select defaultValue="USDx" style={{ width: '100%' }} onChange={(e) => { this.handleChange_receive(e) }}>
                 <Select.Option value="USDx">USDx</Select.Option>
+                <Select.Option value="GOLDx">GOLDx</Select.Option>
                 <Select.Option value="USDT">USDT</Select.Option>
                 <Select.Option value="DAI">DAI</Select.Option>
                 <Select.Option value="HUSD">HUSD</Select.Option>
@@ -750,6 +771,7 @@ export default class App extends React.Component {
             <div className='item-1'>
               <Select defaultValue="USDx" style={{ width: '100%' }} onChange={(e) => { this.handleChange_Transfer_in(e) }}>
                 <Select.Option value="USDx">USDx</Select.Option>
+                <Select.Option value="GOLDx">GOLDx</Select.Option>
                 <Select.Option value="USDT">USDT</Select.Option>
                 <Select.Option value="DAI">DAI</Select.Option>
                 <Select.Option value="HUSD">HUSD</Select.Option>
@@ -776,6 +798,10 @@ export default class App extends React.Component {
                 {
                   this.state.cur_Transfer_in_token === 'USDx' && this.state.my_balance_USDx &&
                   format_str_to_K(format_balance(this.state.my_balance_USDx, this.state.decimals.USDx, 2))
+                }
+                {
+                  this.state.cur_Transfer_in_token === 'GOLDx' && this.state.my_balance_GOLDx &&
+                  format_str_to_K(format_balance(this.state.my_balance_GOLDx, this.state.decimals.GOLDx, 2))
                 }
                 {
                   this.state.cur_Transfer_in_token === 'HUSD' && this.state.my_balance_HUSD &&
@@ -834,6 +860,7 @@ export default class App extends React.Component {
             <div className='item-1'>
               <Select defaultValue="USDx" style={{ width: '100%' }} onChange={(e) => { this.handleChange_Transfer_out(e) }}>
                 <Select.Option value="USDx">USDx</Select.Option>
+                <Select.Option value="GOLDx">GOLDx</Select.Option>
                 <Select.Option value="USDT">USDT</Select.Option>
                 <Select.Option value="DAI">DAI</Select.Option>
                 <Select.Option value="HUSD">HUSD</Select.Option>
@@ -860,6 +887,10 @@ export default class App extends React.Component {
                 {
                   this.state.cur_Transfer_out_token === 'USDx' && this.state.cur_liquidaty_USDx &&
                   format_str_to_K(format_balance(this.state.cur_liquidaty_USDx, this.state.decimals.USDx, 2))
+                }
+                {
+                  this.state.cur_Transfer_out_token === 'GOLDx' && this.state.cur_liquidaty_GOLDx &&
+                  format_str_to_K(format_balance(this.state.cur_liquidaty_GOLDx, this.state.decimals.GOLDx, 2))
                 }
                 {
                   this.state.cur_Transfer_out_token === 'HUSD' && this.state.cur_liquidaty_HUSD &&

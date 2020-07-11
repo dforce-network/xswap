@@ -42,8 +42,9 @@ import Youtube from './images/Youtube.svg';
 import erweima from './images/erweima.png';
 import weixin from './images/weixin.svg';
 import arrow_u from './images/up.svg';
+import logo_goldx from './images/logo_goldx.svg';
 
-import arrow_d from './images/arrow_d.svg';//
+import arrow_d from './images/arrow_d.svg';
 import img_is_open from './images/img_is_open.svg';
 import { Menu, Dropdown, Drawer, Collapse, Modal } from 'antd';
 import {
@@ -61,6 +62,7 @@ import {
   check_TokensEnable,
   handle_A_change_ttt
 } from './utils.js';
+
 let tokens_abi = require('./abi/tokensABI.json');
 let xSwap_abi = require('./abi/xSwapABI.json');
 let address_map = require('./abi/address_map.json');
@@ -85,7 +87,8 @@ export default class App extends React.Component {
         DAI: DAI,
         WBTC: WBTC,
         HUSD: HUSD,
-        BUSD: BUSD
+        BUSD: BUSD,
+        GOLDx: logo_goldx
       },
       decimals: {
         HUSD: 8,
@@ -98,7 +101,8 @@ export default class App extends React.Component {
         USDT: 6,
         imBTC: 8,
         HBTC: 18,
-        WBTC: 8
+        WBTC: 8,
+        GOLDx: 18
       },
       cur_language: navigator.language === 'zh-CN' ? '中文' : 'English',
       show_left_more_token: false,
@@ -136,6 +140,7 @@ export default class App extends React.Component {
         let PAX = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['PAX']);
         let TUSD = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['TUSD']);
         let DAI = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['DAI']);
+        let GOLDx = new this.new_web3.eth.Contract(tokens_abi, address_map[net_type]['GOLDx']);
         console.log(' *** init contract finished *** ');
         this.setState({
           net_type: net_type,
@@ -152,6 +157,7 @@ export default class App extends React.Component {
           WBTC: WBTC,
           HUSD: HUSD,
           BUSD: BUSD,
+          GOLDx: GOLDx,
           cur_send_contract: USDT,
           cur_recive_contract: USDx,
           cur_send_addr: 'USDT',
@@ -283,7 +289,7 @@ export default class App extends React.Component {
       }
     } else {
       if (!this.state.is_stable_coin_send) {
-        if (token === 'USDT' || token === 'USDC' || token === 'PAX' || token === 'TUSD' || token === 'DAI' || token === 'HUSD' || token === 'BUSD') {
+        if (token === 'USDT' || token === 'USDC' || token === 'PAX' || token === 'TUSD' || token === 'DAI' || token === 'HUSD' || token === 'BUSD' || token === 'GOLDx') {
           this.setState({
             cur_recive_addr: 'USDx',
             cur_recive_decimals: 18,
@@ -371,6 +377,12 @@ export default class App extends React.Component {
         cur_send_addr: 'BUSD',
         cur_send_decimals: 18,
         cur_send_contract: this.state.BUSD
+      })
+    } else if (token === 'GOLDx') {
+      this.setState({
+        cur_send_addr: 'GOLDx',
+        cur_send_decimals: 18,
+        cur_send_contract: this.state.GOLDx
       })
     }
 
@@ -472,6 +484,12 @@ export default class App extends React.Component {
         cur_recive_addr: 'BUSD',
         cur_recive_decimals: 18,
         cur_recive_contract: this.state.BUSD
+      })
+    } else if (token === 'GOLDx') {
+      this.setState({
+        cur_recive_addr: 'GOLDx',
+        cur_recive_decimals: 18,
+        cur_recive_contract: this.state.GOLDx
       })
     }
 
@@ -882,9 +900,15 @@ export default class App extends React.Component {
                     {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
                   </span>
                 }
+                {
+                  this.state.cur_send_addr === 'GOLDx' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_GOLDx ? format_num_to_K(format_bn(this.state.my_balance_GOLDx, this.state.decimals.GOLDx, 2)) : '···'}
+                  </span>
+                }
                 <span className="my-balance-title">
                   <FormattedMessage id='balance' />:
-              </span>
+                </span>
               </div>
 
               <div className="other-tokens-left">
@@ -1007,6 +1031,21 @@ export default class App extends React.Component {
                       }
 
                       {
+                        this.state.cur_recive_addr !== 'GOLDx' && this.state.is_tokensEnable_GOLDx &&
+                        <div className="more-tokens-token" onClick={() => { this.change_send_addr('GOLDx') }}>
+                          <img alt='' className="token-logo" src={this.state.token.GOLDx} />
+                          <span className="token-title">
+                            GOLDx
+                          {/* <i>(Binance USD)</i> */}
+                          </span>
+                          {
+                            this.state.cur_send_addr === 'GOLDx' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
+                      {
                         this.state.cur_recive_addr !== 'TUSD' && this.state.is_tokensEnable_TUSD &&
                         <div className="more-tokens-token" onClick={() => { this.change_send_addr('TUSD') }}>
                           <img alt='' className="token-logo" src={this.state.token.TUSD} />
@@ -1079,7 +1118,7 @@ export default class App extends React.Component {
                   className="other-tokens-right-max"
                 >
                   MAX
-              </span>
+                </span>
               </div>
 
               <div className="other-tokens-rate">
@@ -1198,6 +1237,12 @@ export default class App extends React.Component {
                   this.state.cur_recive_addr === 'BUSD' &&
                   <span className="my-balance">
                     {this.state.my_balance_BUSD ? format_num_to_K(format_bn(this.state.my_balance_BUSD, this.state.decimals.BUSD, 2)) : '···'}
+                  </span>
+                }
+                {
+                  this.state.cur_recive_addr === 'GOLDx' &&
+                  <span className="my-balance">
+                    {this.state.my_balance_GOLDx ? format_num_to_K(format_bn(this.state.my_balance_GOLDx, this.state.decimals.GOLDx, 2)) : '···'}
                   </span>
                 }
                 <span className="my-balance-title">
@@ -1320,6 +1365,21 @@ export default class App extends React.Component {
                           </span>
                           {
                             this.state.cur_recive_addr === 'BUSD' &&
+                            <img alt='' className="token-isselected" src={is_selected} />
+                          }
+                        </div>
+                      }
+
+                      {
+                        (this.state.is_stable_coin_send && this.state.cur_send_addr !== 'GOLDx') && this.state.is_tokensEnable_GOLDx &&
+                        <div className="more-tokens-token" onClick={() => { this.change_recive_addr('GOLDx') }}>
+                          <img alt='' className="token-logo" src={this.state.token.GOLDx} />
+                          <span className="token-title">
+                            GOLDx
+                          {/* <i>(Binance USD)</i> */}
+                          </span>
+                          {
+                            this.state.cur_recive_addr === 'GOLDx' &&
                             <img alt='' className="token-isselected" src={is_selected} />
                           }
                         </div>

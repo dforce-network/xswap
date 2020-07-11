@@ -49,6 +49,12 @@ export const get_token_balance = (that) => {
             cur_liquidaty_TUSD: res_getLiquidity
         });
     })
+    that.state.XSwap_stable.methods.getLiquidity(address_map[that.state.net_type]['GOLDx']).call().then(res_getLiquidity => {
+        // console.log('cur liquidaty: ', res_getLiquidity);
+        that.setState({
+            cur_liquidaty_GOLDx: res_getLiquidity
+        });
+    })
 
     // that.state.XSwap_btc.methods.getLiquidity(address_map[that.state.net_type]['imBTC']).call().then(res_getLiquidity => {
     //     // console.log('cur liquidaty: ', res_getLiquidity);
@@ -116,6 +122,12 @@ export const get_token_lending = (that) => {
         // console.log('cur liquidaty: ', res_lending);
         that.setState({
             cur_lending_TUSD: res_lending
+        });
+    })
+    that.state.XSwap_stable.methods.supportDToken(address_map[that.state.net_type]['GOLDx']).call().then(res_lending => {
+        // console.log('cur liquidaty: ', res_lending);
+        that.setState({
+            cur_lending_GOLDx: res_lending
         });
     })
 
@@ -187,6 +199,12 @@ export const get_token_enable = (that) => {
             cur_enable_TUSD: res_enable
         });
     })
+    that.state.XSwap_stable.methods.tokensEnable(address_map[that.state.net_type]['GOLDx']).call().then(res_enable => {
+        // console.log('cur liquidaty: ', res_enable);
+        that.setState({
+            cur_enable_GOLDx: res_enable
+        });
+    })
 
     // that.state.XSwap_btc.methods.tokensEnable(address_map[that.state.net_type]['imBTC']).call().then(res_enable => {
     //     // console.log('cur liquidaty: ', res_enable);
@@ -230,6 +248,12 @@ export const get_token_price = (that) => {
         // console.log('res_price_DAI: ', res_price);
         that.setState({
             price_USDx: res_price
+        });
+    })
+    that.state.Oracle.methods.assetPrices(address_map[that.state.net_type]['GOLDx']).call().then(res_price => {
+        // console.log('res_price_DAI: ', res_price);
+        that.setState({
+            price_GOLDx: res_price
         });
     })
 }
@@ -338,6 +362,14 @@ export const get_my_balance = (that) => {
         if (res_balance) {
             that.setState({
                 my_balance_DAI: res_balance
+            })
+        }
+    });
+
+    that.state.GOLDx.methods.balanceOf(that.state.my_account).call((err, res_balance) => {
+        if (res_balance) {
+            that.setState({
+                my_balance_GOLDx: res_balance
             })
         }
     });
@@ -569,6 +601,8 @@ export const handle_Transfer_in_max = (that, cur_Transfer_in_token, decimals) =>
         t_balance = that.state.my_balance_TUSD;
     } else if (cur_Transfer_in_token === 'DAI') {
         t_balance = that.state.my_balance_DAI;
+    } else if (cur_Transfer_in_token === 'GOLDx') {
+        t_balance = that.state.my_balance_GOLDx;
     }
 
     var to_show;
@@ -638,6 +672,8 @@ export const handle_Transfer_out_max = (that, cur_Transfer_out_token, decimals) 
         t_balance = that.state.cur_liquidaty_TUSD;
     } else if (cur_Transfer_out_token === 'DAI') {
         t_balance = that.state.cur_liquidaty_DAI;
+    } else if (cur_Transfer_out_token === 'GOLDx') {
+        t_balance = that.state.cur_liquidaty_GOLDx;
     }
 
     var to_show;
@@ -692,6 +728,8 @@ export const click_Transfer_in = (that) => {
         t_tokenIn_contract = that.state.PAX;
     } else if (that.state.cur_Transfer_in_token === 'TUSD') {
         t_tokenIn_contract = that.state.TUSD;
+    } else if (that.state.cur_Transfer_in_token === 'GOLDx') {
+        t_tokenIn_contract = that.state.GOLDx;
     }
 
 
