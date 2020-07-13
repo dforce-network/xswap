@@ -338,7 +338,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     }
 
     function swap(address _input, address _output, uint _inputAmount, address _receiver) public nonReentrant {
-        // require(isOpen && !paused, "swap: Contract paused!");
+        require(isOpen && !paused, "swap: Contract paused!");
 
         uint _amountToUser = getAmountByInput(_input, _output, _inputAmount);
         require(_amountToUser > 0, "swap: Invalid amount!");
@@ -386,7 +386,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
     }
 
     function swapTo(address _input, address _output, uint _outputAmount, address _receiver) public nonReentrant {
-        // require(isOpen && !paused, "swapTo: Contract paused!");
+        require(isOpen && !paused, "swapTo: Contract paused!");
 
         uint _inputAmount = getAmountByOutput(_input, _output, _outputAmount);
         require(_inputAmount > 0, "swapTo: Invalid amount!");
@@ -431,7 +431,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function getAmountByInput(address _input, address _output, uint _inputAmount) public view returns (uint) {
 
-        if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output] || !isOpen || paused)
+        if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output])
             return 0;
 
         IPriceOracle _oracle = IPriceOracle(oracle);
@@ -452,7 +452,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      */
     function getAmountByOutput(address _input, address _output, uint _outputAmount) public view returns (uint) {
 
-        if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output] || _outputAmount == 0  || !isOpen || paused)
+        if (!tokensEnable[_input] || !tokensEnable[_output] || tradesDisable[_input][_output] || _outputAmount == 0)
             return 0;
 
         IPriceOracle _oracle = IPriceOracle(oracle);
@@ -471,7 +471,7 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
      * @dev Gets the valid amount of `_token` to redeem.
      * @param _token Asset which will be redeemed.
      */
-    function getLiquidity(address _token) external view returns (uint) {
+    function getLiquidity(address _token) public view returns (uint) {
 
         address _dToken = supportDToken[_token] == address(0) ? remainingDToken[_token] : supportDToken[_token];
         uint _tokenBalance;
@@ -500,4 +500,18 @@ contract XSwap is DSAuth, ReentrancyGuard, ERC20SafeTransfer {
 
         return _amount / (10 ** (_decimals - 18));
     }
+
+    /**
+     * @dev Calculates the best amount of `output` based on the amount`_inputAmount` of `input`.
+     * @param _input Asset that user wants to swap.
+     * @param _output Asset that user wants to get.
+     * @param _inputAmount Amount of asset to swap.
+     */
+	function getBestOutputByInput(address _input, address _output, uint _inputAmount) external view returns (uint) {
+        if (!isOpen || paused)
+            return 0;
+		uint _outputAmount = getAmountByInput(_input, _output, _inputAmount);
+		uint _liquidity = getLiquidity(_output);
+		return _outputAmount > _liquidity ? 0 : _outputAmount;
+	}
 }
