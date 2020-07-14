@@ -1036,7 +1036,7 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.GOLDx} />
                           <span className="token-title">
                             GOLDx
-                          {/* <i>(Binance USD)</i> */}
+                          <i>(dForce)</i>
                           </span>
                           {
                             this.state.cur_send_addr === 'GOLDx' &&
@@ -1376,7 +1376,7 @@ export default class App extends React.Component {
                           <img alt='' className="token-logo" src={this.state.token.GOLDx} />
                           <span className="token-title">
                             GOLDx
-                          {/* <i>(Binance USD)</i> */}
+                          <i>(dForce)</i>
                           </span>
                           {
                             this.state.cur_recive_addr === 'GOLDx' &&
