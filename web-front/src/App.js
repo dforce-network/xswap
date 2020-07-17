@@ -72,7 +72,21 @@ export default class App extends React.Component {
   constructor(porps) {
     super(porps);
 
+    let url_to_arr = window.location.href.split('/');
+    let trans_token;
+    url_to_arr.map(item => {
+      if (item.includes('-')) {
+        trans_token = item;
+      }
+    })
+    // console.log(trans_token);
+    trans_token = this.handle_trans_token(trans_token);
+    console.log(trans_token);
+
     this.state = {
+      cur_send_addr: trans_token ? trans_token.split('-')[0] : 'USDT',
+      cur_recive_addr: trans_token ? trans_token.split('-')[1] : 'USDx',
+
       data_is_ok: false,
       token: {
         WETH: WETH,
@@ -106,15 +120,12 @@ export default class App extends React.Component {
       },
       cur_language: navigator.language === 'zh-CN' ? '中文' : 'English',
       show_left_more_token: false,
-      cur_send_addr: 'USDT',
-      cur_recive_addr: 'USDx',
-      is_stable_coin_send: true,
-      is_stable_coin_receive: true,
       showonly: false,
       meun1: true,
       meun2: true,
       meun3: true,
-      is_open: true
+      is_open: true,
+      token_list: ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'imBTC', 'HBTC', 'WBTC', 'GOLDx']
     }
 
     if (!Web3.givenProvider) {
@@ -124,6 +135,11 @@ export default class App extends React.Component {
     this.new_web3 = window.new_web3 = new Web3(Web3.givenProvider || null);
     this.bn = this.new_web3.utils.toBN;
 
+    this.init_wallet();
+  }
+
+
+  init_wallet = () => {
     this.new_web3.eth.net.getNetworkType().then(
       (net_type) => {
         console.log(net_type);
@@ -158,12 +174,6 @@ export default class App extends React.Component {
           HUSD: HUSD,
           BUSD: BUSD,
           GOLDx: GOLDx,
-          cur_send_contract: USDT,
-          cur_recive_contract: USDx,
-          cur_send_addr: 'USDT',
-          cur_recive_addr: 'USDx',
-          cur_send_decimals: 6,
-          cur_recive_decimals: 18,
           is_from_right_input: false
         }, () => {
           this.new_web3.givenProvider.enable().then((res_accounts) => {
@@ -180,14 +190,63 @@ export default class App extends React.Component {
                       i_am_ready: true,
                       is_open: true
                     })
-                    get_data_first(
-                      this,
-                      address_map[net_type]['XSwap_stable'],
-                      address_map[this.state.net_type][this.state.cur_send_addr],
-                      address_map[this.state.net_type][this.state.cur_recive_addr]
-                    );
+
+                    let url_to_arr = window.location.href.split('/');
+                    let trans_token;
+                    url_to_arr.map(item => {
+                      if (item.includes('-')) {
+                        trans_token = item;
+                      }
+                    })
+                    // console.log(trans_token);
+                    trans_token = this.handle_trans_token(trans_token);
+                    console.log(trans_token);
+                    if (
+                      trans_token &&
+                      this.state.token_list.includes(trans_token.split('-')[0]) &&
+                      this.state.token_list.includes(trans_token.split('-')[1]) &&
+                      (trans_token.split('-')[0] !== trans_token.split('-')[1])
+                    ) {
+                      this.setState({
+                        cur_send_contract: this.state[trans_token.split('-')[0]],
+                        cur_recive_contract: this.state[trans_token.split('-')[1]],
+                        cur_send_addr: trans_token.split('-')[0],
+                        cur_recive_addr: trans_token.split('-')[1],
+                        cur_send_decimals: this.state.decimals[trans_token.split('-')[0]],
+                        cur_recive_decimals: this.state.decimals[trans_token.split('-')[1]],
+                        is_stable_coin_send: this.checkIsStableCoin(trans_token),
+                        is_stable_coin_receive: this.checkIsStableCoin(trans_token),
+                      }, () => {
+                        get_data_first(
+                          this,
+                          address_map[net_type]['XSwap_stable'],
+                          address_map[this.state.net_type][this.state.cur_send_addr],
+                          address_map[this.state.net_type][this.state.cur_recive_addr]
+                        );
+                      })
+                    } else {
+                      this.setState({
+                        cur_send_contract: USDT,
+                        cur_recive_contract: USDx,
+                        cur_send_addr: 'USDT',
+                        cur_recive_addr: 'USDx',
+                        cur_send_decimals: 6,
+                        cur_recive_decimals: 18,
+                        is_stable_coin_send: true,
+                        is_stable_coin_receive: true,
+                      }, () => {
+                        get_data_first(
+                          this,
+                          address_map[net_type]['XSwap_stable'],
+                          address_map[this.state.net_type][this.state.cur_send_addr],
+                          address_map[this.state.net_type][this.state.cur_recive_addr]
+                        );
+                      })
+                    }
+
                     get_my_balance(this);
                     check_TokensEnable(this);
+                    this.accountsChangedEvent();
                   } else {
                     // alert(!(res_isopen_stable && res_isopen_btc));
                     this.setState({
@@ -202,8 +261,11 @@ export default class App extends React.Component {
         })
       }
     )
+  }
 
-    // add accounts changed
+
+  // add accounts changed
+  accountsChangedEvent = () => {
     if (window.ethereum.on) {
       window.ethereum.on('accountsChanged', (accounts) => {
         // console.log('accountsChanged: ', accounts[0]);
@@ -219,12 +281,58 @@ export default class App extends React.Component {
           if (!this.state.my_account || !this.state.net_type) {
             return;
           }
-          get_data_first(
-            this,
-            address_map[this.state.net_type]['XSwap_stable'],
-            address_map[this.state.net_type][this.state.cur_send_addr],
-            address_map[this.state.net_type][this.state.cur_recive_addr]
-          );
+
+          let url_to_arr = window.location.href.split('/');
+          let trans_token;
+          url_to_arr.map(item => {
+            if (item.includes('-')) {
+              trans_token = item;
+            }
+          })
+          trans_token = this.handle_trans_token(trans_token);
+          if (
+            trans_token &&
+            this.state.token_list.includes(trans_token.split('-')[0]) &&
+            this.state.token_list.includes(trans_token.split('-')[1]) &&
+            (trans_token.split('-')[0] !== trans_token.split('-')[1])
+          ) {
+            this.setState({
+              cur_send_contract: this.state.GOLDx,
+              cur_recive_contract: this.state.USDT,
+              cur_send_addr: 'GOLDx',
+              cur_recive_addr: 'USDT',
+              cur_send_decimals: 18,
+              cur_recive_decimals: 6,
+              is_stable_coin_send: this.checkIsStableCoin(trans_token),
+              is_stable_coin_receive: this.checkIsStableCoin(trans_token),
+            }, () => {
+              get_data_first(
+                this,
+                address_map[this.state.net_type]['XSwap_stable'],
+                address_map[this.state.net_type][this.state.cur_send_addr],
+                address_map[this.state.net_type][this.state.cur_recive_addr]
+              );
+            })
+          } else {
+            this.setState({
+              cur_send_contract: this.state.USDT,
+              cur_recive_contract: this.state.USDx,
+              cur_send_addr: 'USDT',
+              cur_recive_addr: 'USDx',
+              cur_send_decimals: 6,
+              cur_recive_decimals: 18,
+              is_stable_coin_send: true,
+              is_stable_coin_receive: true,
+            }, () => {
+              get_data_first(
+                this,
+                address_map[this.state.net_type]['XSwap_stable'],
+                address_map[this.state.net_type][this.state.cur_send_addr],
+                address_map[this.state.net_type][this.state.cur_recive_addr]
+              );
+            })
+          }
+
           get_my_balance(this);
           this.setState({
             load_new_history: Math.random()
@@ -232,6 +340,63 @@ export default class App extends React.Component {
         })
       });
     }
+  }
+
+  checkIsStableCoin = (trans_token) => {
+    if (!trans_token) { return true }
+    return (
+      !(
+        (trans_token.split('-')[0] === 'HBTC' || trans_token.split('-')[0] === 'WBTC') &&
+        (trans_token.split('-')[1] === 'HBTC' || trans_token.split('-')[1] === 'WBTC')
+      )
+    )
+  }
+
+
+  handle_trans_token = (trans_token) => {
+    if (!trans_token) { return false }
+
+    if (trans_token.split('-')[0] && trans_token.split('-')[1]) {
+      let part_a = trans_token.split('-')[0];
+      let part_b = trans_token.split('-')[1];
+
+      part_a = this.handle_token_sylbal(part_a);
+      part_b = this.handle_token_sylbal(part_b);
+
+      return part_a + '-' + part_b;
+    } else {
+      return false;
+    }
+  }
+
+  handle_token_sylbal = (part_a) => {
+    if (part_a.toLowerCase() === 'husd') {
+      part_a = 'UHSD'
+    } else if (part_a.toLowerCase() === 'busd') {
+      part_a = 'BHSD'
+    } else if (part_a.toLowerCase() === 'usdx') {
+      part_a = 'USDx'
+    } else if (part_a.toLowerCase() === 'tusd') {
+      part_a = 'TUSD'
+    } else if (part_a.toLowerCase() === 'pax') {
+      part_a = 'PAX'
+    } else if (part_a.toLowerCase() === 'dai') {
+      part_a = 'DAI'
+    } else if (part_a.toLowerCase() === 'usdc') {
+      part_a = 'USDC'
+    } else if (part_a.toLowerCase() === 'usdt') {
+      part_a = 'USDT'
+    } else if (part_a.toLowerCase() === 'imbtc') {
+      part_a = 'imBTC'
+    } else if (part_a.toLowerCase() === 'hbtc') {
+      part_a = 'HBTC'
+    } else if (part_a.toLowerCase() === 'wbtc') {
+      part_a = 'WBTC'
+    } else if (part_a.toLowerCase() === 'goldx') {
+      part_a = 'GOLDx'
+    }
+
+    return part_a;
   }
 
 
@@ -590,19 +755,6 @@ export default class App extends React.Component {
     if (!Web3.givenProvider) {
       return console.log('no givenProvider');
     }
-    this.new_web3.givenProvider.enable().then(res_accounts => {
-      this.setState({
-        my_account: res_accounts[0]
-      }, () => {
-        get_data_first(
-          this,
-          address_map[this.state.net_type]['XSwap_stable'],
-          address_map[this.state.net_type][this.state.cur_send_addr],
-          address_map[this.state.net_type][this.state.cur_recive_addr]
-        );
-        get_my_balance(this);
-      })
-    })
   }
 
   clear_open = (e) => {
