@@ -125,9 +125,7 @@ export default class App extends React.Component {
       meun2: true,
       meun3: true,
       is_open: true,
-      token_list: ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'imBTC', 'HBTC', 'WBTC', 'GOLDx'],
-      token_list_btc: ['imBTC', 'HBTC', 'WBTC'],
-      token_list_usd: ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'GOLDx'],
+      token_list: ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'imBTC', 'HBTC', 'WBTC', 'GOLDx']
     }
 
     if (!Web3.givenProvider) {
@@ -365,9 +363,12 @@ export default class App extends React.Component {
       part_a = this.handle_token_sylbal(part_a);
       part_b = this.handle_token_sylbal(part_b);
 
+      // console.log(this.state);
+      let token_list_btc = ['imBTC', 'HBTC', 'WBTC'];
+      let token_list_usd = ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'GOLDx'];
       if (
-        (this.state.token_list_btc.includes(part_a) && this.state.token_list_usd.includes(part_b)) ||
-        (this.state.token_list_btc.includes(part_b) && this.state.token_list_usd.includes(part_a))
+        (token_list_btc.includes(part_a) && token_list_usd.includes(part_b)) ||
+        (token_list_btc.includes(part_b) && token_list_usd.includes(part_a))
       ) { return false }
 
       return part_a + '-' + part_b;
