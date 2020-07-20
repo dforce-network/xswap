@@ -125,7 +125,9 @@ export default class App extends React.Component {
       meun2: true,
       meun3: true,
       is_open: true,
-      token_list: ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'imBTC', 'HBTC', 'WBTC', 'GOLDx']
+      token_list: ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'imBTC', 'HBTC', 'WBTC', 'GOLDx'],
+      token_list_btc: ['imBTC', 'HBTC', 'WBTC'],
+      token_list_usd: ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'GOLDx'],
     }
 
     if (!Web3.givenProvider) {
@@ -363,6 +365,11 @@ export default class App extends React.Component {
       part_a = this.handle_token_sylbal(part_a);
       part_b = this.handle_token_sylbal(part_b);
 
+      if (
+        (this.state.token_list_btc.includes(part_a) && this.state.token_list_usd.includes(part_b)) ||
+        (this.state.token_list_btc.includes(part_b) && this.state.token_list_usd.includes(part_a))
+      ) { return false }
+
       return part_a + '-' + part_b;
     } else {
       return false;
@@ -371,9 +378,9 @@ export default class App extends React.Component {
 
   handle_token_sylbal = (part_a) => {
     if (part_a.toLowerCase() === 'husd') {
-      part_a = 'UHSD'
+      part_a = 'HUSD'
     } else if (part_a.toLowerCase() === 'busd') {
-      part_a = 'BHSD'
+      part_a = 'BUSD'
     } else if (part_a.toLowerCase() === 'usdx') {
       part_a = 'USDx'
     } else if (part_a.toLowerCase() === 'tusd') {
