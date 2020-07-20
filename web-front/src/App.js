@@ -355,6 +355,16 @@ export default class App extends React.Component {
 
   handle_trans_token = (trans_token) => {
     if (!trans_token) { return false }
+    let token_list = ['HUSD', 'BUSD', 'USDx', 'TUSD', 'PAX', 'DAI', 'USDC', 'USDT', 'imBTC', 'HBTC', 'WBTC', 'GOLDx'];
+
+    if (trans_token.includes('?')) {
+      let trans_token_arr = trans_token.split('?');
+      for (let i = 0; i < trans_token_arr.length; i++) {
+        if (trans_token_arr[i].includes('-') && token_list.includes(this.handle_token_sylbal(trans_token_arr[i].split('-')[0]))) {
+          trans_token = trans_token_arr[i]
+        }
+      }
+    }
 
     if (trans_token.split('-')[0] && trans_token.split('-')[1]) {
       let part_a = trans_token.split('-')[0];
