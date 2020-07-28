@@ -815,7 +815,7 @@ export default class App extends React.Component {
         </Modal>
 
         <div className={'header'}>
-          <a href="/" className={'header__logo'}>
+          <a href="https://dforce.network/" className={'header__logo'}>
             <img src={logo_xswap} alt="logo" />
           </a>
 
@@ -828,6 +828,27 @@ export default class App extends React.Component {
                       <span>USDx</span>
                       <label>
                         <FormattedMessage id='Portal' />
+                      </label>
+                    </a>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://markets.dforce.network/" className={'header__overlay_item'}>
+                      <span>
+                        <FormattedMessage id='Yield_Markets' />
+                      </span>
+                      <label>
+                        <FormattedMessage id='Yield_Markets_detail' />
+                      </label>
+                    </a>
+                  </Menu.Item>
+
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://goldx.dforce.network/" className={'header__overlay_item'}>
+                      <span>
+                        <FormattedMessage id='goldx' />
+                      </span>
+                      <label>
+                        <FormattedMessage id='goldx_detail' />
                       </label>
                     </a>
                   </Menu.Item>
@@ -916,7 +937,9 @@ export default class App extends React.Component {
         <div className={this.state.showonly ? 'mobile-only' : 'disn'}>
           <div className='wrap-mob'>
             <div className='only-left'>
-              <img src={logo_xswap} alt='' />
+              <a href="https://dforce.network/" className={'header__logo'}>
+                <img src={logo_xswap} alt="logo" />
+              </a>
             </div>
             <div className='only-right'>
               <img src={close_new} alt='' onClick={() => { this.setState({ showonly: false }) }} />
@@ -938,6 +961,26 @@ export default class App extends React.Component {
               </a>
               <span className='details'>
                 <FormattedMessage id='Portal' />
+              </span>
+            </div>
+            <div className='m-item'>
+              <a href='https://markets.dforce.network/' target='_blank' rel="noopener noreferrer">
+                <span className='title'>
+                  <FormattedMessage id='Yield_Markets' />
+                </span>
+              </a>
+              <span className='details'>
+                <FormattedMessage id='Yield_Markets_detail' />
+              </span>
+            </div>
+            <div className='m-item'>
+              <a href='https://goldx.dforce.network/' target='_blank' rel="noopener noreferrer">
+                <span className='title'>
+                  <FormattedMessage id='goldx' />
+                </span>
+              </a>
+              <span className='details'>
+                <FormattedMessage id='goldx_detail' />
               </span>
             </div>
           </div>
@@ -985,7 +1028,9 @@ export default class App extends React.Component {
 
           <div className='wrap-mob'>
             <div className='only-left'>
-              <img src={logo_xswap} alt='' />
+              <a href="https://dforce.network/" className={'header__logo'}>
+                <img src={logo_xswap} alt="logo" />
+              </a>
             </div>
             <div className='only-right'>
               <img src={close} alt='' onClick={() => { this.setState({ showonly: true }) }} />

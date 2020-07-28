@@ -1,4 +1,8 @@
 const en_US = {
+    goldx: 'GOLDx',
+    goldx_detail: 'Token backed by physical gold',
+    Yield_Markets: 'Yield Markets',
+    Yield_Markets_detail: 'A yield aggregator',
     send: 'SEND',
     recive: 'RECEIVE',
     send_l: 'Send',

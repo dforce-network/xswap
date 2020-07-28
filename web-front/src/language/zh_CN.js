@@ -1,4 +1,8 @@
 const zh_CN = {
+    goldx: '黄金代币',
+    goldx_detail: '锚定实物黄金的代币',
+    Yield_Markets: '生息市场',
+    Yield_Markets_detail: '利息聚合器',
     send: '发送',
     recive: '接收',
     send_l: '发送',
