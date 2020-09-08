@@ -503,6 +503,13 @@ contract PriceOracle is Exponential {
      */
     mapping(address => Exp) public _assetPrices;
 
+    /**
+     * @dev Mapping of asset address and timestamp, in order to ensure the recording is valid.
+     *
+     * map: assetAddress -> uint256
+     */
+    mapping(address => uint256) public lastSetPriceTimestamp;
+
     constructor(address _poster, uint _maxSwing) public {
         anchorAdmin = msg.sender;
         poster = _poster;
@@ -960,6 +967,15 @@ contract PriceOracle is Exponential {
     }
 
     /**
+     * @dev Get last setting price timestamp for an asset.
+     * @param asset Asset for which to get the timestamp.
+     * @return Uint of timestamp or zero if unset.
+     */
+    function getLastSetPriceTime(address asset) external view returns (uint) {
+        return lastSetPriceTimestamp[asset];
+    }
+
+    /**
      * @dev Get exchange rate info of an asset in the time of `interval`.
      * @param asset Asset for which to get the exchange rate info.
      * @param interval Time to get accmulator interest rate.
@@ -1010,6 +1026,24 @@ contract PriceOracle is Exponential {
         // Fail when msg.sender is not poster
         if (msg.sender != poster) {
             return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);
+        }
+
+        return setPriceInternal(asset, requestedPriceMantissa);
+    }
+
+    /**
+     * @dev Similar to `setPrice(address, uint)`, but for this function, there is a new variable,
+     *      `recordingFlag`, uses it to indicate if there is a need to record timestamp
+     *      when set new price.
+     */
+    function setPrice(address asset, uint requestedPriceMantissa, bool recordingFlag) external returns (uint) {
+        // Fail when msg.sender is not poster
+        if (msg.sender != poster) {
+            return failOracle(asset, OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);
+        }
+
+        if (recordingFlag) {
+            lastSetPriceTimestamp[asset] = block.timestamp;
         }
 
         return setPriceInternal(asset, requestedPriceMantissa);
@@ -1217,6 +1251,37 @@ contract PriceOracle is Exponential {
         result = new uint[](numAssets);
 
         for (uint i = 0; i < numAssets; i++) {
+            result[i] = setPriceInternal(assets[i], requestedPriceMantissas[i]);
+        }
+
+        return result;
+    }
+
+    function setPrices(address[] memory assets, uint[] memory requestedPriceMantissas, bool[] memory recordingFlags) public returns (uint[] memory) {
+        uint numAssets = assets.length;
+        uint numPrices = requestedPriceMantissas.length;
+        uint numFlags = recordingFlags.length;
+        uint[] memory result;
+
+        // Fail when msg.sender is not poster
+        if (msg.sender != poster) {
+            result = new uint[](1);
+            result[0] = failOracle(address(0), OracleError.UNAUTHORIZED, OracleFailureInfo.SET_PRICE_PERMISSION_CHECK);
+            return result;
+        }
+
+        if ((numAssets == 0) || (numPrices != numAssets) || (numPrices != numFlags)) {
+            result = new uint[](1);
+            result[0] = failOracle(address(0), OracleError.FAILED_TO_SET_PRICE, OracleFailureInfo.SET_PRICES_PARAM_VALIDATION);
+            return result;
+        }
+
+        result = new uint[](numAssets);
+
+        for (uint i = 0; i < numAssets; i++) {
+            if (recordingFlags[i]) {
+                lastSetPriceTimestamp[assets[i]] = block.timestamp;
+            }
             result[i] = setPriceInternal(assets[i], requestedPriceMantissas[i]);
         }
 
